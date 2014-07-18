@@ -6,7 +6,8 @@ var plugins:Array = [];
 
 function onLoad():Void {
 
-	plugins.push( new SuppressCharacterSheetScaling(true) );
+	plugins.push( new SuppressCharacterSheetScaling() );
+	plugins.push( new SuppressMaxAPSPNotifications() );
 	
 }
 
