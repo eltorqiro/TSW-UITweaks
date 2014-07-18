@@ -6,12 +6,12 @@ var plugins:Array = [];
 
 function onLoad():Void {
 
+	plugins.push( new SuppressCharacterSheetScaling(true) );
+	
 }
 
 function OnModuleActivated():Void {
-
-	plugins.push( new SuppressCharacterSheetScaling(true) );
-
+	
 	for (var i:Number = 0; i < plugins.length; i++)
 	{
 		plugins[i].active = true;
