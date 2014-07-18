@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Root>
+  <Module  name = "ElTorqiro_UITweaks"
+    movie       = "ElTorqiro_UITweaks\UITweaks.swf"
+    flags       = "GMF_DONT_UNLOAD"
+    depth_layer = "Top"
+    sub_depth   = "2"
+    variable    = "ElTorqiro_UITweaks"
+    criteria    = "ElTorqiro_UITweaks &amp;&amp; (guimode &amp; (GUIMODEFLAGS_INPLAY | GUIMODEFLAGS_ENABLEALLGUI))"
+    config_name = "ElTorqiro_UITweaks_Data"
+  />
+</Root>
