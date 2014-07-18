@@ -1,7 +1,11 @@
 TSW-UITweaks
 ============
 Configurable tweaks for default The Secret World UI elements
-  
+   
+Maintained By
+=============
+Eltorqiro
+The009
   
 User Configuration
 ------------------
