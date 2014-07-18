@@ -2,11 +2,9 @@ TSW-UITweaks
 ============
 Configurable tweaks for default The Secret World UI elements
    
-Maintained By
-=============
-Eltorqiro
-The009
+Maintained by: Eltorqiro, The009
   
+   
 User Configuration
 ------------------
 None yet, to come in future release.
@@ -25,13 +23,11 @@ Delete the directory: YOUR_TSW_DIRECTORY\Data\Gui\Customized\Flash\ElTorqiro_UIT
 Plugins
 =======
  * Suppress Character Sheet Scaling
-
  * Suppress Max AP/SP Notification icons
-
    
    
 Source Code
 -----------
 You can get the source from GitHub at https://github.com/eltorqiro/TSW-UITweaks
 
-To compile, you will also need my TSW addon utils package, which is also on GitHub at https://github.com/eltorqiro/TSW-Utils
+To compile, you may also need ElTorqiro's TSW addon utils package, which is also on GitHub at https://github.com/eltorqiro/TSW-Utils
