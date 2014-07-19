@@ -1,3 +1,4 @@
+import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.GameInterface.DistributedValue;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
@@ -5,7 +6,7 @@ import flash.geom.Point;
 import com.GameInterface.Game.Camera;
 import com.ElTorqiro.UITweaks.Enums.States;
 
-class com.ElTorqiro.UITweaks.SuppressCharacterSheetScaling extends com.ElTorqiro.UITweaks.UITweakPluginBase {
+class com.ElTorqiro.UITweaks.Plugins.SuppressCharacterSheetScaling extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
 	private var _characterSheetActiveVar:DistributedValue;
 	private var _findCharacterSheetThrashCount:Number = 0;

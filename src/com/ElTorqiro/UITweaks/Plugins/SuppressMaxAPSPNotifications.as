@@ -1,3 +1,4 @@
+import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.GameInterface.DistributedValue;
 import com.GameInterface.Game.Character;
 import mx.utils.Delegate;
@@ -7,7 +8,7 @@ import com.GameInterface.Game.Camera;
 import com.ElTorqiro.UITweaks.Enums.States;
 import com.GameInterface.Utils;
 
-class com.ElTorqiro.UITweaks.SuppressMaxAPSPNotifications extends com.ElTorqiro.UITweaks.UITweakPluginBase {
+class com.ElTorqiro.UITweaks.Plugins.SuppressMaxAPSPNotifications extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 	
 	private var _targetMC:MovieClip;
 	private var _findTargetThrashCount:Number = 0;

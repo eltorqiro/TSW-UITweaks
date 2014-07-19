@@ -2,7 +2,7 @@
  * static class AddonInfo
  * contains addon properties that all modules of the addon can reference
  */
-class AddonInfo
+class com.ElTorqiro.UITweaks.AddonInfo
 {
 	// cannot be instantiated
 	private function AddonInfo() { }

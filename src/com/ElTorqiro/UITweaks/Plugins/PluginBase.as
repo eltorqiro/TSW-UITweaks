@@ -1,11 +1,11 @@
 import com.ElTorqiro.UITweaks.Enums.States;
 
-class com.ElTorqiro.UITweaks.UITweakPluginBase {
+class com.ElTorqiro.UITweaks.Plugins.PluginBase {
 	
 	private var _active:Boolean = false;
 	private var _state:Number;
 
-	public function UITweakPluginBase() {
+	public function PluginBase() {
 		state = States.PluginInactive;
 	}
 	

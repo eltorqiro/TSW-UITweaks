@@ -1,5 +1,6 @@
 import com.Components.FCSlider;
 import com.Components.WindowComponentContent;
+import com.ElTorqiro.Utils;
 import com.Utils.Archive;
 import gfx.controls.CheckBox;
 import gfx.controls.DropdownMenu;
@@ -9,9 +10,7 @@ import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import com.GameInterface.DistributedValue;
 
-import AddonInfo;
-
-class ConfigWindowContent extends WindowComponentContent
+class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 {
 	private var _hudData:DistributedValue;
 	private var _uiControls:Object = {};
@@ -20,7 +19,7 @@ class ConfigWindowContent extends WindowComponentContent
 	private var m_ContentSize:MovieClip;
 	private var m_Content:MovieClip;
 	
-	public function ConfigWindowContent()
+	public function WindowContent()
 	{
 		super();
 		
