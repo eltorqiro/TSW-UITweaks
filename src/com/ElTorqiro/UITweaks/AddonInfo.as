@@ -8,7 +8,7 @@ class com.ElTorqiro.UITweaks.AddonInfo
 	private function AddonInfo() { }
 	
 	public static var Name:String = "ElTorqiro_UITweaks";
-	public static var Version:String = "NEXT";
+	public static var Version:String = "0.3.0";
 	public static var Author:String = "ElTorqiro";
 	
 }

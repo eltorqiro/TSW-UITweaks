@@ -1,4 +1,6 @@
-NEXT -- NEXT
+0.3.0 -- 2014-07-30
+
+ + added Remove AbilityBar Reflections
 
 
 0.2.0 -- 2014-07-18

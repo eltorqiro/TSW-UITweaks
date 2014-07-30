@@ -1,5 +1,6 @@
 import com.ElTorqiro.UITweaks.Plugins.SuppressCharacterSheetScaling;
 import com.ElTorqiro.UITweaks.Plugins.SuppressMaxAPSPNotifications;
+import com.ElTorqiro.UITweaks.Plugins.RemoveAbilityBarReflections;
 import com.ElTorqiro.UITweaks.AddonInfo;
 
 import com.GameInterface.Tooltip.*;
@@ -73,6 +74,7 @@ function onLoad():Void {
 	// attach plugins
 	g_plugins.push( new SuppressCharacterSheetScaling() );
 	g_plugins.push( new SuppressMaxAPSPNotifications() );
+	g_plugins.push( new RemoveAbilityBarReflections() );
 }
 
 function OnModuleActivated():Void {
