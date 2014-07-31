@@ -79,26 +79,33 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 			}
 		}
 
-		
+
 		var content:MovieClip = _root.inspectioncontroller.m_InspectionWindows[characterID].m_Content;
 		var originalContentHeight:Number = content._height;
-		
-
-		/* use this if wanting to put something in the titlebar */
-		//content._parent.m_Title.autoSize = true;
-		//content._parent.m_Title.setNewTextFormat( content.m_CharacterInfo.m_Name.getNewTextFormat() );
-		//content._parent.SetTitle( content.m_CharacterInfo.m_Name.text ); // 'Inspecto Petronum' );
-
-		content._parent.SetTitle( '' );
 		
 		// hide existing stat panel
 		content.m_StatInfoList._visible = false;
 		content.m_StatsBgBox._visible = false;
+
+		// remove default titlebar
+		content._parent.SetTitle( '' );
 		
+			/* use this if wanting to put something in the titlebar */
+			//content._parent.m_Title.autoSize = true;
+			//content._parent.m_Title.setNewTextFormat( content.m_CharacterInfo.m_Name.getNewTextFormat() );
+			//content._parent.SetTitle( content.m_CharacterInfo.m_Name.text ); // 'Inspecto Petronum' );
+
+
+		// define layout constants
+		var iconSize = 25;
+		var iconPadding:Number = 3;
+		var gearOffset:Number = 10;
+
+
 		// add stat lines
 		var statBox:MovieClip = content.createEmptyMovieClip( 'm_UITweaks_Stats', content.getNextHighestDepth() );
-		statBox._x = content.m_CharacterInfo._x;
-		statBox._y = content.m_CharacterInfo._y + content.m_CharacterInfo._height + 18;
+		statBox._x = (3 * iconSize) + (2 * iconPadding) + gearOffset + iconPadding * 12;
+		statBox._y = content.m_CharacterInfo._y + content.m_CharacterInfo._height + iconPadding * 6;
 		
 		
 		var maxWidth:Number = 0;
@@ -143,7 +150,7 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 			case _global.Enums.Factions.e_FactionIlluminati:	factionColour = Colors.e_ColorPvPIlluminati; factionTextColour = Colors.e_ColorPvPIlluminatiText; break;
 		}
 
-		content.m_CharacterInfo.m_Name.autoSize = true;
+		//content.m_CharacterInfo.m_Name.autoSize = 'left';
 		var source:TextField = content.m_CharacterInfo.m_BasicInfo;
 		var factionTextField:TextField = content.m_CharacterInfo.createTextField('m_UITweaks_FactionInfo', content.m_CharacterInfo.getNextHighestDepth(), source._x, source._y + source.textHeight, source._width, source.textHeight );
 		var factionTextFormat:TextFormat = source.getNewTextFormat();
@@ -152,11 +159,11 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 		// Faction.GetName(content.m_InspectionCharacter.GetStat( _global.Enums.Stat.e_PlayerFaction )) + ' ' + 
 		factionTextField.text = LoreBase.GetTagName(content.m_InspectionCharacter.GetStat( _global.Enums.Stat.e_RankTag ));
 		
-		var factionBG:MovieClip = content.createEmptyMovieClip('m_UITweaks_CharacterInfoBackground', content.getNextHighestDepth() );
+		var factionBG:MovieClip = content.createEmptyMovieClip('m_UITweaks_CharacterInfoBackground', -16384 );
 		
 		var x:Number = 0;
 		var y:Number = 0;
-		var w:Number = 100;
+		var w:Number = content._width;
 		var h:Number = content.m_CharacterInfo._height + 100;
 		
 		var topLeftCorner:Number = 5;
@@ -165,7 +172,7 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 		var bottomLeftCorner:Number = 0;
 		
 		var mc = factionBG;
-		var matrix = {matrixType:"box", x:x, y:y, w:w, h:h, r:45/180*Math.PI};
+		var matrix = {matrixType:"box", x:x, y:y, w:100, h:h, r:45/180*Math.PI};
 
 		factionBG.beginGradientFill(
 			'linear', 
@@ -190,8 +197,6 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
         factionBG.lineTo(topLeftCorner+x, y);
         factionBG.endFill();
 
-		factionBG.swapDepths( content.m_CharacterInfo );
-
 		content.m_CharacterInfo.m_FactionIconLoader.filters = [ new GlowFilter(
 			factionTextColour,
 			1,
@@ -206,10 +211,6 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 		//content.m_CharacterInfo.m_FactionIconLoader._x = content.m_CharacterInfo.m_FactionIconLoader._y = 5;
 		
 		// layout gear icons
-		var iconSize = 25;
-		var iconPadding:Number = 3;
-		var gearOffset:Number = 20;
-		
 		var icons:Array = [
 			content.m_IconChakra_1, content.m_IconChakra_2,	content.m_IconChakra_3,	content.m_IconChakra_4,	content.m_IconChakra_5,	content.m_IconChakra_6,	content.m_IconChakra_7,
 			
@@ -238,10 +239,10 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 		gearLabelTextFormat.align = 'center';
 		
 		// talisman layout
-		content.m_ChakrasTitle._y = statBox._y;
+		content.m_ChakrasTitle._y = content.m_CharacterInfo._y + content.m_CharacterInfo._height + iconPadding * 6;
 		
 		content.m_ChakrasTitle._width = content.m_WeaponsTitle._width = (3 * iconSize) + (2 * iconPadding);
-		content.m_ChakrasTitle._x = content.m_WeaponsTitle._x = content._width - (3 * iconSize) - (2 * iconPadding);
+		content.m_ChakrasTitle._x = content.m_WeaponsTitle._x = gearOffset; // content.m_CharacterInfo._x; // content._width - content.m_ChakrasTitle._width;
 		content.m_ChakrasTitle.setTextFormat( gearLabelTextFormat );
 		content.m_WeaponsTitle.setTextFormat( gearLabelTextFormat );
 		
@@ -249,7 +250,7 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 		content.m_IconChakra_4._y = content.m_IconChakra_5._y = content.m_IconChakra_6._y = content.m_IconChakra_7._y + iconSize + iconPadding;
 		content.m_IconChakra_1._y = content.m_IconChakra_2._y = content.m_IconChakra_3._y = content.m_IconChakra_4._y + iconSize + iconPadding;
 		
-		content.m_IconChakra_4._x = content.m_IconChakra_1._x = content.m_IconWeapon_1._x = content._width - (3 * iconSize) - (2 * iconPadding);
+		content.m_IconChakra_4._x = content.m_IconChakra_1._x = content.m_IconWeapon_1._x = content.m_ChakrasTitle._x;
 		content.m_IconChakra_5._x = content.m_IconChakra_2._x = content.m_IconChakra_7._x = content.m_IconWeapon_2._x = content.m_IconChakra_4._x + iconSize + iconPadding;
 		content.m_IconChakra_6._x = content.m_IconChakra_3._x = content.m_IconAuxiliaryWeapon._x = content.m_IconChakra_5._x + iconSize + iconPadding;
 
@@ -264,7 +265,7 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 		// aegis layout
 		content.m_AegisTitle._y = content.m_IconWeapon_1._y + iconSize + (iconPadding * 6);
 		content.m_AegisTitle._width = (3 * iconSize) + (2 * iconPadding);
-		content.m_AegisTitle._x = content._width - content.m_AegisTitle._width;
+		content.m_AegisTitle._x = gearOffset; // content.m_CharacterInfo._x; // content._width - content.m_AegisTitle._width;
 		content.m_AegisTitle.setTextFormat( gearLabelTextFormat );
 		
 		content.m_aegis_0._visible = true;
