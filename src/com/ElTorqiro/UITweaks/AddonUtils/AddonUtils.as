@@ -180,4 +180,17 @@ class com.ElTorqiro.UITweaks.AddonUtils.AddonUtils
 
 		return plainText;
 	}
+	
+	
+	/**
+	 * Provides a copy of a string, with the first letter capitalised and the rest set to lowercase
+	 * 
+	 * @param	word	String to convert
+	 * @return	The string with first letter capitalised
+	 */
+	public static function firstToUpper(word:String):String {
+		var firstLetter = word.substring(1, 0);
+		var restOfWord = word.substring(1);
+		return ( firstLetter.toUpperCase() + restOfWord.toLowerCase() );
+	}
 }

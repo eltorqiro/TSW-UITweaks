@@ -63,8 +63,12 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 	
 	private function Attach( characterID:ID32 ):Void {
 
-		_root.inspectioncontroller.m_InspectionWindows[characterID].m_Content.UITweaksContentBuilder = 
-			new ContentBuilder( _root.inspectioncontroller.m_InspectionWindows[characterID].m_Content );
+		var inspectionWindowContent = _root.inspectioncontroller.m_InspectionWindows[characterID].m_Content;
+		
+		// don't re-render if already done so
+		if( inspectionWindowContent.UITweaksContentBuilder == undefined ) {
+			inspectionWindowContent.UITweaksContentBuilder = new ContentBuilder( _root.inspectioncontroller.m_InspectionWindows[characterID].m_Content );
+		}
 	}	
 	
 	private function Restore():Void {
