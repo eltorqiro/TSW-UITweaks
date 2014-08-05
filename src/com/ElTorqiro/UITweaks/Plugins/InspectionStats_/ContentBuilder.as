@@ -13,8 +13,9 @@ import com.Components.ItemSlot;
 import com.Utils.Faction;
 import com.GameInterface.Game.Character;
 
-import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 
+import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
+import com.ElTorqiro.UITweaks.Plugins.InspectionStats_.LDB;
 
 class com.ElTorqiro.UITweaks.Plugins.InspectionStats_.ContentBuilder {
 	
@@ -63,85 +64,32 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats_.ContentBuilder {
 		// remove default titlebar
 		_content._parent.SetTitle( '' );
 
-/*		
-		QL: { en: 'QL', fr: 'NQ', de: 'QS' }
-
-		fr:
-heal rating: Valeur de guérison
-health: Santé
-name:Valeur de guérison
-maxQL : Max. QL
-avgQL : Avg. QL
-weaponPower : Puissance de l'arme
-attack : Valeur d'attaque
-heal : Valeur de guérison
-hit : Valeur de toucher
-crit : Valeur de critique
-critPower : Valeur de puissance de critique
-pen : Valeur de pénétration
-evade : Valeur d'évitement
-defence : Valeur de défense
-block : Valeur de parade
-physProt : Protection physique
-magProt : Protection magique
-aegisPercent : Avg. AEGIS %
-
-		de:
-German has a space in between number and % symbol, such as in AEGIS controllers
-			
-heal rating: Heilungswert
-health: Gesundheit
-maxQL : Max. QL
-avgQL : Avg. QL
-weaponPower : Waffenkraft
-attack : Angriffswert
-heal : Heilungswert
-hit : Trefferwert
-crit : Kritischer Treffer-Wert
-critPower : Kritischer Treffer-Kraftwert
-pen : Durchdringungswert
-evade : Ausweichwert
-defence : Verteidigungswert
-block : Blockwert
-physProt : Körperlicher Schutz
-magProt : Magischer Schutz
-aegisPercent : Avg. AEGIS %
-*/
-
-		var LDB:Object = {
-			HealRating:			{ en: 'Heal Rating', fr: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_HealingRating ), de: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_HealingRating ) },
-			AverageQL:			{ en: 'Avg. QL', fr: 'Moyenne NQ', de: 'Durchschnitt QS' },
-			MaxQL:				{ en: 'Max. QL', fr: 'Maximum NQ', de: 'Maximum QL' },
-			AverageAegisPercent:{ en: 'Avg. AEGIS %', fr: 'Moyenne AEGIS %', de: 'Durchschnitt AEGIS %' }
-		};
-
-		
 		// define skills/stats to track
 		_stats = {
-			weaponPower: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_WeaponPower )},
-			attack: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_AttackRating )},
-			heal: { name: LDB.HealRating[ LDBFormat.GetCurrentLanguageCode() ] },
+			weaponPower: { name: LDB.GetText('StatNames', 'WeaponPower') },
+			attack: { name: LDB.GetText('StatNames', 'AttackRating') },
+			heal: { name: LDB.GetText('StatNames', 'HealRating') },
 
-			hit: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_HitRating )},
-			crit: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_CriticalRating)},
-			critPower: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_CritPowerRating )},
-			pen: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_PenetrationRating )},
+			hit: { name: LDB.GetText('StatNames', 'HitRating') },
+			crit: { name: LDB.GetText('StatNames', 'CriticalRating') },
+			critPower: { name: LDB.GetText('StatNames', 'CritPower') },
+			pen: { name: LDB.GetText('StatNames', 'PenetrationRating') },
 
-			evade: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_EvadeRating )},
-			defence: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_DefenseRating )},
-			block: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_BlockRating )},
-			physProt: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_PhysicalMitigation )},
-			magProt: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_MagicalMitigation )},
+			evade: { name: LDB.GetText('StatNames', 'EvadeRating') },
+			defence: { name: LDB.GetText('StatNames', 'DefenceRating') },
+			block: { name: LDB.GetText('StatNames', 'BlockRating') },
+			physProt: { name: LDB.GetText('StatNames', 'PhysicalProtection') },
+			magProt: { name: LDB.GetText('StatNames', 'MagicalProtection') },
 			
-			priAegisPercent: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_ColorCodedDamagePercent )},
-			secAegisPercent: { name: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_SecondaryColorCodedDamagePercent )},
+			priAegisPercent: { },
+			secAegisPercent: { },
 			
-			aegisPercent: { name: LDB.AverageAegisPercent[ LDBFormat.GetCurrentLanguageCode() ], counts: { primaryWeapon: 0, secondaryWeapon: 0 } },
+			aegisPercent: { name: LDB.GetText('StatNames', 'AvgAegisConversionPercent'), counts: { primaryWeapon: 0, secondaryWeapon: 0 } },
 			
 			health: { name: 'Health' },
 			
-			maxQL: { name: LDB.MaxQL[ LDBFormat.GetCurrentLanguageCode() ] },
-			avgQL: { name: LDB.AverageQL[ LDBFormat.GetCurrentLanguageCode() ], count: 0 }
+			maxQL: { name: LDB.GetText('StatNames', 'MaxQL') },
+			avgQL: { name: LDB.GetText('StatNames', 'AvgQL'), count: 0 }
 		};
 		
 		// reverse mapping for easy adding of values to skills objects
@@ -242,7 +190,7 @@ aegisPercent : Avg. AEGIS %
 			_stats.avgQL.values.base = Math.floor( _stats.avgQL.values.base / _stats.avgQL.count * 100 ) / 100;
 		
 		// info not from gear
-		_stats.health.values.base = _content.m_InspectionCharacter.GetStat( _global.Enums.Stat.e_Health );
+		//_stats.health.values.base = _content.m_InspectionCharacter.GetStat( _global.Enums.Stat.e_Health );
 		
 
 		// add stat box movieclip
@@ -280,8 +228,8 @@ aegisPercent : Avg. AEGIS %
 		AddStatLine( 'physProt' );
 		AddStatLine( 'magProt' );
 
-		//_statBoxCursor.y += statSectionSpacing;
-		//AddStatLine( 'health' );
+		_statBoxCursor.y += statSectionSpacing;
+		AddStatLine( 'health' );
 		
 		_statBoxCursor.y += statSectionSpacing;
 		AddStatLine( 'aegisPercent' );
@@ -381,22 +329,11 @@ aegisPercent : Avg. AEGIS %
 		
 		_characterInfo.m_Name.filters = [ titleDropShadow ];
 		_characterInfo.m_FactionIconLoader.filters = [ titleDropShadow ];
-/*
-		//_characterInfo._visible = false;
-		//_characterInfo.m_FactionIconLoader._xscale = _characterInfo.m_FactionIconLoader._yscale = 300;
-		//_characterInfo.m_FactionIconLoader._x = (_content._width - _characterInfo.m_FactionIconLoader._width) / 2;
-		//_characterInfo.m_FactionIconLoader._y = (_content._height - _characterInfo.m_FactionIconLoader._height) / 2;
-		
-		//_characterInfo.m_FactionIconLoader._x = _content._width - _characterInfo.m_FactionIconLoader._width - 30;
-		//_characterInfo.m_FactionIconLoader._y += 4;
-		
-		_characterInfo.m_FactionIconLoader._alpha = 50;
-*/		
 		_characterInfo.m_Name._visible = false;
 		_characterInfo.m_BasicInfo._visible = false;
 		factionTextField._visible = false;
 		
-		//_statBox.filters = [ titleDropShadow ];
+		_statBox.filters = [ titleDropShadow ];
 
 		var title:TextField = _characterInfo.createTextField( 'm_UITweaks_TitleFullName', _content.getNextHighestDepth(), 0, 0, 0, _characterInfo._height );
 		title.autoSize = 'left';
@@ -432,45 +369,12 @@ aegisPercent : Avg. AEGIS %
 		}
 
 		title.appendHtml( ', ' + LDBFormat.LDBGetText("GenericGUI", "InspectionWindow_BattleRank") + ' ' + _content.m_InspectionCharacter.GetStat(_global.Enums.Stat.e_PvPLevel) );
-		
 		title.appendHtml( '</font>' );
 		
-		//title._x = _characterInfo.m_FactionIconLoader._x + _characterInfo.m_FactionIconLoader._width + 6;
-		//title._y = -2;
 
 		_statBox._y = title._y + title._height + iconPadding * 6;
-		
-/*		
-		var titleName:TextField = _content.createTextField( 'm_UITweaks_TitleName', _content.getNextHighestDepth(), titleFullName._x, titleFullName._y + titleFullName.textHeight, _content.width, _characterInfo._height );
-		titleName.autoSize = 'left';
-		titleName.embedFonts = true;
-		titleName.multiline = true;
-		titleName.wordWrap = true;
-		titleName.text = _content.m_InspectionCharacter.GetName();
-		titleFormat.size = 18;
-		titleName.setTextFormat( titleFormat );
-		titleName.setNewTextFormat( titleFormat );
-		titleName.filters = [ titleDropShadow ];
-		
-*/		
-		
-/*		
-		var titles:TextField = _content.createTextField( 'm_UITweaks_Titles', _content.getNextHighestDepth(), 3, 2, _content.width, _characterInfo._height );
 
-		titles.embedFonts = true;
-		titles.multiline = true;
-		titles.wordWrap = true;
-		//titles.autoFit = true;
 		
-		titles.text = "El Torqiro";
-		var titlesFormat:TextFormat = _characterInfo.m_Name.getTextFormat();
-		titlesFormat.size = 16;
-		titles.setTextFormat( titlesFormat );
-
-		titles.filters = [ new DropShadowFilter(30, 45, 0x000000, 0.7, 4, 4, 3, 3, false, false, false) ];
-*/		
-		
-
 		var gearLabelTextFormat:TextFormat = titleFormat;
 		gearLabelTextFormat.align = 'center';
 		
