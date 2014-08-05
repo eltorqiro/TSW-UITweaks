@@ -193,4 +193,23 @@ class com.ElTorqiro.UITweaks.AddonUtils.AddonUtils
 		var restOfWord = word.substring(1);
 		return ( firstLetter.toUpperCase() + restOfWord.toLowerCase() );
 	}
+	
+
+	/**
+	 * Converts a numeric color value into a HTML compatible hex string, excluding the leading #
+	 * 
+	 * @param	color	Numeric value representing an RGB color
+	 * @return	color converted into a hex string, e.g. "FF88AA", or an empty string if a non-valid RGB value is passed
+	 */
+	public static function colorToHex(color:Number):String {
+		if ( !isRGB(color) ) return '';
+		
+		var colArr:Array = color.toString(16).toUpperCase().split('');
+		var numChars:Number = colArr.length;
+		for ( var a:Number = 0; a < (6 - numChars); a++ ) {
+			colArr.unshift("0");
+		}
+		return ( colArr.join('') );
+	}
+	
 }

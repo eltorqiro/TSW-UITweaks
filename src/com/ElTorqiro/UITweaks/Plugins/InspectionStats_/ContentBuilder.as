@@ -10,7 +10,7 @@ import flash.filters.DropShadowFilter;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
 import com.Components.ItemSlot;
-
+import com.Utils.Faction;
 import com.GameInterface.Game.Character;
 
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
@@ -377,7 +377,7 @@ aegisPercent : Avg. AEGIS %
 		var titleFormat:TextFormat = _characterInfo.m_Name.getTextFormat();
 		titleFormat.size = 12;
 		
-		var titleDropShadow:DropShadowFilter = new DropShadowFilter(30, 90, 0x000000, 0.7, 4, 4, 2, 3, false, false, false);
+		var titleDropShadow:DropShadowFilter = new DropShadowFilter(60, 90, 0x000000, 0.7, 8, 8, 2, 3, false, false, false);
 		
 		_characterInfo.m_Name.filters = [ titleDropShadow ];
 		_characterInfo.m_FactionIconLoader.filters = [ titleDropShadow ];
@@ -391,36 +391,55 @@ aegisPercent : Avg. AEGIS %
 		//_characterInfo.m_FactionIconLoader._y += 4;
 		
 		_characterInfo.m_FactionIconLoader._alpha = 50;
-		
+*/		
 		_characterInfo.m_Name._visible = false;
 		_characterInfo.m_BasicInfo._visible = false;
 		factionTextField._visible = false;
 		
 		//_statBox.filters = [ titleDropShadow ];
 
-		var title:TextField = _characterInfo.createTextField( 'm_UITweaks_TitleFullName', _content.getNextHighestDepth(), 3, 2, _content.width, _characterInfo._height );
+		var title:TextField = _characterInfo.createTextField( 'm_UITweaks_TitleFullName', _content.getNextHighestDepth(), 0, 0, 0, _characterInfo._height );
 		title.autoSize = 'left';
 		title.embedFonts = true;
 		title.multiline = true;
-		title.wordWrap = true;
-		//title.text = _content.m_InspectionCharacter.GetFirstName() + ' ' + _content.m_InspectionCharacter.GetLastName();
-//		titleFormat.size = 12;
+		//title.wordWrap = true;
+		//titleFormat.size = 12;
+		//titleFormat.leading = -1;
 		//title.setTextFormat( titleFormat );
 		title.setNewTextFormat( titleFormat );		
 		title.filters = [ titleDropShadow ];
 
-		title.appendHtml( '<font size="12">' + _content.m_InspectionCharacter.GetFirstName() + ' ' + _content.m_InspectionCharacter.GetLastName() + '</font>' );
 		
-		title.appendHtml( '\n<font size="18">' + _content.m_InspectionCharacter.GetName() + '</font>' );
+		title.appendHtml( '<font size="16">"' + _content.m_InspectionCharacter.GetName() + '"</font>' );
+		title.appendHtml( '<font size="12">\n' + _content.m_InspectionCharacter.GetFirstName() + ' ' + _content.m_InspectionCharacter.GetLastName() + '</font>' );
 		
 		var characterTitle = _content.m_InspectionCharacter.GetTitle();
 		if( characterTitle.length > 0 ) {
-			title.appendHtml( '\n<font size="12">' + characterTitle + '</font>' );
+			title.appendHtml( '<font size="12">, ' + characterTitle + '</font>' );
+		}
+		
+		var cabalName:String = _content.m_InspectionCharacter.GetGuildName();
+		if ( cabalName.length > 0 ) {
+			title.appendHtml( '<font size="12" color="#cccccc">\n&lt;' + cabalName + '&gt;</font>' );
+		}
+		
+		var factionName:String = Faction.GetName(_content.m_InspectionCharacter.GetStat( _global.Enums.Stat.e_PlayerFaction ));
+		title.appendHtml('\n<font size="12" color="#' + AddonUtils.colorToHex(factionColour) + '">' + AddonUtils.firstToUpper( factionName ) );
+
+		var factionTitle = LoreBase.GetTagName(_content.m_InspectionCharacter.GetStat( _global.Enums.Stat.e_RankTag ));
+		if ( factionTitle.length > 0 ) {
+			title.appendHtml( ' ' + factionTitle );
 		}
 
+		title.appendHtml( ', ' + LDBFormat.LDBGetText("GenericGUI", "InspectionWindow_BattleRank") + ' ' + _content.m_InspectionCharacter.GetStat(_global.Enums.Stat.e_PvPLevel) );
+		
+		title.appendHtml( '</font>' );
+		
 		//title._x = _characterInfo.m_FactionIconLoader._x + _characterInfo.m_FactionIconLoader._width + 6;
-		title._y = 0;
-*/
+		//title._y = -2;
+
+		_statBox._y = title._y + title._height + iconPadding * 6;
+		
 /*		
 		var titleName:TextField = _content.createTextField( 'm_UITweaks_TitleName', _content.getNextHighestDepth(), titleFullName._x, titleFullName._y + titleFullName.textHeight, _content.width, _characterInfo._height );
 		titleName.autoSize = 'left';
@@ -456,8 +475,9 @@ aegisPercent : Avg. AEGIS %
 		gearLabelTextFormat.align = 'center';
 		
 		// talisman layout
-		_content.m_ChakrasTitle._y = _content.m_CharacterInfo._y + _content.m_CharacterInfo._height + iconPadding * 6;
-		
+		//_content.m_ChakrasTitle._y = _content.m_CharacterInfo._y + _content.m_CharacterInfo._height + iconPadding * 6;
+		_content.m_ChakrasTitle._y = title._y + title._height + iconPadding * 6;
+
 		_content.m_ChakrasTitle._width = _content.m_WeaponsTitle._width = (3 * iconSize) + (2 * iconPadding);
 		_content.m_ChakrasTitle._x = _content.m_WeaponsTitle._x = gearOffset; // content.m_CharacterInfo._x; // content._width - content.m_ChakrasTitle._width;
 
@@ -571,6 +591,7 @@ aegisPercent : Avg. AEGIS %
 		
 		// clothes layout
 		_content.m_ClothesTitle._y = aegis[1]._y + iconSize + iconPadding * 6;
+		_content.m_ClothesTitle.autoSize = 'left';
 		_content.m_ClothesTitle._x = gearOffset;
 		_content.m_ClothesTitle.text = AddonUtils.firstToUpper( _content.m_ClothesTitle.text );
 		gearLabelTextFormat.align = 'left';
@@ -584,7 +605,7 @@ aegisPercent : Avg. AEGIS %
 			if ( icons[i]._name.substr( 0, 10 ) != 'm_Clothing' ) continue;
 			if ( clothingIndex == null ) clothingIndex = i;
 			
-			icons[i]._x = (i - clothingIndex) * (iconSize + 1 );
+			icons[i]._x = _content.m_ClothesTitle._x + (i - clothingIndex) * (iconSize + 1 );
 			icons[i]._y = _content.m_ClothesTitle._y + _content.m_ClothesTitle.textHeight + iconPadding;
 		}
 		
@@ -593,19 +614,42 @@ aegisPercent : Avg. AEGIS %
 		_content.m_PreviewAllButton._y = _content.m_ClothingIconHats._y + iconSize + 20;
 
 		// faction bg backgrounds
-		var factionBG:MovieClip = DrawBackgroundBox( _content, 'm_UITweaks_FactionBGTopLeft', -16384, 0, 0, _content._width, _content.m_CharacterInfo._height + 100, 6, 0, 0, 0, factionColour, 45);
+		var factionBG:MovieClip = DrawBackgroundBox( _content, 'm_UITweaks_FactionBGTopLeft', -16384, 0, 0, _content._width, _content.m_CharacterInfo._height + 100, 6, 0, 0, 0, factionColour, 45, 100);
 		factionBG.hitTestDisable = true;
 		
+		// stat box background
+	
+//		DrawBackgroundBox( _statBox, 'm_StatsBackground', -16384, 0, 0, _statBox._width, _statBox._height, 6, 6, 6, 6, 0x666666, 90, _statBox._height + 50);
+/*		
+		_statBox.moveTo( 0, 0 );
+		_statBox.beginFill( 0x333333, 50 );
+		var w:Number = _statBox._width;
+		var h:Number = _statBox._height;
+		_statBox.lineTo( w, 0 );
+		_statBox.lineTo( w, h );
+		_statBox.lineTo( 0, h );
+		_statBox.lineTo( 0, 0 );
+		_statBox.endFill();
+*/		
 		// let window know the size of the content has changed
 		_content.SignalSizeChanged.Emit();
-
+		
+		_characterInfo.m_FactionIconLoader._x -= 30;
+		_characterInfo.m_FactionIconLoader._y -= 30;
+		
+		_characterInfo.m_FactionIconLoader._x = (_content._width + _characterInfo.m_FactionIconLoader._width) / 2;
+/*		
+		_characterInfo.m_FactionIconLoader._width *= 1.5;
+		_characterInfo.m_FactionIconLoader._height *= 1.5;
+		_characterInfo.m_FactionIconLoader.filters = [];
+*/
 	}
 	
 
-	private function DrawBackgroundBox(hostMC, name, depth, x, y, w, h, topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner, colour, angle):MovieClip {
+	private function DrawBackgroundBox(hostMC, name, depth, x, y, w, h, topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner, colour, angle, gradientLength):MovieClip {
 
-		var mc:MovieClip = hostMC.createEmptyMovieClip('m_UITweaks_FactionBackground', depth ); // -16384 );
-		var matrix = {matrixType:"box", x:x, y:y, w:100, h:h, r:angle/180*Math.PI};
+		var mc:MovieClip = hostMC.createEmptyMovieClip(name, depth ); // -16384 );
+		var matrix = {matrixType:"box", x:x, y:y, w:gradientLength, h:h, r:angle/180*Math.PI};
 
 		mc.beginGradientFill(
 			'linear', 
