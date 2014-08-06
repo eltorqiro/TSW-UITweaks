@@ -26,8 +26,10 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 
 	// default window finding objects
 	private var _windowSearches:Object = {};
-	private var _windowSearchInterval:Number = 10;
+	private var _windowSearchInterval:Number = 5;
 	private var _windowSearchTimeout:Number = 1000;
+	
+	private var _runOnce = false;
 	
 	// layout constants
 	public var iconSize = 25;
@@ -61,21 +63,45 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 		
 		// wait for default window to become available (and finish rendering)
 
-		var inspectionController = _root.inspectioncontroller;
+		//var window = _root.inspectioncontroller.m_InspectionWindows[ characterID ];
 		
-		if( inspectionController.m_InspectionWindows[characterID] == undefined ) {
+		var window = _root.inspectioncontroller['i_InspectionWindow_' + characterID.GetInstance() ];
 		
-			if ( _windowSearches[characterID] == undefined ) _windowSearches[characterID] = new Date().getUTCMilliseconds();
+		if( window == undefined ) {
+			if ( _windowSearches[characterID] == undefined ) _windowSearches[characterID] = { time: new Date() };
 
 			// give up if the timeout has passed
-			if ( new Date().getUTCMilliseconds() - _windowSearches[characterID] > _windowSearchTimeout ) return;
+			if ( new Date() - _windowSearches[characterID].time > _windowSearchTimeout ) return;
 			
 			_global.setTimeout( Delegate.create( this, AttachToWindow ), _windowSearchInterval, characterID );
+			return;
+		}
+		
+		else {
+			if ( _windowSearches[characterID].height == undefined ) _windowSearches[characterID].m_Background.height = window._height;
+
+			// give up if the timeout has passed
+			if ( new Date() - _windowSearches[characterID].time > _windowSearchTimeout ) return;
+			
+			if ( _windowSearches[characterID].height == window.m_Background._height ) {
+				_global.setTimeout( Delegate.create( this, AttachToWindow ), _windowSearchInterval, characterID );
+				return;
+			}
 		}
 
 		// if we made it this far, the window has been found, so build content on it
 		delete _windowSearches[characterID];
-		Build( inspectionController.m_InspectionWindows[characterID] );
+		
+		// this mechanism is to avoid the issue on very first run on launching the game, causing a horrible mess in the window
+		if ( !_runOnce ) {
+			_global.setTimeout( Delegate.create( this, Build ), 100, window );
+			_runOnce = true;
+		}
+		
+		else {
+			Build( window );
+		}
+		
 	}
 	
 	
