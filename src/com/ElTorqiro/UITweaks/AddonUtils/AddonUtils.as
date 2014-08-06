@@ -211,5 +211,72 @@ class com.ElTorqiro.UITweaks.AddonUtils.AddonUtils
 		}
 		return ( colArr.join('') );
 	}
+
 	
+	/**
+	 * Draws a rectangle on an existing movieclip, with options for rounded corners
+	 * 
+	 * Does not process any fill or line on the draw, begin those on the movieclip prior to calling this function
+	 * 
+	 * @param	mc					MovieClip to draw onto
+	 * @param	x					x coordinate within the movieclip to start the rectangle
+	 * @param	y					y coordinate within the movieclip to start the rectangle
+	 * @param	w					width of the coordinate, which will be in movieclip-local scale, not pixel
+	 * @param	h					height of the coordinate, which will be in movieclip-local scale, not pixel
+	 * @param	topLeftCorner		radius of the top left corner, leave zero to not have a curved corner
+	 * @param	topRightCorner		radius of the top right corner, leave zero to not have a curved corner
+	 * @param	bottomRightCorner	radius of the bottom right corner, leave zero to not have a curved corner
+	 * @param	bottomLeftCorner	radius of the bottom left corner, leave zero to not have a curved corner
+	 */
+	public static function DrawRectangle(mc:MovieClip, x:Number, y:Number, w:Number, h:Number, topLeftCorner:Number, topRightCorner:Number, bottomRightCorner:Number, bottomLeftCorner:Number):Void {
+
+		if ( mc == undefined || !(mc instanceof MovieClip) ) return;
+		
+		if ( topLeftCorner == undefined ) topLeftCorner = 0;
+		if ( topRightCorner == undefined ) topRightCorner = 0;
+		if ( bottomRightCorner == undefined ) bottomRightCorner = 0;
+		if ( bottomLeftCorner == undefined ) bottomLeftCorner = 0;
+		
+		mc.moveTo(topLeftCorner+x, y);
+		mc.lineTo(w - topRightCorner, y);
+		mc.curveTo(w, y, w, topRightCorner+y);
+		mc.lineTo(w, topRightCorner+y);
+		mc.lineTo(w, h - bottomRightCorner);
+		mc.curveTo(w, h, w - bottomRightCorner, h);
+		mc.lineTo(w - bottomRightCorner, h);
+		mc.lineTo( bottomLeftCorner+x, h);
+		mc.curveTo(x, h, x, h - bottomLeftCorner);
+		mc.lineTo(x, h - bottomLeftCorner);
+		mc.lineTo(x, topLeftCorner+y);
+		mc.curveTo(x, y, topLeftCorner+x, y);
+		mc.lineTo(topLeftCorner+x, y);
+	}
+
+	
+	/**
+	 * Extracts the first numeric sequence (including decimal point) from a string and returns it as a number
+	 * 
+	 * Only works with digits 0-9 and . so does not support hex or other base values
+	 * 
+	 * @param	string	The string to find a number inside
+	 * @return	The numeric value found, or undefined if no number found
+	 */
+	public static function NumberFromString(string:String):Number {
+		
+		var capturing:Boolean = false;
+		var numArray:Array = [];
+		
+		var length:Number = string.length;
+		for ( var i:Number = 0; i < length; i++ ) {
+			
+			var charCode:Number = string.charCodeAt(i);
+			if ( (charCode >= 48 && charCode <= 57) || charCode == 46 ) {
+				capturing = true;
+				numArray.push( string.charAt(i) );
+			}
+			
+			else if ( capturing ) break;
+		}
+		return numArray.length == 0 ? undefined : Number(numArray.join(''));
+	}
 }
