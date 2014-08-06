@@ -52,7 +52,10 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats_.LDB {
 	private static var initialised:Boolean = false;
 	private static var languageCode:String;
 	
+	// LDB categories
 	private static var StatNames:Object = { };
+	private static var Labels:Object = { };
+
 	
 	/**
 	 * initialises language database, so non-compile-time constant values can be added from TSW's LDB
@@ -100,6 +103,15 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats_.LDB {
 									en: "Avg. QL",
 									fr: "Moyenne NQ",
 									de: "Durchschnitt QS"
+			}
+		};
+		
+		
+		Labels = {
+			EquipmentStatistics: { standard: "Equipment Statistics",
+									en: "Gear Stats",
+									fr: "Statistiques de l'équipement",
+									de: "Ausrüstung Statistiken"
 			}
 		};
 	}
