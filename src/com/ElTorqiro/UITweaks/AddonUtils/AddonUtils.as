@@ -1,6 +1,11 @@
 import com.GameInterface.UtilsBase;
 import flash.geom.ColorTransform;
 import flash.geom.Point;
+import com.GameInterface.Inventory;
+import com.GameInterface.InventoryItem;
+import com.GameInterface.Tooltip.TooltipData;
+import com.GameInterface.Tooltip.TooltipDataProvider;
+import com.Utils.LDBFormat;
 
 /**
  * Utility class for TSW addons
@@ -254,29 +259,172 @@ class com.ElTorqiro.UITweaks.AddonUtils.AddonUtils
 
 	
 	/**
-	 * Extracts the first numeric sequence (including decimal point) from a string and returns it as a number
+	 * Extracts numeric sequences (including decimal point) from a string and returns them as an array of numbers
 	 * 
 	 * Only works with digits 0-9 and . so does not support hex or other base values
 	 * 
 	 * @param	string	The string to find a number inside
-	 * @return	The numeric value found, or undefined if no number found
+	 * @return	The numeric values found, in an array, zero length if no numbers found
 	 */
-	public static function NumberFromString(string:String):Number {
+	public static function NumbersFromString(string:String):Array {
 		
 		var capturing:Boolean = false;
 		var numArray:Array = [];
+		var numbers:Array = [];
 		
 		var length:Number = string.length;
 		for ( var i:Number = 0; i < length; i++ ) {
 			
 			var charCode:Number = string.charCodeAt(i);
-			if ( (charCode >= 48 && charCode <= 57) || charCode == 46 ) {
+			if ( (charCode >= 48 && charCode <= 57) || ( capturing && charCode == 46 && i != length - 1)) {
 				capturing = true;
 				numArray.push( string.charAt(i) );
 			}
 			
-			else if ( capturing ) break;
+			else if ( capturing ) {
+				capturing = false;
+				numbers.push( Number(numArray.join('')) );
+				numArray = [];
+			};
 		}
-		return numArray.length == 0 ? undefined : Number(numArray.join(''));
+
+		if( numArray.length > 0 ) { numbers.push( Number(numArray.join('')) ); }
+
+		return numbers;
 	}
+	
+	
+	/**
+	 * Extracts stat values from an item and returns an object populated with organised values
+	 * 
+	 * @param	inventory		inventory the item is in
+	 * @param	itemPosition	position in the inventory the item is in
+	 * @return	organised object of stat data related to the item
+	 */
+	public static function GetItemStats(inventory:Inventory, itemPosition:Number):Object {
+		
+		var inventoryItem:InventoryItem = inventory.GetItemAt( itemPosition );
+		if ( inventoryItem == undefined) return {};
+
+		var signetStats:Object = { };
+		signetStats[ "heal rating" ] = true;
+		signetStats[ LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_HealingRating ).toLowerCase() ] = true;
+		signetStats[ LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_AttackRating ).toLowerCase() ] = true;
+		signetStats[ "Health".toLowerCase() ] = true;
+		signetStats[ "Santé".toLowerCase() ] = true;
+		signetStats[ "Gesundheit".toLowerCase() ] = true;
+		
+		var tooltipData:TooltipData = TooltipDataProvider.GetInventoryItemTooltip( inventory.GetInventoryID(), itemPosition);
+		
+		var item:Object = {
+				name: inventoryItem.m_Name,
+				type: inventoryItem.m_ItemType,
+				position: inventoryItem.m_InventoryPos,
+				rank: Number(tooltipData.m_ItemRank),
+				attributes: {}
+		};
+		
+		var statIndex:Number;
+		var value:String;
+		var stat:String;
+		var attribute:String;
+		var typePosition:String;
+		
+		switch( item.type ) {
+
+			// weapons & talismans
+			case _global.Enums.ItemType.e_ItemType_Weapon:
+				switch( item.position ) {
+					case _global.Enums.ItemEquipLocation.e_Wear_First_WeaponSlot: item.typePosition = 'primary';  break;
+					case _global.Enums.ItemEquipLocation.e_Wear_Second_WeaponSlot: item.typePosition = 'secondary';  break;
+					case _global.Enums.ItemEquipLocation.e_Wear_Aux_WeaponSlot: item.typePosition = 'auxiliary';
+				}
+				
+			case _global.Enums.ItemType.e_ItemType_Chakra:
+				if( item.typePosition == undefined ) item.typePosition = 'talisman';
+				
+				// base item
+				for ( var s:String in tooltipData.m_Attributes ) {
+					if ( tooltipData.m_Attributes[s].m_Right != undefined ) {
+						attribute = AddonUtils.StripHTML( tooltipData.m_Attributes[s].m_Right );
+						statIndex = attribute.indexOf( '+' ) + 1;
+						value = attribute.substring( statIndex, attribute.indexOf(' ', statIndex));
+						stat = attribute.substr( statIndex + value.length + 1 ).toLowerCase();
+						
+						item.attributes[ stat ] = { name: stat, value: Number(value) };
+					}
+				}
+
+				// glyph
+				if ( tooltipData.m_PrefixData != undefined ) {
+					item.glyph = { name: AddonUtils.StripHTML(tooltipData.m_PrefixData.m_Title), rank: Number(tooltipData.m_PrefixData.m_ItemRank) };
+					item.glyph.attributes = { };
+
+					for ( var s:String in tooltipData.m_PrefixData.m_Attributes ) {
+						if ( tooltipData.m_PrefixData.m_Attributes[s].m_Right != undefined ) {
+							attribute = AddonUtils.StripHTML( tooltipData.m_PrefixData.m_Attributes[s].m_Right );
+							statIndex = attribute.indexOf( '+' ) + 1;
+							value = attribute.substring( statIndex, attribute.indexOf(' ', statIndex));
+							stat = attribute.substr( statIndex + value.length + 1 ).toLowerCase();
+							
+							item.attributes[ stat ] = { name: stat, value: Number(value) };
+						}
+					}
+				}
+				
+				// signet
+				if ( tooltipData.m_SuffixData != undefined ) {
+					
+					item.signet = { name: AddonUtils.StripHTML(tooltipData.m_SuffixData.m_Title), rank: Number(tooltipData.m_SuffixData.m_ItemRank) };
+					item.signet.attributes = { };
+					
+					if ( tooltipData.m_SuffixData.m_Descriptions != undefined ) {
+						attribute = AddonUtils.StripHTML( tooltipData.m_SuffixData.m_Descriptions[0] );
+						var numbers:Array = AddonUtils.NumbersFromString( attribute );
+						if( numbers.length == 1 ) {
+							
+							for( var a:String in signetStats ) {
+								if ( attribute.toLowerCase().indexOf(a) >= 0 ) {
+									item.signet.attributes[ a ] = { name: a, value: numbers[0] };
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+			break;
+			
+			// aegis controllers & capacitors
+			case _global.Enums.ItemType.e_ItemType_AegisWeapon:
+				switch( item.position ) {
+					case _global.Enums.ItemEquipLocation.e_Aegis_Weapon_1:
+					case _global.Enums.ItemEquipLocation.e_Aegis_Weapon_1_2:
+					case _global.Enums.ItemEquipLocation.e_Aegis_Weapon_1_3:
+						item.typePosition = 'primary';
+					break;
+						
+					case _global.Enums.ItemEquipLocation.e_Aegis_Weapon_2:
+					case _global.Enums.ItemEquipLocation.e_Aegis_Weapon_2_2:
+					case _global.Enums.ItemEquipLocation.e_Aegis_Weapon_2_3:
+						item.typePosition = 'secondary';
+					break;
+				}
+			
+				item.attributes[ 'aegis xp percent' ] = { name: 'aegis xp percent', value: AddonUtils.NumbersFromString( AddonUtils.StripHTML(tooltipData.m_Descriptions[2]) )[0] };
+				
+			case _global.Enums.ItemType.e_ItemType_AegisGeneric:
+				if( item.typePosition == undefined ) item.typePosition = 'talisman';
+				
+				var attribute = AddonUtils.StripHTML( tooltipData.m_Descriptions[0] );
+				if( attribute != undefined ) {
+					item.attributes[ 'aegis damage' ] = { name: 'aegis damage', value: AddonUtils.NumbersFromString( attribute )[0] };
+				}
+
+			break;
+		}
+		
+		return item;
+	}
+	
 }

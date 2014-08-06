@@ -109,7 +109,7 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats_.LDB {
 		
 		Labels = {
 			EquipmentStatistics: { standard: "Equipment Statistics",
-									en: "Gear Stats",
+									en: "Equipment Statistics",
 									fr: "Statistiques de l'équipement",
 									de: "Ausrüstung Statistiken"
 			}
