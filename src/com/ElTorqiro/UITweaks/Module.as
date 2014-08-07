@@ -2,6 +2,7 @@ import com.ElTorqiro.UITweaks.Plugins.SuppressCharacterSheetScaling;
 import com.ElTorqiro.UITweaks.Plugins.SuppressMaxAPSPNotifications;
 import com.ElTorqiro.UITweaks.Plugins.RemoveAbilityBarReflections;
 import com.ElTorqiro.UITweaks.Plugins.InspectionStats;
+import com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates;
 import com.ElTorqiro.UITweaks.AddonInfo;
 
 import com.GameInterface.Tooltip.*;
@@ -77,6 +78,7 @@ function onLoad():Void {
 	g_plugins.push( new SuppressMaxAPSPNotifications() );
 	g_plugins.push( new RemoveAbilityBarReflections() );
 	g_plugins.push( new InspectionStats() );
+	g_plugins.push( new ResizeAlteredStates() );
 
 }
 

@@ -29,8 +29,6 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 	private var _windowSearchInterval:Number = 5;
 	private var _windowSearchTimeout:Number = 1000;
 	
-	private var _runOnce = false;
-	
 	// layout constants
 	public var iconSize = 25;
 	public var iconPadding:Number = 3;
@@ -62,9 +60,6 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 	private function AttachToWindow( characterID:ID32 ):Void {
 		
 		// wait for default window to become available (and finish rendering)
-
-		//var window = _root.inspectioncontroller.m_InspectionWindows[ characterID ];
-		
 		var window = _root.inspectioncontroller['i_InspectionWindow_' + characterID.GetInstance() ];
 		
 		if( window == undefined ) {
@@ -77,31 +72,10 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 			return;
 		}
 		
-		else {
-			if ( _windowSearches[characterID].height == undefined ) _windowSearches[characterID].m_Background.height = window._height;
-
-			// give up if the timeout has passed
-			if ( new Date() - _windowSearches[characterID].time > _windowSearchTimeout ) return;
-			
-			if ( _windowSearches[characterID].height == window.m_Background._height ) {
-				_global.setTimeout( Delegate.create( this, AttachToWindow ), _windowSearchInterval, characterID );
-				return;
-			}
-		}
-
 		// if we made it this far, the window has been found, so build content on it
 		delete _windowSearches[characterID];
 		
-		// this mechanism is to avoid the issue on very first run on launching the game, causing a horrible mess in the window
-		if ( !_runOnce ) {
-			_global.setTimeout( Delegate.create( this, Build ), 100, window );
-			_runOnce = true;
-		}
-		
-		else {
-			Build( window );
-		}
-		
+		_global.setTimeout( Delegate.create( this, Build ), 100, window );
 	}
 	
 	
