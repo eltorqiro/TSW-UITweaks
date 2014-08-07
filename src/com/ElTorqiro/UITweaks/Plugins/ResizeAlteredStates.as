@@ -32,6 +32,7 @@ class com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates extends com.ElTorqiro.U
 		_findTargetThrashCount = 0;
 
 		Resize( _root.playerinfo.m_States );
+		Resize( _root.targetinfo.m_States );
 	}
 
 	private function Resize(states:MovieClip):Void {
