@@ -24,7 +24,7 @@ class com.ElTorqiro.UITweaks.Plugins.ShrinkAlteredStates extends com.ElTorqiro.U
 	}
 	
 	private function Suppress():Void {
-		if ( _root.playerinfo.m_States._visable == true ) {
+		if ( _root.playerinfo.m_States == undefined ) {
 			if (_findTargetThrashCount++ == 30) _findTargetThrashCount = 0;
 			else _global.setTimeout( Delegate.create(this, Suppress), 10);
 			return;
