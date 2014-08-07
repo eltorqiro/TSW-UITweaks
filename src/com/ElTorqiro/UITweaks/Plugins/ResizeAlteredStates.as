@@ -7,6 +7,9 @@ import mx.utils.Delegate;
 class com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
 	private var _findTargetThrashCount:Number = 0;
+
+	private var _scale:Number = 80;
+	private var _hide:Boolean = true;
 	
 	public function ResizeAlteredStates() {
 		super();
@@ -39,10 +42,16 @@ class com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates extends com.ElTorqiro.U
 
 		var icons:Array = [ states.m_Afflicted, states.m_Hindered, states.m_Impaired, states.m_Weakened ];
 
-		for( var s:String in icons ) {
-			var oldSize:Point = new flash.geom.Point( icons[s]._width, icons[s]._height );
-			icons[s]._xscale = icons[s]._yscale = 80;
-			icons[s]._x += (oldSize.x - icons[s]._width) / 2;
+		if ( _hide ) {
+			states._visible = false;
+		}
+		
+		else {
+			for( var s:String in icons ) {
+				var oldSize:Point = new flash.geom.Point( icons[s]._width, icons[s]._height );
+				icons[s]._xscale = icons[s]._yscale = _scale;
+				icons[s]._x += (oldSize.x - icons[s]._width) / 2;
+			}
 		}
 	}
 }
