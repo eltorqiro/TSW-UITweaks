@@ -36,7 +36,7 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 		_modules['MissionTracker'] = { };
 		_modules['Compass'] = { };
 		_modules['PvPMiniScoreView'] = { };
-		_modules['LatencyWindow'] = { };
+		//_modules['LatencyWindow'] = { };
 		_modules['AnimaWheelLink'] = { };
 		_modules['SignUpNotifications'] = { };
 		//_modules['AchievementLoreWindow'] = { };
@@ -55,6 +55,8 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 	private function Deactivate() {
 		super.Deactivate();
 
+		ConfigClips( false );
+		
 		for ( var s:String in _modules ) {
 			if( _modules[s].hijacked ) {
 				HUDController.RegisterModule( s, _modules[s].mc );
@@ -68,9 +70,11 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 		//UtilsBase.PrintChatText( 'b:' + _dirty );
 	}
 	
-	private function ConfigClips():Void {
+	private function ConfigClips(show:Boolean):Void {
 		
 		if ( _configLayer ) _configLayer.removeMovieClip();
+		if ( !show ) return;
+
 		_configLayer = _root.createEmptyMovieClip( 'm_UITweaks_ConfigClipsProxy', _root.getNextHighestDepth() );
 		
 		for ( var s:String in _modules ) {
@@ -83,7 +87,7 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 			box._y = bounds.yMin;
 			
 			box.lineStyle( 2, 0x0099ff, 100 );
-			box.beginFill( 0x0099ff, 30 );
+			box.beginFill( 0x0099ff, 20 );
 			AddonUtils.DrawRectangle( box, 0, 0, mc._width, mc._height, 6, 6, 6, 6);
 			box.endFill();
 			
@@ -133,6 +137,6 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 			HUDController.DeregisterModule( s );
 		}
 		
-		ConfigClips();
+		ConfigClips( true );
 	}
 }
