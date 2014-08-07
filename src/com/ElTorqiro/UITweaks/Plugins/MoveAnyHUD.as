@@ -15,6 +15,9 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 	private var _modules:Object = { };
 	private var _configLayer:MovieClip;
 	
+	private var _overlayColour:Number = 0x0099ff;
+	private var _overlayBoxMinSize:Number = 12;
+	
 	public function MoveAnyHUD() {
 		super();
 		
@@ -55,7 +58,7 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 	private function Deactivate() {
 		super.Deactivate();
 
-		ConfigClips( false );
+		ConfigOverlay( false );
 		
 		for ( var s:String in _modules ) {
 			if( _modules[s].hijacked ) {
@@ -70,12 +73,12 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 		//UtilsBase.PrintChatText( 'b:' + _dirty );
 	}
 	
-	private function ConfigClips(show:Boolean):Void {
+	private function ConfigOverlay(show:Boolean):Void {
 		
 		if ( _configLayer ) _configLayer.removeMovieClip();
 		if ( !show ) return;
 
-		_configLayer = _root.createEmptyMovieClip( 'm_UITweaks_ConfigClipsProxy', _root.getNextHighestDepth() );
+		_configLayer = _root.createEmptyMovieClip( 'm_UITweaks_ConfigOverlay', _root.getNextHighestDepth() );
 		
 		for ( var s:String in _modules ) {
 			
@@ -86,17 +89,22 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 			box._x = bounds.xMin;
 			box._y = bounds.yMin;
 			
-			box.lineStyle( 2, 0x0099ff, 100 );
-			box.beginFill( 0x0099ff, 20 );
-			AddonUtils.DrawRectangle( box, 0, 0, mc._width, mc._height, 6, 6, 6, 6);
+			var width:Number = Math.max( bounds.xMax - bounds.xMin, _overlayBoxMinSize );
+			var height:Number = Math.max( bounds.yMax - bounds.yMin, _overlayBoxMinSize );
+			
+			box.lineStyle( 2, _overlayColour, 100 );
+			box.beginFill( _overlayColour, 20 );
+			AddonUtils.DrawRectangle( box, 0, 0, width, height, 6, 6, 6, 6);
 			box.endFill();
+
+			box.filters = [ new GlowFilter(_overlayColour, 0.8, 8, 8, 2, 3, false, false) ];
+			box._alpha = 60;
 			
 			box.mc = mc;
 			
-			TooltipUtils.AddTextTooltip(box, s, 200, TooltipInterface.e_OrientationHorizontal, true, false);
-			
+			TooltipUtils.AddTextTooltip(box, s, 200, TooltipInterface.e_OrientationVertical, true, false);
 			box.onPress = function() {
-				this.filters = [ new GlowFilter(0x0099ff, 0.8, 16, 16, 2, 3, false, false) ];
+				this._alpha = 30;
 				this.prevX = this._x;
 				this.prevY = this._y;
 
@@ -108,13 +116,13 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 					this.prevY = this._y;
 				};
 				
-				this.startDrag();
+				this.startDrag(false, Stage.visibleRect.left - this._width + 10, Stage.visibleRect.top - this._height + 10, Stage.visibleRect.right - 10, Stage.visibleRect.bottom - 10);
 			};
 			
 			box.onRelease = box.onReleaseOutside = function() {
 				this.stopDrag();
 				this.onMouseMove = undefined;
-				this.filters = [];
+				this._alpha = 60;
 			};
 			
 		}
@@ -133,6 +141,6 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 			HUDController.DeregisterModule( s );
 		}
 		
-		ConfigClips( true );
+		ConfigOverlay( true );
 	}
 }
