@@ -103,7 +103,9 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 			box.mc = mc;
 			
 			TooltipUtils.AddTextTooltip(box, s, 200, TooltipInterface.e_OrientationVertical, true, false);
+
 			box.onPress = function() {
+				this.originalAlpha = this._alpha;
 				this._alpha = 30;
 				this.prevX = this._x;
 				this.prevY = this._y;
@@ -122,7 +124,7 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 			box.onRelease = box.onReleaseOutside = function() {
 				this.stopDrag();
 				this.onMouseMove = undefined;
-				this._alpha = 60;
+				this._alpha = this.originalAlpha;
 			};
 			
 		}
