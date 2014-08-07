@@ -117,10 +117,6 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 				this.filters = [];
 			};
 			
-			//box.onRollOver = function() {
-				// TODO: tooltip the name of the module
-				
-			//};
 		}
 		
 	}
