@@ -24,6 +24,9 @@ Plugins
 =======
  * Suppress Character Sheet Scaling
  * Suppress Max AP/SP Notification icons
+ * Remove Ability Bar Reflections
+ * Inspection Window Statistics
+ * Resize Altered States
    
    
 Source Code
