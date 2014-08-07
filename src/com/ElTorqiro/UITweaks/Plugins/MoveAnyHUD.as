@@ -6,6 +6,8 @@ import com.Utils.HUDController;
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 import com.GameInterface.DistributedValue;
 import flash.filters.GlowFilter;
+import com.GameInterface.Tooltip.TooltipUtils;
+import com.GameInterface.Tooltip.TooltipInterface;
 
 
 class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
@@ -20,16 +22,16 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 		_modules['AbilityBar'] = { };
 		_modules['AAPassivesBar'] = { };
 		_modules['SprintBar'] = { };
-		_modules['AbilityList'] = { };
-		_modules['PassivesList'] = { };
+		//_modules['AbilityList'] = { };
+		//_modules['PassivesList'] = { };
 		_modules['PlayerInfo'] = { };
 		_modules['TargetInfo'] = { };
 		_modules['PlayerCastBar'] = { };
 		_modules['TargetCastBar'] = { };
 		_modules['DodgeBar'] = { };
 		_modules['FIFO'] = { };
-		_modules['DamageInfo'] = { };
-		_modules['FriendlyMenu'] = { };
+		//_modules['DamageInfo'] = { };
+		//_modules['FriendlyMenu'] = { };
 		_modules['HUDXPBar'] = { };
 		_modules['MissionTracker'] = { };
 		_modules['Compass'] = { };
@@ -37,15 +39,15 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 		_modules['LatencyWindow'] = { };
 		_modules['AnimaWheelLink'] = { };
 		_modules['SignUpNotifications'] = { };
-		_modules['AchievementLoreWindow'] = { };
-		_modules['WalletController'] = { };
+		//_modules['AchievementLoreWindow'] = { };
+		//_modules['WalletController'] = { };
 		
 	}
 
 	private function Activate() {
 		super.Activate();
 		
-		_global.setTimeout( Delegate.create(this, HookClips), 200, true );
+		_global.setTimeout( Delegate.create(this, HookClips), 2000, true );
 		
 		//_root._alpha = 50;
 	}
@@ -74,11 +76,9 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 		for ( var s:String in _modules ) {
 			
 			var mc:MovieClip = _modules[s].mc;
-			
 			var box:MovieClip = _configLayer.createEmptyMovieClip( _modules[s].name, _configLayer.getNextHighestDepth() );
 
 			var bounds:Object = mc.getBounds( box._parent );
-			UtilsBase.PrintChatText('module:' + s + ', xMin:' + bounds.xMin + ', yMin:' + bounds.yMin);
 			box._x = bounds.xMin;
 			box._y = bounds.yMin;
 			
@@ -88,6 +88,8 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 			box.endFill();
 			
 			box.mc = mc;
+			
+			TooltipUtils.AddTextTooltip(box, s, 200, TooltipInterface.e_OrientationHorizontal, true, false);
 			
 			box.onPress = function() {
 				this.filters = [ new GlowFilter(0x0099ff, 0.8, 16, 16, 2, 3, false, false) ];
@@ -111,9 +113,10 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 				this.filters = [];
 			};
 			
-			box.onRollOver = function() {
+			//box.onRollOver = function() {
 				// TODO: tooltip the name of the module
-			};
+				
+			//};
 		}
 		
 	}
