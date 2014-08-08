@@ -13,10 +13,12 @@ import com.GameInterface.Tooltip.TooltipInterface;
 class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
 	private var _modules:Object = { };
-	private var _configLayer:MovieClip;
+	private var _overlayLayer:MovieClip;
 	
 	private var _overlayColour:Number = 0x0099ff;
 	private var _overlayBoxMinSize:Number = 12;
+	
+	public static var Configuration:Object;
 	
 	public function MoveAnyHUD() {
 		super();
@@ -45,6 +47,33 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 		//_modules['AchievementLoreWindow'] = { };
 		//_modules['WalletController'] = { };
 		
+
+		if( Configuration == undefined ) {
+		
+			var panel:Array;
+			panel.push( { type: 'section', label: 'Override Modules' } );
+			for ( var s:String in _modules ) {
+				panel.push( { type: 'checkbox', label: s, data: { module: s }, onClick: function(state:Boolean, data:Object) {
+						SetModuleOverride( data.module, state );
+					}	
+				} );
+			}
+			
+			Configuration = {
+				title: 'test',
+				
+				onOpen: function() {
+					ConfigOverlay( true );
+				},
+				
+				onClose: function() {
+					ConfigOverlay( false );
+				},
+				
+				panel: panel
+			};
+
+		}
 	}
 
 	private function Activate() {
@@ -75,15 +104,15 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 	
 	private function ConfigOverlay(show:Boolean):Void {
 		
-		if ( _configLayer ) _configLayer.removeMovieClip();
+		if ( _overlayLayer ) _overlayLayer.removeMovieClip();
 		if ( !show ) return;
 
-		_configLayer = _root.createEmptyMovieClip( 'm_UITweaks_ConfigOverlay', _root.getNextHighestDepth() );
+		_overlayLayer = _root.createEmptyMovieClip( 'm_UITweaks_ConfigOverlay', _root.getNextHighestDepth() );
 		
 		for ( var s:String in _modules ) {
 			
 			var mc:MovieClip = _modules[s].mc;
-			var box:MovieClip = _configLayer.createEmptyMovieClip( _modules[s].name, _configLayer.getNextHighestDepth() );
+			var box:MovieClip = _overlayLayer.createEmptyMovieClip( _modules[s].name, _overlayLayer.getNextHighestDepth() );
 
 			var bounds:Object = mc.getBounds( box._parent );
 			box._x = bounds.xMin;
@@ -142,7 +171,9 @@ class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.P
 
 			HUDController.DeregisterModule( s );
 		}
-		
-		ConfigOverlay( true );
+	}
+	
+	private function SetModuleOverride(module:String, override:Boolean):Void {
+		UtilsBase.PrintChatText( 'module:' + module + ', override:' + override );
 	}
 }

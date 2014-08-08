@@ -1,3 +1,4 @@
+import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 import com.ElTorqiro.UITweaks.Plugins.SuppressCharacterSheetScaling;
 import com.ElTorqiro.UITweaks.Plugins.SuppressMaxAPSPNotifications;
 import com.ElTorqiro.UITweaks.Plugins.RemoveAbilityBarReflections;
@@ -6,12 +7,15 @@ import com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates;
 import com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD;
 import com.ElTorqiro.UITweaks.AddonInfo;
 
+import mx.utils.Delegate;
+
 import com.GameInterface.Tooltip.*;
 import com.Components.WinComp;
 import com.GameInterface.DistributedValue;
 import flash.geom.Point;
 import com.GameInterface.UtilsBase;
 
+import GUIFramework.SFClipLoader;
 
 // config window
 var g_configWindow:WinComp;
@@ -39,7 +43,7 @@ var g_plugins:Array = [];
  * OnLoad
  * 
  * This has GMF_DONT_UNLOAD in Modules.xml so TSW module manager will not unload it during teleports etc.
- * Thus, all the global variables will persist, like settings and icon etc, only needing to be refreshed during onLoad() and saved during unLoad().
+ * Thus, all the global variables will persist, like settings and icon etc, only needing to be refreshed during onLoad() and saved during onUnLoad().
  */
 function onLoad():Void {
 
@@ -86,10 +90,14 @@ function onLoad():Void {
 
 function OnModuleActivated():Void {
 	
+	// activate all plugins
 	for (var i:Number = 0; i < g_plugins.length; i++)
 	{
 		g_plugins[i].active = true;
 	}
+	
+	// show config icon
+	g_icon._visible = true;
 }
 
 function OnModuleDeactivated():Void {
@@ -97,10 +105,13 @@ function OnModuleDeactivated():Void {
 	// destroy config window
 	g_showConfig.SetValue(false);
 	
+	// deactivate all plugins
 	for (var i:Number = 0; i < g_plugins.length; i++)
 	{
 		g_plugins[i].active = false;
 	}
+	
+	g_icon._visible = false;	
 }
 
 function OnUnload():Void
@@ -123,6 +134,8 @@ function CheckVTIOIsLoaded()
 	// don't re-register with VTIO
 	if ( !g_isRegisteredWithVTIO && g_VTIOIsLoadedMonitor.GetValue() )
 	{
+		if ( g_icon == undefined ) return;
+		
 		// register with VTIO
 		DistributedValue.SetDValue("VTIO_RegisterAddon", 
 			AddonInfo.Name + "|" + AddonInfo.Author + "|" + AddonInfo.Version + "|" + AddonInfo.Name + "_ShowConfig|" + g_icon
@@ -135,15 +148,9 @@ function CheckVTIOIsLoaded()
 	}
 }
 
-function CreateIcon():Void
-{
-	// don't recreate if already there
-	if ( g_icon != undefined )  return;
+function blah(clipNode, loaded) {
+	g_icon = clipNode.m_Movie.m_Icon;
 	
-	// load config icon & tooltip
-	g_icon = this.attachMovie("com.ElTorqiro.UITweaks.Config.Icon", "m_Icon", this.getNextHighestDepth() );
-	CreateTooltipData();
-
 	// restore location
 	g_icon._x = g_settings.iconPosition.x;
 	g_icon._y = g_settings.iconPosition.y;
@@ -204,6 +211,34 @@ function CreateIcon():Void
 	{
 		CloseTooltip();
 	};
+	
+
+	CheckVTIOIsLoaded();
+}
+
+function CreateIcon():Void
+{
+	// don't recreate if already there
+	if ( g_icon != undefined )  return;
+	
+	// load config icon & tooltip
+	// depth 3 = "top"
+	//var depthClip:MovieClip = SFClipLoader.CreateEmptyMovieClip( AddonInfo.Name + '_IconContainer', 3, 2);
+	
+	var clipNode = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/Icon.swf', AddonInfo.Name.toLowerCase() + '_icon', false, 3, 2);
+	clipNode.SignalLoaded.Connect( blah, this );
+	
+	var depthClip = clipNode.m_Movie;
+	
+	depthClip.lineStyle( 2, 0xffffff, 100 );
+	AddonUtils.DrawRectangle( depthClip, 0, 0, 200, 200, 6, 6, 6, 6 );
+
+	//g_icon = depthClip;
+	
+	//g_icon = depthClip.attachMovie("com.ElTorqiro.UITweaks.Config.Icon", "m_Icon", depthClip.getNextHighestDepth() );
+	
+	CreateTooltipData();
+
 }
 
 function CreateTooltipData():Void

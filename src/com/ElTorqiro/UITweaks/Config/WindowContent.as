@@ -10,6 +10,8 @@ import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import com.GameInterface.DistributedValue;
 
+import com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder;
+
 class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 {
 	private var _hudData:DistributedValue;
@@ -47,7 +49,49 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 
 		m_Content = createEmptyMovieClip("m_Content", getNextHighestDepth() );
 		
+		var Configuration:Object = {
+			title: 'test',
+			
+			onOpen: { context: this, fn: function() {
+				ConfigOverlay( true );
+			}},
+			
+			onClose: { context: this, fn: function() {
+				ConfigOverlay( false );
+			}},
+			
+			elements: [
+				{ type: 'section', label: 'Override Modules', color: 0xff8800 },
+				{ type: 'checkbox', label: 'checkbox test', data: { module: 'aaa_test' },
+					onClick: { context: this, fn: function(state:Boolean, data:Object) {
+						UtilsBase.PrintChatText('clicked state:' + state + ', data:' + data);
+					}}
+				},
+				{ type: 'dropdown', label: 'dropdown test', data: {}, items: [
+						{ label: 'Item 1', data: { module: 'item1data' } },
+						{ label: 'Item 2', data: { module: 'item2data' } },
+						{ label: 'Item 3', data: { module: 'item3data' } }
+					],
+					onChange: { context: this, fn: function(selectedIndex:Number, selectedData:Object, data:Object) {
+						UtilsBase.PrintChatText('selected:' + selectedIndex + ', selectedData:' + selectedData + ', data:' + data);
+					}}
+				},
+				{ type: 'slider', label: 'slider test', min: 0, max: 100, initial: 25, snap: 1, data: { module: 'slider' },
+					onChange: { context: this, fn: function(value:Number, data:Object) {
+						UtilsBase.PrintChatText('value:' + value + ', data:' + data);
+					}}
+				}
+			]
+		};
+		
+		
+		var panel:MovieClip = this.createEmptyMovieClip( 'm_ConfigPanel', this.getNextHighestDepth() );
+		
+		var panel:ConfigPanelBuilder = new ConfigPanelBuilder( panel, Configuration );
+		
+		
 		// add options section
+/*
 		AddHeading("Options");
 		_uiControls.hideDefaultSwapButtons = {
 			control:	AddCheckbox( "hideDefaultSwapButtons", "Hide default AEGIS swap buttons" ),
@@ -59,6 +103,7 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 			event:		"click",
 			type:		"setting"
 		};
+*/
 /*
 		// add visuals section
 		AddHeading("Visuals");
