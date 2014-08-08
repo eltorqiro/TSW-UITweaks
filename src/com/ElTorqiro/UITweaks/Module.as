@@ -4,6 +4,7 @@ import com.ElTorqiro.UITweaks.Plugins.RemoveAbilityBarReflections;
 import com.ElTorqiro.UITweaks.Plugins.InspectionStats;
 import com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates;
 import com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD;
+import com.ElTorqiro.UITweaks.Plugins.TargetOfTarget;
 import com.ElTorqiro.UITweaks.AddonInfo;
 
 import com.GameInterface.Tooltip.*;
@@ -80,7 +81,14 @@ function onLoad():Void {
 	g_plugins.push( new RemoveAbilityBarReflections() );
 	g_plugins.push( new InspectionStats() );
 	g_plugins.push( new ResizeAlteredStates() );
-	g_plugins.push( new MoveAnyHUD() );
+	g_plugins.push( new TargetOfTarget() );
+	
+	/**
+	 * Disabling Debug Version Of MoveAnyHUD
+	 *
+	 * g_plugins.push( new MoveAnyHUD() );
+	 * 
+	 * */
 
 }
 
