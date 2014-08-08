@@ -30,35 +30,44 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITwea
 		
 		_character.SignalOffensiveTargetChanged.Disconnect(UserTargetChanged, this);
 	    
-		if( _target != undefined ) _target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
-		if( _target != undefined ) _target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
+		if ( _target != undefined ) {
+			_target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
+			_target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
+		}
 	}
 	
 	private function UserTargetChanged():Void {
 		
-		if ( _target != undefined ) _target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
-		if ( _target != undefined ) _target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
-				
+		if ( _target != undefined ) {
+			_target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
+			_target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
+		}
+
 		_target = Character.GetCharacter( _character.GetOffensiveTarget() );
 		
 		_target.SignalOffensiveTargetChanged.Connect(TargetOfTargetDisplay, this);
 		_target.SignalDefensiveTargetChanged.Connect(TargetOfTargetDisplay, this);
 		
-		/**
-		 * Debug:
-		 *UtilsBase.PrintChatText("My Target: " + _target.GetName());
-		 **/
+		TargetOfTargetDisplay();
 		
-		 TargetOfTargetDisplay();
+		/**
+		* Debug: Just Uncomment The Following CMD
+		**/
+			//UtilsBase.PrintChatText("My Target: " + _target.GetName());
+
 	}
 	
 	private function TargetOfTargetDisplay():Void 
 	{
 		_offensiveTargetOfTarget = Character.GetCharacter( _target.GetOffensiveTarget() );
 		_defensiveTargetOfTarget = Character.GetCharacter( _target.GetDefensiveTarget() );
+			
+		if ( _offensiveTargetOfTarget != undefined ) {
+			UtilsBase.PrintChatText("OFFTOT: " + _offensiveTargetOfTarget.GetName());
+		}
 		
-				
-		UtilsBase.PrintChatText("OFFTOT: " + _offensiveTargetOfTarget.GetName());
-		UtilsBase.PrintChatText("DEFFTOT: " + _defensiveTargetOfTarget.GetName());
+		if ( _defensiveTargetOfTarget != undefined ){
+			UtilsBase.PrintChatText("DEFFTOT: " + _defensiveTargetOfTarget.GetName());
+		}
 	}
 }
