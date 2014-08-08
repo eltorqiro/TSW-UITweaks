@@ -7,8 +7,8 @@ import com.Utils.ID32;
 class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
 	private var _character:Character;
-	private var _target:ID32;
-	private var _targetOfTarget:ID32;
+	private var _target:Character;
+	private var _targetOfTarget:Character;
 	
 	public function TargetOfTarget() {
 		super();
@@ -16,32 +16,39 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITwea
 
 	private function Activate() {
 		super.Activate();
-
-		 _character = Character.GetClientCharacter();
+		
+		_character = Character.GetClientCharacter();
 		_character.SignalOffensiveTargetChanged.Connect(UserTargetChanged, this);
+		
+		UserTargetChanged();
+		
 	}
 
 	private function Deactivate() {
 		super.Deactivate();
-	
+		
+		_character.SignalOffensiveTargetChanged.Disconnect(UserTargetChanged, this);
+	    
+		if( _target != undefined ) _target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 	}
 	
 	private function UserTargetChanged():Void {
 		
-		_target = _character.GetOffensiveTarget();
+		if( _target != undefined ) _target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 		
-		_character.SignalOffensiveTargetChanged.Disconnect(UserTargetChanged, this);
-		
+		_target = Character.GetCharacter( _character.GetOffensiveTarget() );
 		_target.SignalOffensiveTargetChanged.Connect(TargetOfTargetDisplay, this);
 		
+		/**
+		 * Debug:
+		 *UtilsBase.PrintChatText("My Target: " + _target.GetName());
+		 **/
 	}
 	
 	private function TargetOfTargetDisplay():Void 
 	{
-		_targetOfTarget = _target.GetOffensiveTarget();
-		
-		_target.SignalOffensiveTargetChanged.Disconnect(TargetOfTargetDisplay, this);
-		
-		UtilsBase.PrintChatText(_targetOfTarget);
+		_targetOfTarget = Character.GetCharacter( _target.GetOffensiveTarget() );
+				
+		UtilsBase.PrintChatText("TOT: " + _targetOfTarget.GetName());
 	}
 }
