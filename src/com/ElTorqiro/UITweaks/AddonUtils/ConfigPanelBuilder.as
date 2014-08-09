@@ -155,8 +155,9 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		_currentColumn.elements.push( el );
 
 		el.label = label;
-		
 		el.selected = initial != undefined ? initial : false;
+		
+		el.disableFocus = true;
 		
 		if ( onClick != undefined ) {
 			el['clickHandler'] = onClick;
@@ -180,6 +181,8 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		// TODO: implement label for dropdown
 		//el.label = label;
 
+		// TODO: implement value textbox for showing value
+		
 		el['items'] = items;
 		
 		var labels:Array = [];
@@ -197,11 +200,11 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 			el['changeHandler'] = onChange
 			el.addEventListener( 'change', this, "dropdownChangeHandler" );
 		}
+
+		el.addEventListener("change", this, "removeFocus");
+		el.addEventListener("stateChange", this, "dropdownStateChangeHandler");
 		
 		el.data = data;
-		
-		// TODO: implement removal of focus from control
-		//o.dropdown.addEventListener("focusIn", this, "RemoveFocus");
 		
 		el._x = _currentColumn.cursor.x;
 		el._y = _currentColumn.cursor.y;
@@ -228,6 +231,8 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		}
 		
 		el.value = initial;
+
+		el.addEventListener("focusIn", this, "removeFocus");		
 		
 		if ( onChange != undefined ) {
 			el['changeHandler'] = onChange
@@ -235,9 +240,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		}
 		
 		el['data'] = data;
-		
-		// TODO: implement removal of focus from control
-		//o.dropdown.addEventListener("focusIn", this, "RemoveFocus");
 		
 		el._x = _currentColumn.cursor.x;
 		el._y = _currentColumn.cursor.y;
@@ -260,4 +262,14 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		Delegate.create( event.target.changeHandler.context, event.target.changeHandler.fn )( event.target.value, event.target.data );
 	}
 
+	private function dropdownStateChangeHandler(event:Object):Void {
+		UtilsBase.PrintChatText('dropdownStateChangeHandler');
+		if ( event.state == 'up' ) removeFocus();
+	}
+	
+    //Remove Focus
+    private function removeFocus():Void
+    {
+        Selection.setFocus(null);
+    }	
 }
