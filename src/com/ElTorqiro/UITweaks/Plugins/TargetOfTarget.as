@@ -15,8 +15,7 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITwea
 	private var _defensiveTargetOfTarget:Character;
 	private var clipNode:ClipNode;
 	private var m_HealthBar:HealthBar;
-	private var CharacterName:String;
-	
+		
 	public function TargetOfTarget() {
 		super();
 	}
@@ -87,13 +86,13 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITwea
 		_defensiveTargetOfTarget = Character.GetCharacter( _target.GetDefensiveTarget() );
 			
 		if ( _offensiveTargetOfTarget != undefined ) {
-			UtilsBase.PrintChatText("OFFTOT: " + _offensiveTargetOfTarget.GetName());
+			
+			//UtilsBase.PrintChatText("OFFTOT: " + _offensiveTargetOfTarget.GetName());
 			
 			m_HealthBar = HealthBar(clipNode.m_Movie.m_HealthBar);
 			m_HealthBar.SetCharacter(_offensiveTargetOfTarget);
 			
-			CharacterName = clipNode.m_Movie.characterName;
-			CharacterName = _offensiveTargetOfTarget.GetName();
+			clipNode.m_Movie.m_NameBox.i_NameField.text = _offensiveTargetOfTarget.GetName();
 			
 			if ( clipNode.m_Movie._visible == false) clipNode.m_Movie._visible = true;
 
@@ -111,8 +110,8 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITwea
 	private function ClearCharacter():Void {
 		_offensiveTargetOfTarget = undefined;
 		m_HealthBar.SetCharacter(_offensiveTargetOfTarget);
-		clipNode.m_Movie._visible = false
-		
+		clipNode.m_Movie._visible = false;
+		clipNode.m_Movie.m_NameBox.i_NameField.text = "";
 	}
 	
 }
