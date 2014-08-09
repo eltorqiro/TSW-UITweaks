@@ -62,7 +62,7 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 			
 			elements: [
 				{ type: 'section', label: 'Override Modules', color: 0xff8800 },
-				{ type: 'checkbox', label: 'checkbox test', data: { module: 'aaa_test' },
+				{ type: 'checkbox', label: 'checkbox test', data: { module: 'aaa_test' }, initial: true,
 					onClick: { context: this, fn: function(state:Boolean, data:Object) {
 						UtilsBase.PrintChatText('clicked state:' + state + ', data:' + data);
 					}}
@@ -71,7 +71,7 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 						{ label: 'Item 1', data: { module: 'item1data' } },
 						{ label: 'Item 2', data: { module: 'item2data' } },
 						{ label: 'Item 3', data: { module: 'item3data' } }
-					],
+					], initial: 1,
 					onChange: { context: this, fn: function(selectedIndex:Number, selectedData:Object, data:Object) {
 						UtilsBase.PrintChatText('selected:' + selectedIndex + ', selectedData:' + selectedData + ', data:' + data);
 					}}

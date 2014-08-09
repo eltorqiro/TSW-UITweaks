@@ -76,11 +76,11 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 				break;
 				
 				case 'checkbox':
-					addCheckbox( el.label, el.data, el.onClick );
+					addCheckbox( el.label, el.data, el.initial, el.onClick );
 				break;
 				
 				case 'dropdown':
-					addDropdown( el.label, el.data, el.items, el.onChange );
+					addDropdown( el.label, el.data, el.items, el.initial, el.onChange );
 				break;
 				
 				case 'slider':
@@ -148,13 +148,15 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		}
 	}
 	
-	private function addCheckbox(label:String, data:Object, onClick:Object ):Void {
+	private function addCheckbox(label:String, data:Object, initial:Boolean, onClick:Object ):Void {
 		UtilsBase.PrintChatText('addCheckbox');
 		
 		var el:CheckBox = _currentColumn.mc.attachMovie( 'CheckboxDark', 'm_el_' + _currentColumn.elements.length, _currentColumn.mc.getNextHighestDepth() );
 		_currentColumn.elements.push( el );
 
 		el.label = label;
+		
+		el.selected = initial != undefined ? initial : false;
 		
 		if ( onClick != undefined ) {
 			el['clickHandler'] = onClick;
@@ -169,7 +171,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		_currentColumn.cursor.y += el._height;
 	}
 
-	private function addDropdown(label:String, data:Object, items:Array, onChange:Object ):Void {
+	private function addDropdown(label:String, data:Object, items:Array, initial:Number, onChange:Object ):Void {
 		UtilsBase.PrintChatText('addDropdown');
 		
 		var el:DropdownMenu = _currentColumn.mc.attachMovie( 'DropdownGray', 'm_el_' + _currentColumn.elements.length, _currentColumn.mc.getNextHighestDepth() );
@@ -188,6 +190,8 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		el.dropdown = 'ScrollingListGray';
 		el.itemRenderer = 'ListItemRendererGray';
 		el.dataProvider = labels;
+		
+		el.selectedIndex = initial != undefined ? initial : -1;
 		
 		if ( onChange != undefined ) {
 			el['changeHandler'] = onChange
