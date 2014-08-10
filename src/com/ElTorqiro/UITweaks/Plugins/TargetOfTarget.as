@@ -3,6 +3,7 @@ import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 import com.GameInterface.Game.Character
 import com.Utils.ID32;
+import gfx.controls.TextArea;
 import GUIFramework.ClipNode;
 import GUIFramework.SFClipLoader;
 import com.Components.HealthBar;
@@ -13,9 +14,12 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITwea
 	private var _target:Character;
 	private var _offensiveTargetOfTarget:Character;
 	private var _defensiveTargetOfTarget:Character;
-	private var clipNode:ClipNode;
-	private var m_HealthBar:HealthBar;
-		
+	private var offtot:ClipNode;
+	private var defftot:ClipNode;
+	private var m_OFFHealthBar:HealthBar;
+	private var m_DEFFHealthBar:HealthBar;
+
+
 	public function TargetOfTarget() {
 		super();
 	}
@@ -25,59 +29,43 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITwea
 		
 		_character = Character.GetClientCharacter();
 		_character.SignalOffensiveTargetChanged.Connect(UserTargetChanged, this);
-		
-		clipNode = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/TOTDisplay.swf', 'AAA_TOTDisplay', false, 3, 2);
-		clipNode.SignalLoaded.Connect( ClipLoaded, this );
-		
+		offtot = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/TOTDisplay.swf', 'OFF_TOTDisplay', false, 3, 2);
+		offtot.SignalLoaded.Connect( OFFClipLoaded, this );
+		defftot = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/TOTDisplay.swf', 'DEFF_TOTDisplay', false, 3, 2);
+		defftot.SignalLoaded.Connect(Layout, this);
 	}
 
 	private function Deactivate() {
 		super.Deactivate();
-		
 		_character.SignalOffensiveTargetChanged.Disconnect(UserTargetChanged, this);
-	    
 		if ( _target != undefined ) {
 			_target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 			_target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 		}
-		clipNode.m_Movie.UnloadClip();
+		offtot.m_Movie.UnloadClip();
+		defftot.m_Movie.UnloadClip();
 	}
 	
 	
-	function ClipLoaded():Void {
+	function OFFClipLoaded():Void {
 		
 		UserTargetChanged();
-		//OffensiveHeathBar(3, 12);
-		
-		clipNode.m_Movie._x = 5; 
-		clipNode.m_Movie._y = 20;
-		
 		ClearCharacter();
-		
+		Layout();
 	}
 	
 	
 	private function UserTargetChanged():Void {
-		
 		if ( _target != undefined ) {
 			_target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 			_target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
-		}else {
+		} else {
 			ClearCharacter();
 		}
-
 		_target = Character.GetCharacter( _character.GetOffensiveTarget() );
-		
 		_target.SignalOffensiveTargetChanged.Connect(TargetOfTargetDisplay, this);
 		_target.SignalDefensiveTargetChanged.Connect(TargetOfTargetDisplay, this);
-		
 		TargetOfTargetDisplay();
-		
-		/**
-		* Debug: Just Uncomment The Following CMD
-		**/
-			//UtilsBase.PrintChatText("My Target: " + _target.GetName());
-
 	}
    
 	private function TargetOfTargetDisplay():Void 
@@ -86,32 +74,54 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget extends com.ElTorqiro.UITwea
 		_defensiveTargetOfTarget = Character.GetCharacter( _target.GetDefensiveTarget() );
 			
 		if ( _offensiveTargetOfTarget != undefined ) {
-			
-			//UtilsBase.PrintChatText("OFFTOT: " + _offensiveTargetOfTarget.GetName());
-			
-			m_HealthBar = HealthBar(clipNode.m_Movie.m_HealthBar);
-			m_HealthBar.SetCharacter(_offensiveTargetOfTarget);
-			
-			clipNode.m_Movie.m_NameBox.i_NameField.text = _offensiveTargetOfTarget.GetName();
-			
-			if ( clipNode.m_Movie._visible == false) clipNode.m_Movie._visible = true;
-
+			m_OFFHealthBar = HealthBar(offtot.m_Movie.m_HealthBar);
+			m_OFFHealthBar.SetCharacter(_offensiveTargetOfTarget);
+			offtot.m_Movie.m_NameBox.i_NameField.text = _offensiveTargetOfTarget.GetName();
+			if ( offtot.m_Movie._visible == false) offtot.m_Movie._visible = true;
 		} else {
 			ClearCharacter();
 		}
 		
 		if ( _defensiveTargetOfTarget != undefined ){
 			UtilsBase.PrintChatText("DEFFTOT: " + _defensiveTargetOfTarget.GetName());
+			
+			m_DEFFHealthBar = HealthBar(defftot.m_Movie.m_HealthBar);
+			m_DEFFHealthBar.SetCharacter(_defensiveTargetOfTarget);
+			defftot.m_Movie.m_NameBox.i_NameField.text = _defensiveTargetOfTarget.GetName();
+			if ( defftot.m_Movie._visible == false) defftot.m_Movie._visible = true;
+			
+		}else {
+			ClearCharacerDEFF();
 		}
 	}
 
-	
-	
 	private function ClearCharacter():Void {
+		offtot.m_Movie._visible = false;
+		defftot.m_Movie._visible = true;
 		_offensiveTargetOfTarget = undefined;
-		m_HealthBar.SetCharacter(_offensiveTargetOfTarget);
-		clipNode.m_Movie._visible = false;
-		clipNode.m_Movie.m_NameBox.i_NameField.text = "";
+		m_OFFHealthBar.SetCharacter(_offensiveTargetOfTarget);
+		offtot.m_Movie.m_NameBox.i_NameField.text = "";
+		ClearCharacerDEFF();
 	}
 	
+	private function ClearCharacerDEFF():Void {
+		//Commented For Debug
+		//defftot.m_Movie._visible = false;
+		_defensiveTargetOfTarget = undefined;
+		m_DEFFHealthBar.SetCharacter(_defensiveTargetOfTarget);
+		defftot.m_Movie.m_NameBox.I_NameField.text = "";
+	}
+	/**
+	 * 
+	 * Testing Making It Movable
+	 * 
+	 * */
+	
+	private function Layout():Void {
+		offtot.m_Movie._x = defftot.m_Movie._x = 5; 
+		offtot.m_Movie._y = 20;
+		defftot.m_Movie._y = offtot.m_Movie._y + offtot.m_Movie._height;
+		offtot.m_Movie._xscale = offtot.m_Movie._yscale = 65;
+		defftot.m_Movie._xscale = defftot.m_Movie._yscale = 65;
+		}
 }
