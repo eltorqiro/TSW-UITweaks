@@ -76,7 +76,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 				break;
 				
 				case 'checkbox':
-					addCheckbox( el.label, el.data, el.initial, el.onClick );
+					addCheckbox( el.label, el.data, el.initial, el.onChange );
 				break;
 				
 				case 'dropdown':
@@ -101,6 +101,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	public function Destroy():Void {
 		UtilsBase.PrintChatText('destroy');
 		
+		// fire onClose event
 		if ( _onClose != undefined ) {
 			UtilsBase.PrintChatText('closeHandler');		
 			Delegate.create( _onClose.context, _onClose.fn )();
@@ -126,6 +127,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 			_currentColumn.cursor.y += _sectionSpacing;
 		}
 		
+		// new section implies reset to start of line
 		_currentColumn.cursor.x = 0;
 		
 		if( label.length > 0 ) {
@@ -137,18 +139,18 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 
 			el.filters = [ _sectionLabelDropShadow ];
 			
-			el.m_Text.setNewTextFormat( textFormat );
-			el.m_Text.autoSize = 'left';
-			el.m_Text.text = label;
+			el.textField.setNewTextFormat( textFormat );
+			el.textField.autoSize = 'left';
+			el.textField.text = label;
 			
 			el._x = _currentColumn.cursor.x;
 			el._y = _currentColumn.cursor.y;
 			
-			_currentColumn.cursor.y += el.m_Text.textHeight;
+			_currentColumn.cursor.y += el.textField.textHeight;
 		}
 	}
 	
-	private function addCheckbox(label:String, data:Object, initial:Boolean, onClick:Object ):Void {
+	private function addCheckbox(label:String, data:Object, initial:Boolean, onChange:Object ):Void {
 		UtilsBase.PrintChatText('addCheckbox');
 		
 		var el:CheckBox = _currentColumn.mc.attachMovie( 'CheckboxDark', 'm_el_' + _currentColumn.elements.length, _currentColumn.mc.getNextHighestDepth() );
@@ -159,9 +161,9 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		
 		el.disableFocus = true;
 		
-		if ( onClick != undefined ) {
-			el['clickHandler'] = onClick;
-			el.addEventListener( 'click', this, "checkboxClickHandler" );
+		if ( onChange != undefined ) {
+			el['changeHandler'] = onChange;
+			el.addEventListener( 'select', this, "checkboxChangeHandler" );
 		}
 		
 		el.data = data;
@@ -181,8 +183,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		// TODO: implement label for dropdown
 		//el.label = label;
 
-		// TODO: implement value textbox for showing value
-		
 		el['items'] = items;
 		
 		var labels:Array = [];
@@ -218,8 +218,8 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		var el:Slider = _currentColumn.mc.attachMovie( 'Slider', 'm_el_' + _currentColumn.elements.length, _currentColumn.mc.getNextHighestDepth() );
 		_currentColumn.elements.push( el );
 
-		// TODO: implement label for slider
-		//el.label = label;
+		el['labelTextField'].text = label;
+		el['labelTextField'].autoSize = 'left';
 
 		el.liveDragging = true;
 		
@@ -231,7 +231,9 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		}
 		
 		el.value = initial;
-
+		el['valueTextField'].text = String(initial);
+		el['valueTextField'].autoSize = 'right';
+		
 		el.addEventListener("focusIn", this, "removeFocus");		
 		
 		if ( onChange != undefined ) {
@@ -240,16 +242,16 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		}
 		
 		el['data'] = data;
-		
+
 		el._x = _currentColumn.cursor.x;
 		el._y = _currentColumn.cursor.y;
 
 		_currentColumn.cursor.y += el._height;
 	}
 	
-	private function checkboxClickHandler(event:Object):Void {
-		UtilsBase.PrintChatText('checkboxClickHandler');
-		Delegate.create( event.target.clickHandler.context, event.target.clickHandler.fn )( event.target.selected, event.target.data );
+	private function checkboxChangeHandler(event:Object):Void {
+		UtilsBase.PrintChatText('checkboxChangeHandler');
+		Delegate.create( event.target.changeHandler.context, event.target.changeHandler.fn )( event.target.selected, event.target.data );
 	}
 
 	private function dropdownChangeHandler(event:Object):Void {
@@ -257,19 +259,19 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		Delegate.create( event.target.changeHandler.context, event.target.changeHandler.fn )( event.target.selectedIndex, event.target.items[ event.target.selectedIndex ].data, event.target.data );
 	}
 
-	private function sliderChangeHandler(event:Object):Void {
-		UtilsBase.PrintChatText('sliderChangeHandler');
-		Delegate.create( event.target.changeHandler.context, event.target.changeHandler.fn )( event.target.value, event.target.data );
-	}
-
 	private function dropdownStateChangeHandler(event:Object):Void {
 		UtilsBase.PrintChatText('dropdownStateChangeHandler');
 		if ( event.state == 'up' ) removeFocus();
 	}
 	
-    //Remove Focus
-    private function removeFocus():Void
-    {
+	private function sliderChangeHandler(event:Object):Void {
+		UtilsBase.PrintChatText('sliderChangeHandler');
+		event.target.valueTextField.text = String( event.target.value );
+		Delegate.create( event.target.changeHandler.context, event.target.changeHandler.fn )( event.target.value, event.target.data );
+	}
+
+    // universally remove focus
+    private function removeFocus():Void {
         Selection.setFocus(null);
     }	
 }

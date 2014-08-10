@@ -6,11 +6,14 @@ import com.ElTorqiro.UITweaks.Plugins.InspectionStats;
 import com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates;
 import com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD;
 import com.ElTorqiro.UITweaks.AddonInfo;
+import GUIFramework.ClipNode;
 
 import mx.utils.Delegate;
 
+import flash.filters.DropShadowFilter;
+
 import com.GameInterface.Tooltip.*;
-import com.Components.WinComp;
+import com.ElTorqiro.UITweaks.AddonUtils.Window;
 import com.GameInterface.DistributedValue;
 import flash.geom.Point;
 import com.GameInterface.UtilsBase;
@@ -18,7 +21,7 @@ import com.GameInterface.UtilsBase;
 import GUIFramework.SFClipLoader;
 
 // config window
-var g_configWindow:WinComp;
+var g_configWindow:Window;
 
 // internal distributed value listeners
 var g_showConfig:DistributedValue;
@@ -31,6 +34,8 @@ var g_isRegisteredWithVTIO:Boolean = false;
 var g_icon:MovieClip;
 var g_iconTooltipData:TooltipData;
 var g_tooltip:TooltipInterface;
+
+var clipNode:ClipNode;
 
 // config settings
 var g_settings:Object;
@@ -95,9 +100,10 @@ function OnModuleActivated():Void {
 	{
 		g_plugins[i].active = true;
 	}
-	
+
 	// show config icon
-	g_icon._visible = true;
+//	g_icon._visible = true;
+	clipNode.m_Movie._visible = true;
 }
 
 function OnModuleDeactivated():Void {
@@ -111,7 +117,8 @@ function OnModuleDeactivated():Void {
 		g_plugins[i].active = false;
 	}
 	
-	g_icon._visible = false;	
+//	g_icon._visible = false;	
+	clipNode.m_Movie._visible = false;
 }
 
 function OnUnload():Void
@@ -225,7 +232,7 @@ function CreateIcon():Void
 	// depth 3 = "top"
 	//var depthClip:MovieClip = SFClipLoader.CreateEmptyMovieClip( AddonInfo.Name + '_IconContainer', 3, 2);
 	
-	var clipNode = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/Icon.swf', AddonInfo.Name.toLowerCase() + '_icon', false, 3, 2);
+	clipNode = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/Icon.swf', AddonInfo.Name.toLowerCase() + '_icon', false, 3, 2);
 	clipNode.SignalLoaded.Connect( blah, this );
 	
 	var depthClip = clipNode.m_Movie;
@@ -245,7 +252,7 @@ function CreateTooltipData():Void
 {
 	// create icon tooltip data
 	g_iconTooltipData = new com.GameInterface.Tooltip.TooltipData();
-	g_iconTooltipData.AddAttribute("","<font face=\'_StandardFont\' size=\'14\' color=\'#00ccff\'><b>" + AddonInfo.Name + " v" + AddonInfo.Version + "</b></font>");
+	g_iconTooltipData.AddAttribute("", "<font face=\'_StandardFont\' size=\'14\' color=\'#00ccff\'><b>" + AddonInfo.Name + " v" + AddonInfo.Version + "</b></font>");
 	g_iconTooltipData.AddAttributeSplitter();
 	g_iconTooltipData.AddAttribute("","");
 	g_iconTooltipData.AddAttribute("", "<font face=\'_StandardFont\' size=\'11\' color=\'#BFBFBF\'><b>Left Click</b> Open/Close configuration window.</font>");
@@ -257,12 +264,13 @@ function CreateTooltipData():Void
 		g_iconTooltipData.AddAttribute("","");		
 		g_iconTooltipData.AddAttribute("", "<font face=\'_StandardFont\' size=\'12\' color=\'#FFFFFF\'><b>Icon</b>\n</font><font face=\'_StandardFont\' size=\'11\' color=\'#BFBFBF\'><b>CTRL + Left Drag</b> Move icon.\n<b>CTRL + Roll Mousewheel</b> Resize icon.\n<b>CTRL + Right Click</b> Reset icon size to 100%.</font>");
 	}
-
+/*
 	g_iconTooltipData.AddAttributeSplitter();
 	g_iconTooltipData.AddAttribute("","");	
 	g_iconTooltipData.AddAttribute("", "<font face=\'_StandardFont\' size=\'12\' color=\'#FFFFFF\'><b>HUD Bars</b>\n<font face=\'_StandardFont\' size=\'11\' color=\'#BFBFBF\'><b>CTRL + Left Drag</b> Move both HUD bars at once.\n<b>CTRL + Right Drag</b> Move an individual bar.\n<b>CTRL + Mouse Wheel roll</b> Scale HUD bars.</font>");
 	g_iconTooltipData.m_Padding = 8;
 	g_iconTooltipData.m_MaxWidth = 256;	
+*/
 }
 
 function CloseTooltip():Void
@@ -313,15 +321,30 @@ function CreateConfigWindow():Void
 	// do nothing if window already open
 	if ( g_configWindow )  return;
 	
-	g_configWindow = WinComp(attachMovie( "com.ElTorqiro.UITweaks.Config.WindowComponent", "m_ConfigWindow", getNextHighestDepth() ));
-	g_configWindow.SetTitle(AddonInfo.Name + " v" + AddonInfo.Version);
-	g_configWindow.ShowStroke(false);
+	g_configWindow = Window(attachMovie( "com.ElTorqiro.UITweaks.Config.WindowComponent", "m_ConfigWindow", getNextHighestDepth() ));
+	//g_configWindow.SetTitle(AddonInfo.Name + " v" + AddonInfo.Version);
+	g_configWindow['m_Title'].embedFonts = true;
+	g_configWindow['m_Title'].html = false;
+	var textFormat:TextFormat = new TextFormat();
+	textFormat.bold = false;
+	textFormat.color = 0x00ccff;
+	g_configWindow['m_Title'].setNewTextFormat( textFormat );
+	g_configWindow['m_Title'].text = AddonInfo.Name + " v" + AddonInfo.Version;
+	g_configWindow['m_Title'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
+	
+	g_configWindow['m_CloseButton'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
+	
 	g_configWindow.ShowFooter(false);
-	g_configWindow.ShowResizeButton(false);
+	g_configWindow.ShowResizeButton(true);
+	g_configWindow.SetMinHeight( 300 );
+	g_configWindow.SetMinWidth( 400 );
+	g_configWindow.SetSize( 300, 400 );
 
 	// load the content panel
 	g_configWindow.SetContent( "com.ElTorqiro.UITweaks.Config.WindowContent" );
 
+	
+	
 	// set position -- rounding of the values is critical here, else it will not reposition reliably
 	g_configWindow._x = Math.round(g_settings.configWindowPosition.x);
 	g_configWindow._y = Math.round(g_settings.configWindowPosition.y);
