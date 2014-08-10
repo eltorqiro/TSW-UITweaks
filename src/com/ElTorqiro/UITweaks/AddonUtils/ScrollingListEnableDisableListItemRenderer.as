@@ -1,5 +1,4 @@
 import flash.filters.DropShadowFilter;
-import gfx.controls.CheckBox;
 import gfx.controls.ListItemRenderer;
 import com.GameInterface.Utils;
 import com.Utils.ID32;

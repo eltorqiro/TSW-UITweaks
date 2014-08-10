@@ -56,10 +56,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 	private var _resizeGrabOffset:Point;
 	
 	private var _resizing:Boolean;
-	private var _resizeLoop:Boolean;
-	
-	private var _layoutRunning:Boolean;
-	private var _dirty:Boolean;
 	
     //Constructor
     public function Window()
@@ -84,9 +80,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 		m_ShowResize = true;
 		
 		_resizing = false;
-		
-		_layoutRunning = false;
-		_dirty = false;
     }
     
     //On Load
@@ -119,19 +112,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     public function Layout():Void
     {
         var contentSize:Point = m_Content.GetSize();
-		
-		UtilsBase.PrintChatText('w:' + contentSize.x + ', h:' + contentSize.y);
-		
-		UtilsBase.PrintChatText('layoutRunning:' + _layoutRunning + ', dirty:' + _dirty);
-		
-		if ( _layoutRunning ) {
-			_dirty = true;
-			return;
-		}
-
-		_layoutRunning = true;
-		
-        var contentSize:Point = m_Content.GetSize();
         m_Content._x = m_Background._x + m_Padding;
         m_Background._width = m_Content._x + contentSize.x + m_Padding;
         
@@ -162,17 +142,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
         //m_CloseButton._y = m_Background._y + m_Padding;
 		m_CloseButton._x = m_Background._width - m_CloseButton._width - m_Padding;
 		m_CloseButton._y = 0;
-		
-		if ( _dirty ) _global.setTimeout( Delegate.create(this, LayoutRetrigger), 10 );
-		else _layoutRunning = false;
     }
-    
-	private function LayoutRetrigger():Void {
-		UtilsBase.PrintChatText(' layout retrigger ');
-		_layoutRunning = false;
-		_dirty = false;
-		Layout();
-	}
 	
     //Show Close Button
     public function ShowCloseButton(value:Boolean):Void
@@ -246,9 +216,9 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
         var xdiff:Number = Math.abs(m_Background._width - m_ResizeX);
         var ydiff:Number = Math.abs(m_Background._height - m_ResizeY);
         
-		//if (xdiff > m_ResizeSensitivity || ydiff > m_ResizeSensitivity) {
+		if (xdiff > m_ResizeSensitivity || ydiff > m_ResizeSensitivity) {
 			SetSize(m_ResizeX, m_ResizeY);
-        //}
+        }
     }
     
     //Resize Drag Release

@@ -4,7 +4,7 @@ import flash.geom.Point;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import com.GameInterface.DistributedValue;
-import gfx.controls.ScrollingList;
+import com.ElTorqiro.UITweaks.AddonUtils.ScrollingList;
 
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 
@@ -46,10 +46,9 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		super.configUI();
 
 		//m_Content = createEmptyMovieClip("m_Content", getNextHighestDepth() );
-		m_ContentSize = attachMovie( 'ConfigWindowContentSize', 'm_ContentSize', getNextHighestDepth() );
-		m_ContentSize.hitTestDisable = true;
-		//box = attachMovie( 'ScrollingListEnableDisableDarkContainer', 'box', getNextHighestDepth() );
-		
+		//m_ContentSize = attachMovie( 'ConfigWindowContentSize', 'm_ContentSize', getNextHighestDepth() );
+		//m_ContentSize._visible = false;
+		//m_ContentSize.hitTestDisable = true;
 		
 		var Configuration:Object = {
 			title: 'test',
@@ -105,7 +104,6 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		
 		pluginList.dataProvider = data;
 		
-		/*
 		pluginList.dataProvider = [
 			{ label: 'item 1', enabled: true },
 			{ label: 'item 2', enabled: true },
@@ -126,18 +124,20 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 			{ label: 'item 17', enabled: true },
 			{ label: 'item 18', enabled: true },
 			{ label: 'item 19', enabled: false }
-		];*/
+		];
 		
-
+		
 		pluginList.height = 240;
 		pluginList.width = 200;
-		
-		m_ContentSize._width = 400;
-		m_ContentSize._height = 300;
 		
 		panel._x = pluginList.width + 10;
 		
 		pluginList.addEventListener( 'focusIn', this, 'removeFocus' );
+		
+		pluginList.addEventListener( 'renderComplete', SignalSizeChanged, 'Emit' );
+		
+		m_PluginListBackground._height = pluginList.height;
+		m_PluginListBackground._width = pluginList.width;		
 		
 		SignalSizeChanged.Emit();
 		//SetSize( this._width, this._height );
@@ -147,30 +147,29 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
     private function removeFocus():Void {
         Selection.setFocus(null);
     }	
-		
-	public function Close():Void
-	{
+
+	public function Close():Void {
 		super.Close();
 	}
 
 	public function GetSize():Point {
-		return new Point( m_ContentSize._width, m_ContentSize._height );
+		//return new Point( m_ContentSize._width, m_ContentSize._height );
+		return new Point( _width, _height );
 	}
 	
 	/**
 	 * 
 	 * this is the all-important override that makes window resizing work properly
 	 */
-    public function SetSize(width:Number, height:Number)
-    {	
-		//super.SetSize( width, height );
+    public function SetSize(width:Number, height:Number) {	
+		super.SetSize( width, height );
 
-		pluginList.height = height;
-		m_PluginListBackground._height = height;
+		// this seems to happen asynchronously as if enabled it can finish rendering *after* the following commands have happened (and even the parent window layout)
+		// which causes the interior content to be the 'right size', but the parent window to be too large, especially on vertical size reduction
+		pluginList.height = height;	
+										
+		m_PluginListBackground._height = pluginList.height;
 		m_PluginListBackground._width = pluginList.width;
-		
-        m_ContentSize._width = width;
-        m_ContentSize._height = height;
         
 		SignalSizeChanged.Emit();	// must fire this signal, else the parent WinComp container never gets resized, only the inner content does
     }	
