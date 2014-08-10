@@ -1,5 +1,6 @@
 import com.Components.WindowComponentContent;
 import com.Utils.Archive;
+import flash.geom.Point;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import com.GameInterface.DistributedValue;
@@ -17,6 +18,8 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 	
 	private var m_ContentSize:MovieClip;
 	private var m_Content:MovieClip;
+	
+	private var m_PluginListBackground:MovieClip;
 	
 	private var panel:MovieClip;
 	
@@ -150,6 +153,10 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		super.Close();
 	}
 
+	public function GetSize():Point {
+		return new Point( m_ContentSize._width, m_ContentSize._height );
+	}
+	
 	/**
 	 * 
 	 * this is the all-important override that makes window resizing work properly
@@ -157,10 +164,10 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
     public function SetSize(width:Number, height:Number)
     {	
 		//super.SetSize( width, height );
-		
-		UtilsBase.PrintChatText('height:' + box._height );
-		
+
 		pluginList.height = height;
+		m_PluginListBackground._height = height;
+		m_PluginListBackground._width = pluginList.width;
 		
         m_ContentSize._width = width;
         m_ContentSize._height = height;

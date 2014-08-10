@@ -7,7 +7,10 @@ import flash.geom.Rectangle;
 import mx.utils.Delegate;
 import com.Utils.Signal;
 import com.GameInterface.Game.Character;
-import com.GameInterface.Game.CharacterBase;
+
+import com.GameInterface.UtilsBase;
+
+import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 
 //Class
 class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
@@ -20,12 +23,12 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     public var SignalSizeChanged:Signal;
     public var SignalSelected:Signal;
 	public var SignalContentLoaded:Signal;
-    public var m_CloseButton:MovieClip;
+    public var m_CloseButton:Button;
     
     private var m_Title:TextField;
     private var m_Content:WindowComponentContent;
-    private var m_ResizeButton:MovieClip;
-    private var m_TitleFade:MovieClip;
+    private var m_ResizeButton:MovieClip;	// Button
+    private var m_TopFade:MovieClip;
     private var m_Background:MovieClip;
     private var m_DropShadow:MovieClip;
     
@@ -50,6 +53,14 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 	private var m_ShowFooter:Boolean;
 	private var m_ShowResize:Boolean;
     
+	private var _resizeGrabOffset:Point;
+	
+	private var _resizing:Boolean;
+	private var _resizeLoop:Boolean;
+	
+	private var _layoutRunning:Boolean;
+	private var _dirty:Boolean;
+	
     //Constructor
     public function Window()
     {
@@ -71,6 +82,11 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 		m_ShowCloseButton = true;
 		m_ShowFooter = true;
 		m_ShowResize = true;
+		
+		_resizing = false;
+		
+		_layoutRunning = false;
+		_dirty = false;
     }
     
     //On Load
@@ -83,18 +99,38 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 		m_ResizeButton._visible = m_ShowResize;
         
         m_ResizeButton.onPress = Delegate.create(this, ResizeDragHandler);
-        m_ResizeButton.onRelease = m_ResizeButton.onReleaseOutside = Delegate.create(this, ResizeDragReleaseHandler);
+		m_ResizeButton.onRollOver = Delegate.create( this, ResizeRollOverHandler );
+		m_ResizeButton.onRollOut = Delegate.create( this, ResizeRollOutHandler );
+		m_ResizeButton.disableFocus = true;
 
         m_Background.onPress =  Delegate.create(this, MoveDragHandler);
-        m_Background.onRelease = m_Background.onReleaseOutside  = Delegate.create(this, MoveDragReleaseHandler);
+        m_Background.onRelease = m_Background.onReleaseOutside = 
+		m_Background.onReleaseAux = m_Background.onReleaseOutsideAux = Delegate.create(this, MoveDragReleaseHandler);
         
         m_CloseButton.addEventListener("click", this, "CloseButtonHandler");
         m_CloseButton.disableFocus = true;
+		
+		AddonUtils.Colorize( m_TopFade, 0x003366 );
+		
+		m_ResizeSensitivity = 1;
     }
     
     //Layout
     public function Layout():Void
     {
+        var contentSize:Point = m_Content.GetSize();
+		
+		UtilsBase.PrintChatText('w:' + contentSize.x + ', h:' + contentSize.y);
+		
+		UtilsBase.PrintChatText('layoutRunning:' + _layoutRunning + ', dirty:' + _dirty);
+		
+		if ( _layoutRunning ) {
+			_dirty = true;
+			return;
+		}
+
+		_layoutRunning = true;
+		
         var contentSize:Point = m_Content.GetSize();
         m_Content._x = m_Background._x + m_Padding;
         m_Background._width = m_Content._x + contentSize.x + m_Padding;
@@ -107,15 +143,13 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
         }
         else
         {
-            //m_Title._x = m_Title._y = m_Padding;
 			m_Title._x = m_Padding;
 			m_Title._y = 3;
             m_Title._width = m_Background._width - m_Padding * 2;
             m_Content._y = Math.round(m_Title._y + m_Title._height) + m_Padding;
             m_Background._height = m_Content._y + contentSize.y + m_Padding ;
-            //m_NonContentHeight = m_Title._height + m_Padding * 2;
-			m_TitleFade._width = m_Background._width;
-			m_NonContentHeight = m_Title._height + m_Padding + 3;
+			m_TopFade._width = m_Background._width;
+			m_NonContentHeight = Math.round(m_Title._y + m_Title._height) + m_Padding * 2;
         }
         
         m_DropShadow._width = m_Background._width + 31;
@@ -124,10 +158,22 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
         m_ResizeButton._x = m_Background._x + m_Background._width - m_ResizeButton._width;
         m_ResizeButton._y = m_Background._y + m_Background._height - m_ResizeButton._height;
         
-        m_CloseButton._x = m_Background._width - m_CloseButton._width - m_Padding;
-        m_CloseButton._y = m_Background._y + m_Padding;
+        //m_CloseButton._x = m_Background._width - m_CloseButton._width - m_Padding;
+        //m_CloseButton._y = m_Background._y + m_Padding;
+		m_CloseButton._x = m_Background._width - m_CloseButton._width - m_Padding;
+		m_CloseButton._y = 0;
+		
+		if ( _dirty ) _global.setTimeout( Delegate.create(this, LayoutRetrigger), 10 );
+		else _layoutRunning = false;
     }
     
+	private function LayoutRetrigger():Void {
+		UtilsBase.PrintChatText(' layout retrigger ');
+		_layoutRunning = false;
+		_dirty = false;
+		Layout();
+	}
+	
     //Show Close Button
     public function ShowCloseButton(value:Boolean):Void
     {
@@ -157,49 +203,71 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
         SignalClose.Emit(this);
         m_Content.Close();
     }
-    
+
+    private function ResizeRollOverHandler():Void {
+		if( !_resizing ) m_ResizeButton.gotoAndPlay( 'over' );
+	}
+	
+	private function ResizeRollOutHandler():Void {
+		if( !_resizing ) m_ResizeButton.gotoAndPlay( 'up' );
+	}
+	
     //Resize Drag Handler
     private function ResizeDragHandler():Void
     {
+		if ( _resizing ) return;
+		
+		_resizing = true;
+		m_ResizeButton.gotoAndPlay( 'down' );
+		
+		_resizeGrabOffset = new Point( m_Background._width - this._xmouse, m_Background._height - this._ymouse );
+		
         m_ResizeListener = {};
         m_ResizeListener.onMouseMove = Delegate.create(this, MouseResizeMovingHandler);
+		m_ResizeListener.onMouseUp = Delegate.create( this, ResizeDragReleaseHandler );
         
         Mouse.addListener(m_ResizeListener); 
     }
     
     //Mouse Resize Moving Handler
     private function MouseResizeMovingHandler():Void
-    {
-        m_ResizeX = Math.max(this._xmouse, m_MinWidth);
-        m_ResizeY = Math.max(this._ymouse, m_MinHeight);
+    {	
+		m_ResizeX = Math.max(this._xmouse + _resizeGrabOffset.x, m_MinWidth);
+        m_ResizeY = Math.max(this._ymouse + _resizeGrabOffset.y, m_MinHeight);
         
-        if (m_MaxWidth > 0)
-        {
+        if (m_MaxWidth > 0) {
             m_ResizeX = Math.min(m_MaxWidth, m_ResizeX);
         }
         
-        if (m_MaxHeight > 0)
-        {
+        if (m_MaxHeight > 0) {
             m_ResizeY = Math.min(m_MaxHeight, m_ResizeY);
         }
         
         var xdiff:Number = Math.abs(m_Background._width - m_ResizeX);
         var ydiff:Number = Math.abs(m_Background._height - m_ResizeY);
         
-        if (xdiff > m_ResizeSensitivity || ydiff > m_ResizeSensitivity) 
-        {
-            SetSize(m_ResizeX, m_ResizeY);
-        }
+		//if (xdiff > m_ResizeSensitivity || ydiff > m_ResizeSensitivity) {
+			SetSize(m_ResizeX, m_ResizeY);
+        //}
     }
     
     //Resize Drag Release
     private function ResizeDragReleaseHandler():Void
     {
-        SetSize(m_ResizeX, m_ResizeY);
-        
         Mouse.removeListener(m_ResizeListener);
+		SetSize(m_ResizeX, m_ResizeY);
+		
+		if (Mouse["IsMouseOver"](m_ResizeButton)) {
+			m_ResizeButton.gotoAndPlay( 'over' );
+		}
+		
+		else {
+			m_ResizeButton.gotoAndPlay( 'up' );
+		}
         
         m_ResizeListener = undefined;
+		
+		_resizing = false;
     }
     
     // Move Drag Handler
@@ -339,7 +407,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 	
 	public function GetSize():Point
 	{
-		return m_Content.GetSize();;
+		return m_Content.GetSize();
 	}
     
 	public function GetNonContentSize():Point

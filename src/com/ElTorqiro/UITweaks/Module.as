@@ -333,6 +333,7 @@ function CreateConfigWindow():Void
 	g_configWindow['m_Title'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
 	
 	g_configWindow['m_CloseButton'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
+	g_configWindow['m_ResizeButton'].filters = [ new DropShadowFilter( 90, -90, 0x000000, 0.8, 8, 8, 2, 3, false, false, false ) ];
 	
 	g_configWindow.ShowFooter(false);
 	g_configWindow.ShowResizeButton(true);
