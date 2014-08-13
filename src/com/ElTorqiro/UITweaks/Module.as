@@ -1,7 +1,7 @@
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 import com.ElTorqiro.UITweaks.Plugins.SuppressCharacterSheetScaling;
 import com.ElTorqiro.UITweaks.Plugins.SuppressMaxAPSPNotifications;
-import com.ElTorqiro.UITweaks.Plugins.RemoveAbilityBarReflections;
+import com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX;
 import com.ElTorqiro.UITweaks.Plugins.InspectionStats;
 import com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates;
 import com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD;
@@ -86,7 +86,7 @@ function onLoad():Void {
 	// attach plugins
 	g_plugins.push( new SuppressCharacterSheetScaling() );
 	g_plugins.push( new SuppressMaxAPSPNotifications() );
-	g_plugins.push( new RemoveAbilityBarReflections() );
+	g_plugins.push( new AbilityBarDeFX() );
 	g_plugins.push( new InspectionStats() );
 	g_plugins.push( new ResizeAlteredStates() );
 	g_plugins.push( new MoveAnyHUD() );
@@ -323,22 +323,27 @@ function CreateConfigWindow():Void
 	
 	g_configWindow = Window(attachMovie( "com.ElTorqiro.UITweaks.Config.WindowComponent", "m_ConfigWindow", getNextHighestDepth() ));
 	//g_configWindow.SetTitle(AddonInfo.Name + " v" + AddonInfo.Version);
-	g_configWindow['m_Title'].embedFonts = true;
-	g_configWindow['m_Title'].html = false;
-	var textFormat:TextFormat = new TextFormat();
-	textFormat.bold = false;
-	textFormat.color = 0x00ccff;
-	g_configWindow['m_Title'].setNewTextFormat( textFormat );
-	g_configWindow['m_Title'].text = AddonInfo.Name + " v" + AddonInfo.Version;
-	g_configWindow['m_Title'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
+	//g_configWindow['m_Title'].embedFonts = true;
+	//g_configWindow['m_Title'].html = false;
+	//var textFormat:TextFormat = new TextFormat();
+	//textFormat.bold = false;
+	//textFormat.color = 0x00ccff;
+	//g_configWindow['m_Title'].setNewTextFormat( textFormat );
+	//g_configWindow['m_Title'].text = AddonInfo.Name + " v" + AddonInfo.Version;
+	//g_configWindow['m_Title'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
 	
-	g_configWindow['m_CloseButton'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
-	g_configWindow['m_ResizeButton'].filters = [ new DropShadowFilter( 90, -90, 0x000000, 0.8, 8, 8, 2, 3, false, false, false ) ];
+	//g_configWindow['m_CloseButton'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
+	//g_configWindow['m_ResizeButton'].filters = [ new DropShadowFilter( 90, -90, 0x000000, 0.8, 8, 8, 2, 3, false, false, false ) ];
 	
-	g_configWindow.ShowFooter(false);
-	g_configWindow.ShowResizeButton(true);
-	g_configWindow.SetMinHeight( 300 );
-	g_configWindow.SetMinWidth( 400 );
+	//g_configWindow.ShowFooter(false);
+	//g_configWindow.ShowResizeButton(true);
+	//g_configWindow.SetMinHeight( 300 );
+	//g_configWindow.SetMinWidth( 400 );
+	
+	g_configWindow.title = AddonInfo.Name + " v" + AddonInfo.Version;
+	g_configWindow.showHelpButton = false;
+	g_configWindow.showFooter = false;
+	
 	g_configWindow.SetSize( 300, 400 );
 
 	// load the content panel

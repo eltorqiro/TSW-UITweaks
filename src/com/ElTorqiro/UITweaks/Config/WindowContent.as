@@ -129,18 +129,24 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		
 		pluginList.height = 240;
 		pluginList.width = 200;
+		pluginList.rowHeight = 22;
 		
 		panel._x = pluginList.width + 10;
 		
 		pluginList.addEventListener( 'focusIn', this, 'removeFocus' );
 		
-		pluginList.addEventListener( 'renderComplete', SignalSizeChanged, 'Emit' );
+		pluginList.addEventListener( 'renderComplete', this, 'listrenderdone' );
 		
 		m_PluginListBackground._height = pluginList.height;
 		m_PluginListBackground._width = pluginList.width;		
 		
 		SignalSizeChanged.Emit();
 		//SetSize( this._width, this._height );
+	}
+	
+	private function listrenderdone():Void {
+		UtilsBase.PrintChatText('listrenderdone');
+		SignalSizeChanged.Emit();
 	}
 	
     // universally remove focus
@@ -166,12 +172,17 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 
 		// this seems to happen asynchronously as if enabled it can finish rendering *after* the following commands have happened (and even the parent window layout)
 		// which causes the interior content to be the 'right size', but the parent window to be too large, especially on vertical size reduction
-		pluginList.height = height;	
-										
+		
+		//pluginList.height = 10;
+		//m_PluginListBackground._height = 10;
+		
+		pluginList.height = height;
 		m_PluginListBackground._height = pluginList.height;
 		m_PluginListBackground._width = pluginList.width;
         
+		UtilsBase.PrintChatText('w:' + width + ', h:' + height);
+		
 		SignalSizeChanged.Emit();	// must fire this signal, else the parent WinComp container never gets resized, only the inner content does
-    }	
+	}	
 	
 }

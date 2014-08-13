@@ -78,6 +78,7 @@ otherwise accompanies this software in either electronic or hard copy form.
 
 **************************************************************************/
 
+import com.GameInterface.UtilsBase;
 import flash.external.ExternalInterface; 
 import flash.geom.Rectangle;
 import gfx.controls.CoreList;
@@ -363,16 +364,46 @@ class com.ElTorqiro.UITweaks.AddonUtils.ScrollingList extends CoreList {
 	}
 	
 	private function draw():Void {
+		
+		
+		container._scaleY = 0;
+		
 		if (sizeIsInvalid) { 
-			_width = __width;
-			_height = __height;
+			//_width = __width;
+			//_height = __height;
+			
+			this['m_Background']._width = __width;
+			this['m_Background']._height = __height;
 		}
+/*		
+		if ( this['m_containerMask'] == undefined ) {
+			var mask:MovieClip = createEmptyMovieClip( 'm_containerMask', getNextHighestDepth() );
+			mask.beginFill( 0xffffff, 100 );
+			mask.lineTo( this['m_Background']._width, 0 );
+			mask.lineTo( this['m_Background']._width, this['m_Background']._height );
+			mask.lineTo( 0, this['m_Background']._height );
+			mask.lineTo( 0, 0 );
+			mask.endFill();
+			
+			container.setMask( mask );
+		}
+		else var mask:MovieClip = this['m_containerMask'];
+
+			UtilsBase.PrintChatText( '__width:' + __width + ', __height:' + __height );
+		if ( sizeIsInvalid ) {
+			mask._width = __width;
+			mask._height = __height;
+			
+			//mask._xscale = 10000 / _xscale;
+			//mask._yscale = 10000 / _yscale;
+		}
+*/		
 		
 		if (externalRenderers) {
 			totalRenderers = renderers.length;
 		} else {
-			container._xscale = 10000 / _xscale; // Counter scale the list items.
-			container._yscale = 10000 / _yscale;
+			//container._xscale = 10000 / _xscale; // Counter scale the list items.
+			//container._yscale = 10000 / _yscale;
 			var h:Number = _rowHeight;
 			if (h == null) {
 				var temp:MovieClip = createItemRenderer(99);
@@ -391,6 +422,8 @@ class com.ElTorqiro.UITweaks.AddonUtils.ScrollingList extends CoreList {
 		setState();
 		
 		super.draw();
+
+		container._scaleY = 100;
 		
 		dispatchEventAndSound({type:"renderComplete"});
 	}
