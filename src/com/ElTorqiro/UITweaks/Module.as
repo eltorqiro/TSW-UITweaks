@@ -1,10 +1,4 @@
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
-import com.ElTorqiro.UITweaks.Plugins.SuppressCharacterSheetScaling;
-import com.ElTorqiro.UITweaks.Plugins.SuppressMaxAPSPNotifications;
-import com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX;
-import com.ElTorqiro.UITweaks.Plugins.InspectionStats;
-import com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates;
-import com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD;
 import com.ElTorqiro.UITweaks.AddonInfo;
 import GUIFramework.ClipNode;
 import XML;
@@ -85,15 +79,7 @@ function onLoad():Void {
 	g_showConfig.SignalChanged.Connect(ToggleConfigWindow, this);
 
 
-	// attach plugins
-/*
-	g_plugins.push( new SuppressCharacterSheetScaling() );
-	g_plugins.push( new SuppressMaxAPSPNotifications() );
-	g_plugins.push( new AbilityBarDeFX() );
-	g_plugins.push( new InspectionStats() );
-	g_plugins.push( new ResizeAlteredStates() );
-	g_plugins.push( new MoveAnyHUD() );
-*/	
+	// load plugins
 	LoadPluginData();
 }
 
@@ -110,25 +96,26 @@ function LoadPluginData():Void {
 		UtilsBase.PrintChatText('pluginsNode:' + pluginsNode.nodeName );
 		
 		for (var aNode:XMLNode = pluginsNode.firstChild; aNode != null; aNode = aNode.nextSibling) {
-			UtilsBase.PrintChatText('n:' +  aNode.attributes.name );
 
 			var plugin:Object = {
 				name: aNode.attributes.name,
 				author: aNode.attributes.author,
 				contactURL: aNode.attributes['contact-url'],
-				location: aNode.attributes.location,
+				path: AddonInfo.Path + '/plugins/' + aNode.attributes.location,
+				id: aNode.attributes.location,
 				depth: aNode.attributes.depth,
 				subDepth: aNode.attributes['sub-depth'],
-				clipNode: undefined
+				clipNode: undefined,
+				mc: undefined,
+				plugin: undefined
 				
 				/* settings: TODO: fetch settings from archive */
 			};
-			
+
 			g_plugins.push( plugin );
 
-			plugin.clipNode = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/plugins/' + plugin.location + '/plugin.swf', AddonInfo.Name.toLowerCase() + ' ' + plugin.location, false, plugin.depth, plugin.subDepth);
+			plugin.clipNode = SFClipLoader.LoadClip( plugin.path + '/plugin.swf', AddonInfo.Path.toLowerCase() + '_' + plugin.id, false, plugin.depth, plugin.subDepth);
 			plugin.clipNode.SignalLoaded.Connect( function() {
-				UtilsBase.PrintChatText('s:' + this.clipNode.m_Movie );
 				this.mc = this.clipNode.m_Movie;
 				this.plugin = new this.mc.plugin( this );
 				this.plugin.Activate();
@@ -139,7 +126,7 @@ function LoadPluginData():Void {
 	};
 	
 	xml.ignoreWhite = true;
-	xml.load( 'ElTorqiro_UITweaks/plugins.xml' );
+	xml.load( AddonInfo.Path + '/plugins.xml' );
 }
 
 function OnModuleActivated():Void {

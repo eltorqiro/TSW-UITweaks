@@ -1,0 +1,67 @@
+<?xml version="1.0" standalone="yes"?>
+<plugins>
+	<!-- plugin nodes have no children and have the following attributes:
+	
+		name: 			your plugin name
+		author: 		your name (e.g. TSW forum name or game character name)
+		contact-url: 	full url of a contact page for the plugin, such as a TSW forum thread
+		location: 		directory beneath the plugins/ folder that contains your plugin, no trailing slash
+		depth: 			TSW depth layer to load the plugin into; 0, 1, 2, 3
+		sub-depth: 		depth within the depth layer to load clip into
+
+		e.g. 
+
+		<plugin
+			name="Magical Plugin"
+			author="Anonymous Rex"
+			contact-url="http://forums.thesecretworld.com/showthread=123456"
+			location="MagicalPlugin"
+			depth="3"
+			sub-depth="0"
+		/>
+		
+	-->
+	
+	<plugin
+		name="Ability Bar DeFX"
+		author="ElTorqiro"
+		contact-url="http://forums.thesecretworld.com/"
+		location="AbilityBarDeFX"
+	/>
+	
+	<plugin
+		name="Inspecto Petronum"
+		author="ElTorqiro"
+		contact-url="http://forums.thesecretworld.com/"
+		location="InspectoPetronum"
+	/>
+	
+	<plugin
+		name="Mobile HUD"
+		author="ElTorqiro"
+		contact-url="http://forums.thesecretworld.com/"
+		location="MobileHUD"
+	/>
+
+	<plugin
+		name="Resize Altered States"
+		author="The009"
+		contact-url="http://forums.thesecretworld.com/"
+		location="ResizeAlteredStates"
+	/>
+
+	<plugin
+		name="Character Sheet Zoom"
+		author="ElTorqiro"
+		contact-url="http://forums.thesecretworld.com/"
+		location="CharacterSheetZoom"
+	/>
+
+	<plugin
+		name="Max AP/SP Notifications"
+		author="ElTorqiro"
+		contact-url="http://forums.thesecretworld.com/"
+		location="MaxAPSPNotifications"
+	/>
+	
+</plugins>
