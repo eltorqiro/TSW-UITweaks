@@ -7,6 +7,8 @@ import com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates;
 import com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD;
 import com.ElTorqiro.UITweaks.AddonInfo;
 import GUIFramework.ClipNode;
+import XML;
+import com.GameInterface.GUIUtils.XmlParser;
 
 import mx.utils.Delegate;
 
@@ -90,7 +92,31 @@ function onLoad():Void {
 	g_plugins.push( new InspectionStats() );
 	g_plugins.push( new ResizeAlteredStates() );
 	g_plugins.push( new MoveAnyHUD() );
+	
+	LoadPluginData();
+}
 
+
+function LoadPluginData():Void {
+	
+	var xml:XML = new XML();
+	xml.onLoad = function(success:Boolean) {
+		// TODO: if status is 0, xml could not be parsed successfully
+		UtilsBase.PrintChatText('loaded:' + success + ', status:' + this.status);
+		
+		var pluginsNode = this.firstChild;
+		// TODO: check if pluginsNode is actually the <plugins> node
+		UtilsBase.PrintChatText('pluginsNode:' + pluginsNode.nodeName );
+		
+		for (var aNode:XMLNode = pluginsNode.firstChild; aNode != null; aNode = aNode.nextSibling) {
+			UtilsBase.PrintChatText('n:' +  aNode.attributes.name );
+		}
+		
+	};
+	
+	xml.ignoreWhite = true;
+	xml.load( 'ElTorqiro_UITweaks/plugins.xml' );
+	
 }
 
 function OnModuleActivated():Void {
