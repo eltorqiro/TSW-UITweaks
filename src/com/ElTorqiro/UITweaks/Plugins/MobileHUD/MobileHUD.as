@@ -1,5 +1,5 @@
 import com.GameInterface.UtilsBase;
-import com.ElTorqiro.UITweaks.Plugins.PluginBase;
+import com.ElTorqiro.UITweaks.PluginBase;
 import flash.geom.Point;
 import mx.utils.Delegate;
 import com.Utils.HUDController;
@@ -10,7 +10,7 @@ import com.GameInterface.Tooltip.TooltipUtils;
 import com.GameInterface.Tooltip.TooltipInterface;
 
 
-class com.ElTorqiro.UITweaks.Plugins.MoveAnyHUD extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD extends com.ElTorqiro.UITweaks.PluginBase {
 
 	private var _modules:Object = { };
 	private var _overlayLayer:MovieClip;

@@ -86,13 +86,14 @@ function onLoad():Void {
 
 
 	// attach plugins
+/*
 	g_plugins.push( new SuppressCharacterSheetScaling() );
 	g_plugins.push( new SuppressMaxAPSPNotifications() );
 	g_plugins.push( new AbilityBarDeFX() );
 	g_plugins.push( new InspectionStats() );
 	g_plugins.push( new ResizeAlteredStates() );
 	g_plugins.push( new MoveAnyHUD() );
-	
+*/	
 	LoadPluginData();
 }
 
@@ -101,7 +102,7 @@ function LoadPluginData():Void {
 	
 	var xml:XML = new XML();
 	xml.onLoad = function(success:Boolean) {
-		// TODO: if status is 0, xml could not be parsed successfully
+		// TODO: if status is 0, xml could not be parsed successfully, some user friendly message needed
 		UtilsBase.PrintChatText('loaded:' + success + ', status:' + this.status);
 		
 		var pluginsNode = this.firstChild;
@@ -110,13 +111,35 @@ function LoadPluginData():Void {
 		
 		for (var aNode:XMLNode = pluginsNode.firstChild; aNode != null; aNode = aNode.nextSibling) {
 			UtilsBase.PrintChatText('n:' +  aNode.attributes.name );
+
+			var plugin:Object = {
+				name: aNode.attributes.name,
+				author: aNode.attributes.author,
+				contactURL: aNode.attributes['contact-url'],
+				location: aNode.attributes.location,
+				depth: aNode.attributes.depth,
+				subDepth: aNode.attributes['sub-depth'],
+				clipNode: undefined
+				
+				/* settings: TODO: fetch settings from archive */
+			};
+			
+			g_plugins.push( plugin );
+
+			plugin.clipNode = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/plugins/' + plugin.location + '/plugin.swf', AddonInfo.Name.toLowerCase() + ' ' + plugin.location, false, plugin.depth, plugin.subDepth);
+			plugin.clipNode.SignalLoaded.Connect( function() {
+				UtilsBase.PrintChatText('s:' + this.clipNode.m_Movie );
+				this.mc = this.clipNode.m_Movie;
+				this.plugin = new this.mc.plugin( this );
+				this.plugin.Activate();
+			}
+			, plugin );
 		}
 		
 	};
 	
 	xml.ignoreWhite = true;
 	xml.load( 'ElTorqiro_UITweaks/plugins.xml' );
-	
 }
 
 function OnModuleActivated():Void {

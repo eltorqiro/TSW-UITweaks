@@ -1,4 +1,4 @@
-import com.ElTorqiro.UITweaks.Plugins.PluginBase;
+import com.ElTorqiro.UITweaks.PluginBase;
 import com.GameInterface.DistributedValue;
 import com.GameInterface.Inventory;
 import com.GameInterface.InventoryItem;
@@ -19,10 +19,10 @@ import com.GameInterface.Tooltip.TooltipData;
 import com.GameInterface.Tooltip.TooltipDataProvider;
 import flash.filters.DropShadowFilter;
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
-import com.ElTorqiro.UITweaks.Plugins.InspectionStats_.LDB;
+import com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.LDB;
 import com.Components.ItemSlot;
 
-class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum extends com.ElTorqiro.UITweaks.PluginBase {
 
 	// default window finding objects
 	private var _windowSearches:Object = {};
@@ -37,8 +37,8 @@ class com.ElTorqiro.UITweaks.Plugins.InspectionStats extends com.ElTorqiro.UITwe
 	public var statSectionSpacing:Number = iconPadding * 3;
 	
 
-	public function InspectionStats() {
-		super();
+	public function InspectoPetronum(data:Object) {
+		super(data);
 	}
 	
 	private function Activate() {

@@ -7,7 +7,7 @@ import com.ElTorqiro.UITweaks.Enums.States;
 import com.GameInterface.Game.Shortcut;
 import com.GameInterface.ProjectUtils;
 
-class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX.AbilityBarDeFX extends com.ElTorqiro.UITweaks.PluginBase {
 
 	// settings
 	// TODO: make these configurable
@@ -21,8 +21,8 @@ class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX extends com.ElTorqiro.UITwea
 	
 	private var _sheet:MovieClip;
 	
-	public function AbilityBarDeFX() {
-		super();
+	public function AbilityBarDeFX(data:Object) {
+		super(data);
 		
 		_lastSlot = ProjectUtils.GetUint32TweakValue("PlayerMaxActiveSpells") - 1;
 	}

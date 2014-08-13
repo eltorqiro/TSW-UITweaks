@@ -45,7 +45,7 @@ magProt : Magischer Schutz
 aegisPercent : Avg. AEGIS %
 */
 
-class com.ElTorqiro.UITweaks.Plugins.InspectionStats_.LDB {
+class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.LDB {
 
 	private function LDB() { }
 	
