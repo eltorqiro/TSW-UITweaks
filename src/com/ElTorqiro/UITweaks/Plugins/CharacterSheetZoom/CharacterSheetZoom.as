@@ -1,12 +1,13 @@
-import com.ElTorqiro.UITweaks.PluginBase;
+import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.GameInterface.DistributedValue;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import flash.geom.Point;
 import com.GameInterface.Game.Camera;
 import com.ElTorqiro.UITweaks.Enums.States;
+import com.ElTorqiro.UITweaks.PluginWrapper;
 
-class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom extends com.ElTorqiro.UITweaks.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
 	private var _characterSheetActiveVar:DistributedValue;
 	private var _findCharacterSheetThrashCount:Number = 0;
@@ -19,8 +20,8 @@ class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom exten
 	private var _suppressOnEnterFrameThrashing:Boolean = true;
 
 
-	public function CharacterSheetZoom(data:Object) {
-		super(data);
+	public function CharacterSheetZoom(wrapper:PluginWrapper) {
+		super(wrapper);
 		
 		_characterSheetActiveVar = DistributedValue.Create("character_sheet");
 	}

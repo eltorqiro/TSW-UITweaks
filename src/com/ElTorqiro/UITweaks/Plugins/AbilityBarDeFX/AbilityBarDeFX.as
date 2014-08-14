@@ -6,8 +6,9 @@ import flash.geom.Point;
 import com.ElTorqiro.UITweaks.Enums.States;
 import com.GameInterface.Game.Shortcut;
 import com.GameInterface.ProjectUtils;
+import com.ElTorqiro.UITweaks.PluginWrapper;
 
-class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX.AbilityBarDeFX extends com.ElTorqiro.UITweaks.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX.AbilityBarDeFX extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
 	// settings
 	// TODO: make these configurable
@@ -21,8 +22,8 @@ class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX.AbilityBarDeFX extends com.E
 	
 	private var _sheet:MovieClip;
 	
-	public function AbilityBarDeFX(data:Object) {
-		super(data);
+	public function AbilityBarDeFX(wrapper:PluginWrapper) {
+		super(wrapper);
 		
 		_lastSlot = ProjectUtils.GetUint32TweakValue("PlayerMaxActiveSpells") - 1;
 	}

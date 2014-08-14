@@ -1,24 +1,24 @@
 import com.ElTorqiro.UITweaks.Enums.States;
 import GUIFramework.ClipNode;
+import com.ElTorqiro.UITweaks.PluginWrapper;
 
-class com.ElTorqiro.UITweaks.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.PluginBase {
 	
 	private var _active:Boolean = false;
 	private var _state:Number;
 	
-	private var _data:Object;
+	private var _wrapper:PluginWrapper;
 
-	public function PluginBase(data:Object) {
-		_data = data;
-		
+	public function PluginBase(wrapper:PluginWrapper) {
+		_wrapper = wrapper;
 		state = States.PluginInactive;
 	}
 	
-	private function Activate() {
+	public function Activate() {
 		state = States.PluginActive;
 	}
 	
-	private function Deactivate() {
+	public function Deactivate() {
 		state = States.PluginInactive;
 	}
 	
@@ -34,5 +34,5 @@ class com.ElTorqiro.UITweaks.PluginBase {
 	}
 	
 	// readonly
-	public function get clipNode():ClipNode { return _data.clipNode; };
+	public function get clipNode():ClipNode { return _wrapper.clipNode; };
 }

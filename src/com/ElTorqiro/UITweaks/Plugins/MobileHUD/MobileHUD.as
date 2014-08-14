@@ -1,5 +1,5 @@
 import com.GameInterface.UtilsBase;
-import com.ElTorqiro.UITweaks.PluginBase;
+import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import flash.geom.Point;
 import mx.utils.Delegate;
 import com.Utils.HUDController;
@@ -8,9 +8,10 @@ import com.GameInterface.DistributedValue;
 import flash.filters.GlowFilter;
 import com.GameInterface.Tooltip.TooltipUtils;
 import com.GameInterface.Tooltip.TooltipInterface;
+import com.ElTorqiro.UITweaks.PluginWrapper;
 
 
-class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD extends com.ElTorqiro.UITweaks.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
 	private var _modules:Object = { };
 	private var _overlayLayer:MovieClip;
@@ -20,8 +21,8 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD extends com.ElTorqiro.U
 	
 	public static var Configuration:Object;
 	
-	public function MoveAnyHUD() {
-		super();
+	public function MoveAnyHUD(wrapper:PluginWrapper) {
+		super(wrapper);
 		
 		_modules['HUDBackground'] = { };
 		_modules['AbilityBar'] = { };

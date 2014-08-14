@@ -3,6 +3,8 @@ import com.ElTorqiro.UITweaks.AddonInfo;
 import GUIFramework.ClipNode;
 import XML;
 import com.GameInterface.GUIUtils.XmlParser;
+import com.ElTorqiro.UITweaks.PluginWrapper;
+import com.ElTorqiro.UITweaks.PluginHost;
 
 import mx.utils.Delegate;
 
@@ -78,65 +80,29 @@ function onLoad():Void {
 	g_showConfig = DistributedValue.Create(AddonInfo.Name + "_ShowConfig");
 	g_showConfig.SignalChanged.Connect(ToggleConfigWindow, this);
 
-
 	// load plugins
-	LoadPluginData();
+	PluginHost.init();
+	PluginHost.SignalReady.Connect( PluginsReady, this );
+	
+	PluginHost.Load( AddonInfo.Path + '/plugins.xml' );
 }
 
-
-function LoadPluginData():Void {
+function PluginsReady():Void {
+	if ( !PluginHost.ready ) return;
 	
-	var xml:XML = new XML();
-	xml.onLoad = function(success:Boolean) {
-		// TODO: if status is 0, xml could not be parsed successfully, some user friendly message needed
-		UtilsBase.PrintChatText('loaded:' + success + ', status:' + this.status);
-		
-		var pluginsNode = this.firstChild;
-		// TODO: check if pluginsNode is actually the <plugins> node
-		UtilsBase.PrintChatText('pluginsNode:' + pluginsNode.nodeName );
-		
-		for (var aNode:XMLNode = pluginsNode.firstChild; aNode != null; aNode = aNode.nextSibling) {
+	UtilsBase.PrintChatText('plugins ready');
 
-			var plugin:Object = {
-				name: aNode.attributes.name,
-				author: aNode.attributes.author,
-				contactURL: aNode.attributes['contact-url'],
-				path: AddonInfo.Path + '/plugins/' + aNode.attributes.location,
-				id: aNode.attributes.location,
-				depth: aNode.attributes.depth,
-				subDepth: aNode.attributes['sub-depth'],
-				clipNode: undefined,
-				mc: undefined,
-				plugin: undefined
-				
-				/* settings: TODO: fetch settings from archive */
-			};
-
-			g_plugins.push( plugin );
-
-			plugin.clipNode = SFClipLoader.LoadClip( plugin.path + '/plugin.swf', AddonInfo.Path.toLowerCase() + '_' + plugin.id, false, plugin.depth, plugin.subDepth);
-			plugin.clipNode.SignalLoaded.Connect( function() {
-				this.mc = this.clipNode.m_Movie;
-				this.plugin = new this.mc.plugin( this );
-				this.plugin.Activate();
-			}
-			, plugin );
-		}
-		
-	};
+	// activate all plugins
+	for (var i:Number = 0; i < PluginHost.plugins.length; i++) {
+		PluginHost.plugins[i].Load();
+	}
 	
-	xml.ignoreWhite = true;
-	xml.load( AddonInfo.Path + '/plugins.xml' );
 }
 
 function OnModuleActivated():Void {
 	
-	// activate all plugins
-	for (var i:Number = 0; i < g_plugins.length; i++)
-	{
-		g_plugins[i].active = true;
-	}
-
+	PluginsReady();
+	
 	// show config icon
 //	g_icon._visible = true;
 	clipNode.m_Movie._visible = true;
@@ -148,9 +114,8 @@ function OnModuleDeactivated():Void {
 	g_showConfig.SetValue(false);
 	
 	// deactivate all plugins
-	for (var i:Number = 0; i < g_plugins.length; i++)
-	{
-		g_plugins[i].active = false;
+	for (var i:Number = 0; i < PluginHost.plugins.length; i++) {
+		PluginHost.plugins[i].Unload();
 	}
 	
 //	g_icon._visible = false;	

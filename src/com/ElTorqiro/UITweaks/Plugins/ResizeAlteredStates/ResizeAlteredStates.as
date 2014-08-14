@@ -1,18 +1,19 @@
 import com.GameInterface.UtilsBase;
-import com.ElTorqiro.UITweaks.PluginBase;
+import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import flash.geom.Point;
 import mx.utils.Delegate;
+import com.ElTorqiro.UITweaks.PluginWrapper;
 
 
-class com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates.ResizeAlteredStates extends com.ElTorqiro.UITweaks.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.ResizeAlteredStates.ResizeAlteredStates extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
 	private var _findTargetThrashCount:Number = 0;
 
 	private var _scale:Number = 80;
 	private var _hide:Boolean = false;
 	
-	public function ResizeAlteredStates(data:Object) {
-		super(data);
+	public function ResizeAlteredStates(wrapper:PluginWrapper) {
+		super(wrapper);
 	}
 
 	private function Activate() {
