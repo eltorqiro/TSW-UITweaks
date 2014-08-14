@@ -63,5 +63,12 @@
 		contact-url="http://forums.thesecretworld.com/"
 		location="MaxAPSPNotifications"
 	/>
+
+	<plugin
+		name="Target Of Target"
+		author="The009"
+		contact-url="http://forums.thesecretworld.com/"
+		location="TargetOfTarget"
+	/>
 	
 </plugins>

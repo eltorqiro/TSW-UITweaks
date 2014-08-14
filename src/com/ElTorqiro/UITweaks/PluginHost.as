@@ -51,8 +51,8 @@ class com.ElTorqiro.UITweaks.PluginHost {
 			plugin.contactURL = aNode.attributes['contact-url'];
 			
 			/* settings: TODO: fetch settings from archive */
-
-			plugin.onLoad = function() { this.plugin.Activate(); UtilsBase.PrintChatText('m:' + this.mc ); }
+			//plugin.onLoad = function() { this.plugin.Activate(); UtilsBase.PrintChatText('m:' + this.mc ); }
+			plugin.onLoad = function() { this.plugin.Activate(); }
 			
 			plugins.push( plugin );
 		}
