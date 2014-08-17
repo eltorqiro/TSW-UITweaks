@@ -27,7 +27,8 @@ Plugins
  * Remove Ability Bar Reflections
  * Inspection Window Statistics
  * Resize Altered States
-   
+ * Target Of Target
+ * In Combat Display Background Remover
    
 Source Code
 -----------

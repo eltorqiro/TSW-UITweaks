@@ -71,4 +71,11 @@
 		location="TargetOfTarget"
 	/>
 	
+	<plugin
+		name="In Combat Background Remover"
+		author="The009"
+		contact-url="http://forums.thesecretworld.com/"
+		location="InCombatBGRemover"
+	/>
+	
 </plugins>

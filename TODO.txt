@@ -1,0 +1,12 @@
+TO DO List ( Or Ideas to get in )
+
+The009:
+ - Make Target Of Target Movable ( In the works )
+ 
+ Ideas:
+    TeamGUI:
+      - Change the Default Team GUI to be mouse over.
+      - Add Skill Target Forwarding
+      - Add to teamgui shift Click to lock defensive target
+      - add to temgui shift RIGHT Click to enable skill target forwarding
+ 

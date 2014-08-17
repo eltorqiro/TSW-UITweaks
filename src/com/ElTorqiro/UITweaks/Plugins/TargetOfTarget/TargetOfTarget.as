@@ -31,9 +31,9 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		
 		_character = Character.GetClientCharacter();
 		_character.SignalOffensiveTargetChanged.Connect(UserTargetChanged, this);
-		offtot = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/plugins/TargetOfTarget/TOTDisplay.swf', 'OFF_TOTDisplay', false, 3, 2);
+		offtot = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/plugins/TargetOfTarget/TOTDisplay.swf', 'TOTDisplay_Offensive', false, 3, 2);
 		offtot.SignalLoaded.Connect( OFFClipLoaded, this );
-		defftot = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/plugins/TargetOfTarget/TOTDisplay.swf', 'DEFF_TOTDisplay', false, 3, 2);
+		defftot = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/plugins/TargetOfTarget/TOTDisplay.swf', 'TOTDisplay_Deffensive', false, 3, 2);
 		defftot.SignalLoaded.Connect(Layout, this);
 	}
 
@@ -113,7 +113,7 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		//defftot.m_Movie._visible = false;
 		_defensiveTargetOfTarget = undefined;
 		m_DEFFHealthBar.SetCharacter(_defensiveTargetOfTarget);
-		defftot.m_Movie.m_NameBox.I_NameField.text = "";
+		defftot.m_Movie.m_NameBox.i_NameField.text = "";
 	}
 	/**
 	 * 
@@ -161,7 +161,4 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		m_DragProxy.unloadMovie();
 		m_DragProxy.removeMovieClip();
 	}
-		
-		
-
 }
