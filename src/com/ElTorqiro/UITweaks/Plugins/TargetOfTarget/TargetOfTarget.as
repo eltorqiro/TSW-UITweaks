@@ -2,14 +2,12 @@ import com.GameInterface.UtilsBase;
 import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 import com.ElTorqiro.UITweaks.PluginWrapper;
-import com.GameInterface.Game.Character
+import com.GameInterface.Game.Character;
 import com.Utils.ID32;
-import gfx.controls.TextArea;
-import GUIFramework.ClipNode;
-import GUIFramework.SFClipLoader;
 import com.Components.HealthBar;
 import mx.utils.Delegate;
 import gfx.core.UIComponent;
+import com.GameInterface.Game.TargetingInterface;
 
 class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
@@ -47,27 +45,47 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		
 		_character = Character.GetClientCharacter();
 		_character.SignalOffensiveTargetChanged.Connect(UserTargetChanged, this);
-		
+
 		m_Offensive = _wrapper.mc.attachMovie( 'totPanel', 'm_Offensive', _wrapper.mc.getNextHighestDepth() );
 		m_Defensive = _wrapper.mc.attachMovie( 'totPanel', 'm_Defensive', _wrapper.mc.getNextHighestDepth() );
 
-		HealthBar( m_Offensive.m_HealthBar).SetBarScale( 80, 80 );
-		HealthBar( m_Defensive.m_HealthBar).SetBarScale( 80, 80 );
 		
-		m_Offensive.m_Background._width = m_Offensive.m_HealthBar._x + m_Offensive.m_HealthBar._width + 5;
-		m_Defensive.m_Background._width = m_Defensive.m_HealthBar._x + m_Defensive.m_HealthBar._width + 5;
+		m_Offensive.m_HealthBar.onLoad = m_Defensive.m_HealthBar.onLoad = function() {
+			
+			this.SetBarScale( 100, 100, undefined, 80 );
+			/**
+			 * Store For Later If We Decide To Make
+			 * It Shrink Horizontally
+			 *
+			
+			 //this.m_Bar._width *= 0.5;
+			this.m_ShieldBar._width *= 0.5;
+			
+			//this.PositionUpcomingShields(this.m_ShieldsOnTop);
+			this.PositionUpcomingShields = undefined;
+
+			this.m_SecondShield._x = this.m_ShieldBar._x + this.m_ShieldBar._width + 5;
+			this.m_ThirdShield._x = this.m_SecondShield._x + this.m_SecondShield._width + 2;
+			*/
+			this._parent.m_Background._width = this._x + this._width + 5;
+
+			this._parent.m_NameBox.i_NameField.autoSize = 'left';
+		};
 		
 		m_Offensive.m_Icon.gotoAndStop( 'offensive' );
 		m_Defensive.m_Icon.gotoAndStop( 'defensive' );
 		
+		m_Offensive.onClick = Delegate.create( this, function() {
+			if ( _offensiveTargetOfTarget != undefined ) {
+				TargetingInterface.SetTarget( _offensiveTargetOfTarget.GetID() );
+			}
+		});
 		
-		m_Offensive.onClick = function() {
-			UtilsBase.PrintChatText( 'offensive onClick' );
-		};
-		
-		m_Defensive.onClick = function() {
-			UtilsBase.PrintChatText( 'defensive onClick' );
-		};
+		m_Defensive.onClick = Delegate.create( this, function() {
+			if ( _defensiveTargetOfTarget != undefined ) {
+				TargetingInterface.SetTarget( _defensiveTargetOfTarget.GetID() );
+			}
+		});
 		
 		UserTargetChanged();
 		Layout();
@@ -118,7 +136,7 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		}
 		
 		else {
-			panel._visible = true; //false;
+			panel._visible = false;
 		}
 		
 	}
@@ -129,7 +147,7 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		//m_Offensive._xscale = m_Offensive._yscale = m_Defensive._xscale = m_Defensive._yscale = 65;
 		
 		m_Offensive._x = m_Defensive._x = 5; 
-		m_Offensive._y = m_Defensive._y + m_Defensive._height;
+		m_Defensive._y = m_Offensive._y + m_Offensive._height;
 	}
 
 	
