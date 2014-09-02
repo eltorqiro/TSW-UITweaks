@@ -51,6 +51,16 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		m_Offensive = _wrapper.mc.attachMovie( 'totPanel', 'm_Offensive', _wrapper.mc.getNextHighestDepth() );
 		m_Defensive = _wrapper.mc.attachMovie( 'totPanel', 'm_Defensive', _wrapper.mc.getNextHighestDepth() );
 
+		HealthBar( m_Offensive.m_HealthBar).SetBarScale( 80, 80 );
+		HealthBar( m_Defensive.m_HealthBar).SetBarScale( 80, 80 );
+		
+		m_Offensive.m_Background._width = m_Offensive.m_HealthBar._x + m_Offensive.m_HealthBar._width + 5;
+		m_Defensive.m_Background._width = m_Defensive.m_HealthBar._x + m_Defensive.m_HealthBar._width + 5;
+		
+		m_Offensive.m_Icon.gotoAndStop( 'offensive' );
+		m_Defensive.m_Icon.gotoAndStop( 'defensive' );
+		
+		
 		m_Offensive.onClick = function() {
 			UtilsBase.PrintChatText( 'offensive onClick' );
 		};
@@ -102,14 +112,13 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 	private function UpdatePanel(panel:MovieClip, character:Character):Void {
 			
 		if ( character != undefined ) {
-			
 			HealthBar( panel.m_HealthBar ).SetCharacter( character );
 			panel.m_NameBox.i_NameField.text = character.GetName();
 			panel._visible = true;
 		}
 		
 		else {
-			panel._visible = false;
+			panel._visible = true; //false;
 		}
 		
 	}
