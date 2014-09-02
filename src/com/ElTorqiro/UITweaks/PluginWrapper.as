@@ -49,8 +49,6 @@ class com.ElTorqiro.UITweaks.PluginWrapper {
 			mc = clipNode.m_Movie;
 			plugin = new mc.plugin( this );
 		}
-		//Commented To Clean Up Chat Window For Other Dev Debug
-		//UtilsBase.PrintChatText('s:' + mc);
 		
 		// fire callback
 		onLoad( this, success );

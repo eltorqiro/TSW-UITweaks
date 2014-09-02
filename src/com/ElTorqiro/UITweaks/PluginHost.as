@@ -19,6 +19,8 @@ class com.ElTorqiro.UITweaks.PluginHost {
 	private function PluginHost() {}
 
 	public static function init():Void {
+		if ( _initialised) return;
+		
 		SignalReady = new Signal();
 		_initialised = true;
 	}
@@ -38,13 +40,10 @@ class com.ElTorqiro.UITweaks.PluginHost {
 
 	private static function onLoad(success:Boolean):Void {
 		// TODO: if status is 0, xml could not be parsed successfully, some user friendly message needed
-		UtilsBase.PrintChatText('loaded:' + success + ', status:' + _xml.status);
+		//UtilsBase.PrintChatText('loaded:' + success + ', status:' + _xml.status);
 		
 		var pluginsNode = _xml.firstChild;
 		// TODO: check if pluginsNode is actually the <plugins> node
-		
-		//Commented To Clean Up Chat Window For Other Dev Debug
-		//UtilsBase.PrintChatText('pluginsNode:' + pluginsNode.nodeName );
 		
 		for (var aNode:XMLNode = pluginsNode.firstChild; aNode != null; aNode = aNode.nextSibling) {
 
@@ -53,7 +52,6 @@ class com.ElTorqiro.UITweaks.PluginHost {
 			plugin.contactURL = aNode.attributes['contact-url'];
 			
 			/* settings: TODO: fetch settings from archive */
-			//plugin.onLoad = function() { this.plugin.Activate(); UtilsBase.PrintChatText('m:' + this.mc ); }
 			plugin.onLoad = function() { this.plugin.Activate(); }
 			
 			plugins.push( plugin );
