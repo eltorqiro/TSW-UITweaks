@@ -8,6 +8,8 @@ import gfx.controls.TextArea;
 import GUIFramework.ClipNode;
 import GUIFramework.SFClipLoader;
 import com.Components.HealthBar;
+import mx.utils.Delegate;
+import gfx.core.UIComponent;
 
 class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
@@ -15,13 +17,27 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 	private var _target:Character;
 	private var _offensiveTargetOfTarget:Character;
 	private var _defensiveTargetOfTarget:Character;
-	private var offtot:ClipNode;
-	private var defftot:ClipNode;
-	private var m_OFFHealthBar:HealthBar;
-	private var m_DEFFHealthBar:HealthBar;
+	
+	// offensive & defensive panels
+	private var m_Offensive:MovieClip;
+	private var m_Defensive:MovieClip;
+	
+
+	//Stuff For Moving
 	private var m_DragProxy:MovieClip;
 	private var _dragObjects:Array;
+	
+	private var _dragging:Boolean = false;
+	private var _mouseDown:Number = -1;
 
+	// behaviour modifier keys
+	public var dualDragModifier:Number = Key.CONTROL;
+	public var dualDragButton:Number = 0;
+
+	public var singleDragModifier:Number = Key.CONTROL;
+	public var singleDragButton:Number = 1;
+
+	
 	public function TargetOfTarget(wrapper:PluginWrapper) {
 		super(wrapper);
 	}
@@ -31,10 +47,23 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		
 		_character = Character.GetClientCharacter();
 		_character.SignalOffensiveTargetChanged.Connect(UserTargetChanged, this);
-		offtot = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/plugins/TargetOfTarget/TOTDisplay.swf', 'TOTDisplay_Offensive', false, 3, 2);
-		offtot.SignalLoaded.Connect( OFFClipLoaded, this );
-		defftot = SFClipLoader.LoadClip( 'ElTorqiro_UITweaks/plugins/TargetOfTarget/TOTDisplay.swf', 'TOTDisplay_Deffensive', false, 3, 2);
-		defftot.SignalLoaded.Connect(Layout, this);
+		
+		m_Offensive = _wrapper.mc.attachMovie( 'totPanel', 'm_Offensive', _wrapper.mc.getNextHighestDepth() );
+		m_Defensive = _wrapper.mc.attachMovie( 'totPanel', 'm_Defensive', _wrapper.mc.getNextHighestDepth() );
+
+		m_Offensive.onClick = function() {
+			UtilsBase.PrintChatText( 'offensive onClick' );
+		};
+		
+		m_Defensive.onClick = function() {
+			UtilsBase.PrintChatText( 'defensive onClick' );
+		};
+		
+		UserTargetChanged();
+		Layout();
+
+		SetupGlobalMouseHandlers( m_Offensive );
+		SetupGlobalMouseHandlers( m_Defensive );
 	}
 
 	private function Deactivate() {
@@ -44,16 +73,6 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 			_target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 			_target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 		}
-		offtot.m_Movie.UnloadClip();
-		defftot.m_Movie.UnloadClip();
-	}
-	
-	
-	function OFFClipLoaded():Void {
-		
-		UserTargetChanged();
-		ClearCharacter();
-		Layout();
 	}
 	
 	
@@ -61,81 +80,56 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		if ( _target != undefined ) {
 			_target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 			_target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
-		} else {
-			ClearCharacter();
 		}
+		
 		_target = Character.GetCharacter( _character.GetOffensiveTarget() );
 		_target.SignalOffensiveTargetChanged.Connect(TargetOfTargetDisplay, this);
 		_target.SignalDefensiveTargetChanged.Connect(TargetOfTargetDisplay, this);
+
 		TargetOfTargetDisplay();
 	}
-   
-	private function TargetOfTargetDisplay():Void 
-	{
-		_offensiveTargetOfTarget = Character.GetCharacter( _target.GetOffensiveTarget() );
-		_defensiveTargetOfTarget = Character.GetCharacter( _target.GetDefensiveTarget() );
-			
-		if ( _offensiveTargetOfTarget != undefined ) {
-			m_OFFHealthBar = HealthBar(offtot.m_Movie.m_HealthBar);
-			m_OFFHealthBar.SetCharacter(_offensiveTargetOfTarget);
-			offtot.m_Movie.m_NameBox.i_NameField.text = _offensiveTargetOfTarget.GetName();
-			if ( offtot.m_Movie._visible == false) offtot.m_Movie._visible = true;
-		} else {
-			ClearCharacter();
-		}
-		
-		if ( _defensiveTargetOfTarget != undefined ){
-			UtilsBase.PrintChatText("DEFFTOT: " + _defensiveTargetOfTarget.GetName());
-			
-			m_DEFFHealthBar = HealthBar(defftot.m_Movie.m_HealthBar);
-			m_DEFFHealthBar.SetCharacter(_defensiveTargetOfTarget);
-			defftot.m_Movie.m_NameBox.i_NameField.text = _defensiveTargetOfTarget.GetName();
-			if ( defftot.m_Movie._visible == false) defftot.m_Movie._visible = true;
-			
-		}else {
-			ClearCharacerDEFF();
-		}
-	}
 
-	private function ClearCharacter():Void {
-		//set to true for debug
-		offtot.m_Movie._visible = true;
-		defftot.m_Movie._visible = true;
+	
+	private function TargetOfTargetDisplay():Void {
 		
-		_offensiveTargetOfTarget = undefined;
-		m_OFFHealthBar.SetCharacter(_offensiveTargetOfTarget);
-		offtot.m_Movie.m_NameBox.i_NameField.text = "";
-		ClearCharacerDEFF();
+		_offensiveTargetOfTarget = Character.GetCharacter( _target.GetOffensiveTarget() );
+		UpdatePanel( m_Offensive, _offensiveTargetOfTarget );
+		
+		_defensiveTargetOfTarget = Character.GetCharacter( _target.GetDefensiveTarget() );
+		UpdatePanel( m_Defensive, _defensiveTargetOfTarget );
 	}
 	
-	private function ClearCharacerDEFF():Void {
-		//Commented For Debug
-		//defftot.m_Movie._visible = false;
-		_defensiveTargetOfTarget = undefined;
-		m_DEFFHealthBar.SetCharacter(_defensiveTargetOfTarget);
-		defftot.m_Movie.m_NameBox.i_NameField.text = "";
+	private function UpdatePanel(panel:MovieClip, character:Character):Void {
+			
+		if ( character != undefined ) {
+			
+			HealthBar( panel.m_HealthBar ).SetCharacter( character );
+			panel.m_NameBox.i_NameField.text = character.GetName();
+			panel._visible = true;
+		}
+		
+		else {
+			panel._visible = false;
+		}
+		
 	}
-	/**
-	 * 
-	 * Testing Making It Movable
-	 * 
-	 * */
+	
 	
 	private function Layout():Void {
-		offtot.m_Movie._x = defftot.m_Movie._x = 5; 
-		offtot.m_Movie._y = 20;
-		defftot.m_Movie._y = offtot.m_Movie._y + offtot.m_Movie._height;
-		offtot.m_Movie._xscale = offtot.m_Movie._yscale = 65;
-		defftot.m_Movie._xscale = defftot.m_Movie._yscale = 65;
-		}
 
-	private function DragStartHandler(event:Object):Void {
-
-		m_DragProxy = m_DragProxy.createEmptyMovieClip("m_DragProxy", m_DragProxy.getNextHighestDepth());
-		_dragObjects = [ offtot.m_Movie, defftot.m_Movie ];
-		m_DragProxy.onMouseMove = DragMovementHandler;
-		m_DragProxy.startDrag();
+		//m_Offensive._xscale = m_Offensive._yscale = m_Defensive._xscale = m_Defensive._yscale = 65;
 		
+		m_Offensive._x = m_Defensive._x = 5; 
+		m_Offensive._y = m_Defensive._y + m_Defensive._height;
+	}
+
+	
+	private function DragStartHandler(clips:Array):Void {
+
+		m_DragProxy = _wrapper.mc.createEmptyMovieClip("m_DragProxy", _wrapper.mc.getNextHighestDepth());
+		_dragObjects = clips;
+		m_DragProxy.onMouseMove = Delegate.create( this, DragMovementHandler );
+		m_DragProxy.startDrag();
 	}
 	
 	private function DragMovementHandler():Void {
@@ -152,7 +146,7 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		m_DragProxy._prevY = m_DragProxy._y;		
 	}
 	
-	private function DragEndHandler(event:Object):Void {
+	private function DragEndHandler():Void {
 
 		_dragObjects = undefined;
 		
@@ -160,5 +154,54 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		m_DragProxy.stopDrag();
 		m_DragProxy.unloadMovie();
 		m_DragProxy.removeMovieClip();
+	}
+	
+	private function SetupGlobalMouseHandlers(mc:MovieClip) {
+		
+		if ( !mc ) return;
+		
+		mc.onPress = mc.onPressAux = Delegate.create(this, handleMousePress);
+		mc.onRelease = mc.onReleaseAux = Delegate.create(this, handleMouseRelease);
+		mc.onReleaseOutside = mc.onReleaseOutsideAux = Delegate.create(this, handleReleaseOutside);
+	}
+
+	private function getClickedPanel():MovieClip {
+		if ( m_Offensive.hitTest(_root._xmouse, _root._ymouse, true, true) ) return m_Offensive;
+		else return m_Defensive;
+	}
+	
+	private function handleMousePress(controllerIdx:Number, keyboardOrMouse:Number, button:Number):Void {
+
+		// only allow one mouse button to be pressed at once
+		if ( _mouseDown != -1 ) return;
+		_mouseDown = button;
+		
+		// TODO: check if no modifiers held down, and only fire click if that is the case, otherwise fire appropriate start drag etc
+		if ( Key.isDown( dualDragModifier ) && button == dualDragButton ) {
+			_dragging = true;
+			DragStartHandler( [ m_Offensive, m_Defensive ] );
+		}
+		
+		else if ( Key.isDown( singleDragModifier ) && button == singleDragButton ) {
+			_dragging = true;
+			DragStartHandler( [ getClickedPanel() ] );
+		}
+		
+		else {
+			getClickedPanel().onClick();
+		}
+		
+	}
+	
+	private function handleMouseRelease(controllerIdx:Number, keyboardOrMouse:Number, button:Number):Void {
+		// only propogate if the release is associated with the originally held down button
+		if ( _mouseDown != button ) return;
+		_mouseDown = -1;
+
+		DragEndHandler();
+	}
+	
+	private function handleReleaseOutside(controllerIdx:Number, button:Number):Void {
+		handleMouseRelease(controllerIdx, 0, button);
 	}
 }

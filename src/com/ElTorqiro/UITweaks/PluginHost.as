@@ -42,7 +42,9 @@ class com.ElTorqiro.UITweaks.PluginHost {
 		
 		var pluginsNode = _xml.firstChild;
 		// TODO: check if pluginsNode is actually the <plugins> node
-		UtilsBase.PrintChatText('pluginsNode:' + pluginsNode.nodeName );
+		
+		//Commented To Clean Up Chat Window For Other Dev Debug
+		//UtilsBase.PrintChatText('pluginsNode:' + pluginsNode.nodeName );
 		
 		for (var aNode:XMLNode = pluginsNode.firstChild; aNode != null; aNode = aNode.nextSibling) {
 

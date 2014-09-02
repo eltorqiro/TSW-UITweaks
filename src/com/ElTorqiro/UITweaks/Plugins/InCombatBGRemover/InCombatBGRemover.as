@@ -4,6 +4,7 @@ import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import flash.geom.Point;
 import com.GameInterface.Lore;
+import gfx.motion.Tween;
 
 
 class com.ElTorqiro.UITweaks.Plugins.InCombatBGRemover.InCombatBGRemover extends PluginBase {
@@ -12,8 +13,10 @@ class com.ElTorqiro.UITweaks.Plugins.InCombatBGRemover.InCombatBGRemover extends
 	private var _findTargetThrashCount:Number = 0;
 	private var _combat:MovieClip;
 	
+	//Use In Other Function ( Declaired For Compile )
 	public var isInCombat:Boolean;
 	public var m_AuxilliarySlotAchievement:Number;
+	public var Strong;
 	
 	public function TargetOfTarget(wrapper:PluginWrapper) {
 		super(wrapper);
@@ -33,27 +36,27 @@ class com.ElTorqiro.UITweaks.Plugins.InCombatBGRemover.InCombatBGRemover extends
 		
 		if ( _hideCombatBackground) {
 			
-			if ( _root.combatbackground == undefined ) {
+			if ( _root.combatbackground.i_CombatBackground == undefined ) {
 			if (_findTargetThrashCount++ == 30) _findTargetThrashCount = 0;
 			else _global.setTimeout( Delegate.create(this, FindInCombatIndicator), 10);
 			return;
-		}
+			}
 
 		_findTargetThrashCount = 0;
 		
-		UtilsBase.PrintChatText("Found Background Removing 1");
+		UtilsBase.PrintChatText("Found _root.combatbackground.i_CombatBackground");
 		
 		_combat = _root.combatbackground;
+		_combat.InCombatCheck = Delegate.create(this, InCombatCheck);	
+		_combat.SlotToggleCombat = _combat.InCombatCheck;
 		
-		_combat.SlotToggleCombat = _combat.InCombat;
-		_combat.InCombat = Delegate.create(this, InCombat);
-		_combat.InCombat(isInCombat);
+		//_combat.InCombat(isInCombat);
 		}
 	}
 	
-	private function InCombat(isInCombat){ 
-
+	public function InCombatCheck(isInCombat){ 
 		
+		UtilsBase.PrintChatText("Function Called");
 
 		if (Lore.IsLocked(m_AuxilliarySlotAchievement)) {
 			_combat.i_CombatBackground._x = 317; 
@@ -63,11 +66,16 @@ class com.ElTorqiro.UITweaks.Plugins.InCombatBGRemover.InCombatBGRemover extends
 	
 		if (isInCombat) { 
 			if ( _combat._visible == false) { _combat._visible = true; }
+			
 			UtilsBase.PrintChatText("in Combat");
-			//_combat.i_CombatBackground.tweenTo(1, { _alpha:75 }, Strong.easeIn); 
-		}else { 
+		
+			_combat.i_CombatBackground.tweenTo(1, { _alpha:75 }, Strong.easeIn); 
+		
+		} else { 
+			_combat.i_CombatBackground.tweenTo(2, { _alpha:0 }, Strong.easeOut);
 			_combat._visible = false;
-			//_combat.i_CombatBackground.tweenTo(2, { _alpha:0 }, Strong.easeOut);
+			
+			UtilsBase.PrintChatText("Not In Combat");
 		}
 	
 	}
