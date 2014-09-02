@@ -50,8 +50,6 @@ class com.ElTorqiro.UITweaks.PluginWrapper {
 			plugin = new mc.plugin( this );
 		}
 		
-		UtilsBase.PrintChatText('s:' + mc);
-		
 		// fire callback
 		onLoad( this, success );
 		

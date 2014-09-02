@@ -89,8 +89,6 @@ function onLoad():Void {
 
 function PluginsReady():Void {
 	if ( !PluginHost.ready ) return;
-	
-	UtilsBase.PrintChatText('plugins ready');
 
 	// activate all plugins
 	for (var i:Number = 0; i < PluginHost.plugins.length; i++) {
@@ -265,13 +263,6 @@ function CreateTooltipData():Void
 		g_iconTooltipData.AddAttribute("","");		
 		g_iconTooltipData.AddAttribute("", "<font face=\'_StandardFont\' size=\'12\' color=\'#FFFFFF\'><b>Icon</b>\n</font><font face=\'_StandardFont\' size=\'11\' color=\'#BFBFBF\'><b>CTRL + Left Drag</b> Move icon.\n<b>CTRL + Roll Mousewheel</b> Resize icon.\n<b>CTRL + Right Click</b> Reset icon size to 100%.</font>");
 	}
-/*
-	g_iconTooltipData.AddAttributeSplitter();
-	g_iconTooltipData.AddAttribute("","");	
-	g_iconTooltipData.AddAttribute("", "<font face=\'_StandardFont\' size=\'12\' color=\'#FFFFFF\'><b>HUD Bars</b>\n<font face=\'_StandardFont\' size=\'11\' color=\'#BFBFBF\'><b>CTRL + Left Drag</b> Move both HUD bars at once.\n<b>CTRL + Right Drag</b> Move an individual bar.\n<b>CTRL + Mouse Wheel roll</b> Scale HUD bars.</font>");
-	g_iconTooltipData.m_Padding = 8;
-	g_iconTooltipData.m_MaxWidth = 256;	
-*/
 }
 
 function CloseTooltip():Void
@@ -323,34 +314,17 @@ function CreateConfigWindow():Void
 	if ( g_configWindow )  return;
 	
 	g_configWindow = Window(attachMovie( "com.ElTorqiro.UITweaks.Config.WindowComponent", "m_ConfigWindow", getNextHighestDepth() ));
-	//g_configWindow.SetTitle(AddonInfo.Name + " v" + AddonInfo.Version);
-	//g_configWindow['m_Title'].embedFonts = true;
-	//g_configWindow['m_Title'].html = false;
-	//var textFormat:TextFormat = new TextFormat();
-	//textFormat.bold = false;
-	//textFormat.color = 0x00ccff;
-	//g_configWindow['m_Title'].setNewTextFormat( textFormat );
-	//g_configWindow['m_Title'].text = AddonInfo.Name + " v" + AddonInfo.Version;
-	//g_configWindow['m_Title'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
-	
-	//g_configWindow['m_CloseButton'].filters = [ new DropShadowFilter( 60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false ) ];
-	//g_configWindow['m_ResizeButton'].filters = [ new DropShadowFilter( 90, -90, 0x000000, 0.8, 8, 8, 2, 3, false, false, false ) ];
-	
-	//g_configWindow.ShowFooter(false);
-	//g_configWindow.ShowResizeButton(true);
-	//g_configWindow.SetMinHeight( 300 );
-	//g_configWindow.SetMinWidth( 400 );
 	
 	g_configWindow.title = AddonInfo.Name + " v" + AddonInfo.Version;
 	g_configWindow.showHelpButton = false;
 	g_configWindow.showFooter = false;
+	g_configWindow.minWidth = 500;
+	g_configWindow.minHeight = 400;
 	
-	g_configWindow.SetSize( 300, 400 );
-
 	// load the content panel
 	g_configWindow.SetContent( "com.ElTorqiro.UITweaks.Config.WindowContent" );
 
-	
+	g_configWindow.SetSize( 500, 400 );
 	
 	// set position -- rounding of the values is critical here, else it will not reposition reliably
 	g_configWindow._x = Math.round(g_settings.configWindowPosition.x);

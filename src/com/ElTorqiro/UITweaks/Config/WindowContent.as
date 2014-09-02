@@ -1,6 +1,7 @@
 import com.Components.WindowComponentContent;
 import com.Utils.Archive;
 import flash.geom.Point;
+import gfx.controls.CheckBox;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import com.GameInterface.DistributedValue;
@@ -9,6 +10,8 @@ import com.ElTorqiro.UITweaks.AddonUtils.ScrollingList;
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 
 import com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder;
+import com.ElTorqiro.UITweaks.PluginHost;
+
 
 class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 {
@@ -19,8 +22,10 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 	private var m_ContentSize:MovieClip;
 	private var m_Content:MovieClip;
 	
-	private var m_PluginListBackground:MovieClip;
+	private var m_PluginTitle:MovieClip;
+	private var m_PluginEnabled:CheckBox;
 	
+	private var m_TitlePanel:MovieClip;
 	private var panel:MovieClip;
 	
 	private var pluginList:ScrollingList;
@@ -85,63 +90,71 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 			]
 		};
 		
+		var titleConfig:Object = {
+			title: 'title panel',
+			
+			onOpen: { context: this, fn: function() {
+				ConfigOverlay( true );
+			}},
+			
+			onClose: { context: this, fn: function() {
+				ConfigOverlay( false );
+			}},
+			
+			elements: [
+				{ id: 'm_PluginTitle', type: 'section', label: 'PluginTitle', color: 0xff8800 },
+				{ id: 'm_PluginEnabled', type: 'checkbox', label: 'Enabled', data: { module: 'aaa_test' }, initial: true,
+					onChange: { context: this, fn: function(state:Boolean, data:Object) {
+						UtilsBase.PrintChatText('plugin state:' + state + ', data:' + data);
+					}}
+				}
+			]
+		};
+		
+		m_TitlePanel = createEmptyMovieClip( 'm_TitlePanel', getNextHighestDepth() );
+		m_TitlePanel._x = 210;
+		var titlePanelBuilder:ConfigPanelBuilder = new ConfigPanelBuilder( m_TitlePanel, titleConfig );
 		
 		panel = createEmptyMovieClip( 'm_ConfigPanel', getNextHighestDepth() );
-		
+		panel._x = m_TitlePanel._x;
+		panel._y = m_TitlePanel._y + m_TitlePanel._height + 20;
 		var configPanelBuilder:ConfigPanelBuilder = new ConfigPanelBuilder( panel, Configuration );
 		
 		
 		pluginList = ScrollingList( attachMovie( 'ScrollingListEnableDisableDark', 'm_PluginList', getNextHighestDepth(), { margin: 5 } ) );
-		//pluginList.rowHeight = 28;
+		pluginList.rowHeight = 22;
 		pluginList.itemRenderer = 'ScrollingListEnableDisableDarkListItemRenderer';
 		pluginList.scrollBar = 'ScrollBar';
 		
 		var data:Array = [];
-		for ( var i:Number = 0; i < g_plugins.length; i++ ) {
-			data.push( {label: 'i:' + i, enabled: true, data: { plugin: g_plugins[i] } } );
+		for ( var i:Number = 0; i < PluginHost.plugins.length; i++ ) {
+			data.push( {label: PluginHost.plugins[i].name, enabled: true, data: PluginHost.plugins[i] } );
 			
 		}
 		
 		pluginList.dataProvider = data;
 		
-		pluginList.dataProvider = [
-			{ label: 'item 1', enabled: true },
-			{ label: 'item 2', enabled: true },
-			{ label: 'item 3', enabled: false },
-			{ label: 'item 4', enabled: false },
-			{ label: 'item 5', enabled: true },
-			{ label: 'item 6', enabled: false },
-			{ label: 'item 7', enabled: false },
-			{ label: 'item 8', enabled: true },
-			{ label: 'item 9', enabled: true },
-			{ label: 'item 10', enabled: true },
-			{ label: 'item 11', enabled: false },
-			{ label: 'item 12', enabled: true },
-			{ label: 'item 13', enabled: true },
-			{ label: 'item 14', enabled: true },
-			{ label: 'item 15', enabled: false },
-			{ label: 'item 16', enabled: false },
-			{ label: 'item 17', enabled: true },
-			{ label: 'item 18', enabled: true },
-			{ label: 'item 19', enabled: false }
-		];
-		
-		
-		pluginList.height = 240;
 		pluginList.width = 200;
-		pluginList.rowHeight = 22;
-		
 		panel._x = pluginList.width + 10;
+		panel._y = m_PluginEnabled._y + m_PluginEnabled._height + 10;
 		
 		pluginList.addEventListener( 'focusIn', this, 'removeFocus' );
-		
 		pluginList.addEventListener( 'renderComplete', this, 'listrenderdone' );
+		pluginList.addEventListener( 'change', this, 'pluginListItemSelected' );
 		
-		m_PluginListBackground._height = pluginList.height;
-		m_PluginListBackground._width = pluginList.width;		
+		pluginList.selectedIndex = 0;
 		
 		SignalSizeChanged.Emit();
 		//SetSize( this._width, this._height );
+	}
+
+	private function pluginListItemSelected(event:Object) {
+		m_PluginTitle.textField.text = pluginList.dataProvider[ pluginList.selectedIndex ].label;
+		m_PluginEnabled.selected = pluginList.dataProvider[ pluginList.selectedIndex ].enabled;
+		
+		panel.clear();
+		
+		
 	}
 	
 	private function listrenderdone():Void {
@@ -168,19 +181,11 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 	 * this is the all-important override that makes window resizing work properly
 	 */
     public function SetSize(width:Number, height:Number) {	
-		super.SetSize( width, height );
 
 		// this seems to happen asynchronously as if enabled it can finish rendering *after* the following commands have happened (and even the parent window layout)
 		// which causes the interior content to be the 'right size', but the parent window to be too large, especially on vertical size reduction
 		
-		//pluginList.height = 10;
-		//m_PluginListBackground._height = 10;
-		
 		pluginList.height = height;
-		m_PluginListBackground._height = pluginList.height;
-		m_PluginListBackground._width = pluginList.width;
-        
-		UtilsBase.PrintChatText('w:' + width + ', h:' + height);
 		
 		SignalSizeChanged.Emit();	// must fire this signal, else the parent WinComp container never gets resized, only the inner content does
 	}	

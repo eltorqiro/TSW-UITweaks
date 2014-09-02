@@ -67,24 +67,25 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		for ( var i:Number = 0; i < elements.length; i++ ) {
 			
 			var el:Object = elements[i];
+			var id:String = el.id == undefined ? 'm_el_' + _currentColumn.elements.length : el.id;
 			
 			switch( el.type ) {
 				
 				// new section, with or without label
 				case 'section':
-					addSection( el.label, el.color );
+					addSection( id, el.label, el.color );
 				break;
 				
 				case 'checkbox':
-					addCheckbox( el.label, el.data, el.initial, el.onChange );
+					addCheckbox( id, el.label, el.data, el.initial, el.onChange );
 				break;
 				
 				case 'dropdown':
-					addDropdown( el.label, el.data, el.items, el.initial, el.onChange );
+					addDropdown( id, el.label, el.data, el.items, el.initial, el.onChange );
 				break;
 				
 				case 'slider':
-					addSlider( el.label, el.data, el.min, el.max, el.initial, el.snap, el.onChange );
+					addSlider( id, el.label, el.data, el.min, el.max, el.initial, el.snap, el.onChange );
 				break;
 			}
 			
@@ -120,7 +121,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		});
 	}
 	
-	private function addSection(label:String, color:Number):Void {
+	private function addSection(id:String, label:String, color:Number):Void {
 		UtilsBase.PrintChatText('addSection');
 		// reposition section if not at top of column
 		if ( _currentColumn.cursor.y > 0 ) {
@@ -131,7 +132,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		_currentColumn.cursor.x = 0;
 		
 		if( label.length > 0 ) {
-			var el:MovieClip = _currentColumn.mc.attachMovie( 'SectionLabel', 'm_el_' + _currentColumn.elements.length, _currentColumn.mc.getNextHighestDepth() );
+			var el:MovieClip = _currentColumn.mc.attachMovie( 'SectionLabel', id, _currentColumn.mc.getNextHighestDepth() );
 			_currentColumn.elements.push( el );
 			
 			var textFormat:TextFormat = new TextFormat();
@@ -150,10 +151,10 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		}
 	}
 	
-	private function addCheckbox(label:String, data:Object, initial:Boolean, onChange:Object ):Void {
+	private function addCheckbox(id:String, label:String, data:Object, initial:Boolean, onChange:Object ):Void {
 		UtilsBase.PrintChatText('addCheckbox');
 		
-		var el:CheckBox = _currentColumn.mc.attachMovie( 'CheckboxDark', 'm_el_' + _currentColumn.elements.length, _currentColumn.mc.getNextHighestDepth() );
+		var el:CheckBox = _currentColumn.mc.attachMovie( 'CheckboxDark', id, _currentColumn.mc.getNextHighestDepth() );
 		_currentColumn.elements.push( el );
 
 		el.label = label;
@@ -174,10 +175,10 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		_currentColumn.cursor.y += el._height;
 	}
 
-	private function addDropdown(label:String, data:Object, items:Array, initial:Number, onChange:Object ):Void {
+	private function addDropdown(id:String, label:String, data:Object, items:Array, initial:Number, onChange:Object ):Void {
 		UtilsBase.PrintChatText('addDropdown');
 		
-		var el:DropdownMenu = _currentColumn.mc.attachMovie( 'DropdownGray', 'm_el_' + _currentColumn.elements.length, _currentColumn.mc.getNextHighestDepth() );
+		var el:DropdownMenu = _currentColumn.mc.attachMovie( 'DropdownGray', id, _currentColumn.mc.getNextHighestDepth() );
 		_currentColumn.elements.push( el );
 
 		// TODO: implement label for dropdown
@@ -212,10 +213,10 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		_currentColumn.cursor.y += el._height;
 	}
 
-	private function addSlider(label:String, data:Object, min:Number, max:Number, initial:Number, snap:Number, onChange:Object ):Void {
+	private function addSlider(id:String, label:String, data:Object, min:Number, max:Number, initial:Number, snap:Number, onChange:Object ):Void {
 		UtilsBase.PrintChatText('addSlider');
 		
-		var el:Slider = _currentColumn.mc.attachMovie( 'Slider', 'm_el_' + _currentColumn.elements.length, _currentColumn.mc.getNextHighestDepth() );
+		var el:Slider = _currentColumn.mc.attachMovie( 'Slider', id, _currentColumn.mc.getNextHighestDepth() );
 		_currentColumn.elements.push( el );
 
 		el['labelTextField'].text = label;
