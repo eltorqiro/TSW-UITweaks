@@ -47,10 +47,13 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 	private function Activate() {
 		super.Activate();
 		
-		//Get Settings
+		//Get Display Settings
 		_showDefTargetWindow = true; //settings.FindEntry( 'showDefTarget', true );
 		_showOffTargetWindow = true; //settings.FindEntry( 'showOffTarget', true );
 		
+		//Get Display Lications
+		var offDisplayLocation:Point =  undefined; //settings.FindEntry( 'offSaveLocation', undefined );
+		var defDisplayLication:Point =  undefined; //settings.FindEntry( 'defSaveLocation', undefined );
 		
 		_character = Character.GetClientCharacter();
 		_character.SignalOffensiveTargetChanged.Connect(UserTargetChanged, this);
@@ -87,6 +90,23 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 
 		SetupGlobalMouseHandlers( m_Offensive );
 		SetupGlobalMouseHandlers( m_Defensive );
+		
+		//Set Display Locations
+		if ( offDisplayLocation != undefined) {
+			m_Offensive._x = offDisplayLocation.x;
+			m_Offensive._y = offDisplayLocation.y;
+		}
+		else {
+			DefaultLayout("offDisplayLocation");
+		}
+	
+		if ( defDisplayLication != undefined ) {
+			m_Defensive._x = defDisplayLication.x;
+			m_Defensive._y = defDisplayLication.y;
+		}
+		else {
+				DefaultLayout("defDisplayLocation");
+		 }
 	}
 
 	private function Deactivate() {
@@ -145,8 +165,19 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 	}
 	
 	
-	private function Layout():Void {
-		/**
+	private function DefaultLayout(TargetWindow):Void {
+		
+		if ( TargetWindow == "offDisplayLocation" ) {
+				m_Offensive._x = _root.targetinfo._x + _root.targetinfo._width + 2;
+				m_Offensive._y =  Stage.visibleRect.height - 300;
+		}
+		
+		if ( TargetWindow == "defDisplayLocation" ) {
+			m_Defensive._x = m_Offensive._x;
+			m_Defensive._y = m_Offensive._y + m_Defensive._height + 1;
+		}
+
+		/*
 		 * Store For Later If We Decide To Make
 		 * It Shrink Horizontally
 		 *
@@ -160,8 +191,6 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		this.m_SecondShield._x = this.m_ShieldBar._x + this.m_ShieldBar._width + 5;
 		this.m_ThirdShield._x = this.m_SecondShield._x + this.m_SecondShield._width + 2;
 		*/
-		m_Offensive._x = m_Defensive._x = 5; 
-		m_Defensive._y = m_Offensive._y + m_Offensive._height;
 	}
 
 	
