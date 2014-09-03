@@ -48,8 +48,8 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		super.Activate();
 		
 		//Get Settings
-		_showDefTargetWindow = settings.FindEntry( 'showDefTarget', true );
-		_showOffTargetWindow = settings.FindEntry( 'showOffTarget', true );
+		_showDefTargetWindow = true; //settings.FindEntry( 'showDefTarget', true );
+		_showOffTargetWindow = true; //settings.FindEntry( 'showOffTarget', true );
 		
 		
 		_character = Character.GetClientCharacter();
@@ -136,7 +136,7 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 			HealthBar( panel.m_HealthBar ).SetCharacter( character );
 			panel.m_NameBox.i_NameField.text = character.GetName();
 			
-			panel._visible = (panel == m_Offensive && _showOffensiveTargetWindow) || (panel == m_Defensive && _showDefensiveTargetWindow);
+			panel._visible = (panel == m_Offensive && _showOffTargetWindow) || (panel == m_Defensive && _showDefTargetWindow);
 		}
 		else {
 			panel._visible = false;
