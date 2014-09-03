@@ -1,22 +1,16 @@
 import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.ElTorqiro.UITweaks.PluginWrapper;
-import mx.utils.Delegate;
-import com.GameInterface.UtilsBase;
+import com.Utils.HUDController;
 import flash.geom.Point;
-import com.GameInterface.Lore;
-import gfx.motion.Tween;
+import mx.utils.Delegate;
 
 
 class com.ElTorqiro.UITweaks.Plugins.InCombatBGRemover.InCombatBGRemover extends PluginBase {
 	
-	private var _hideCombatBackground:Boolean = true;
 	private var _findTargetThrashCount:Number = 0;
-	private var _combat:MovieClip;
 	
-	//Use In Other Function ( Declaired For Compile )
-	public var isInCombat:Boolean;
-	public var m_AuxilliarySlotAchievement:Number;
-	public var Strong;
+	private var _originalPosition:Point;
+	private var _hudBackgroundRegistered:MovieClip;
 	
 	public function TargetOfTarget(wrapper:PluginWrapper) {
 		super(wrapper);
@@ -24,60 +18,46 @@ class com.ElTorqiro.UITweaks.Plugins.InCombatBGRemover.InCombatBGRemover extends
 
 	private function Activate() {
 		super.Activate();
-		
-		FindInCombatIndicator();
+		_global.setTimeout( Delegate.create(this, FindInCombatIndicator), 1000 );
 	}
 
 	private function Deactivate() {
 		super.Deactivate();
+		
+		_root.combatbackground.i_CombatBackground._y = _originalPosition.y;
+		
+		if( _hudBackgroundRegistered ) HUDController.RegisterModule( 'HUDBackground', _hudBackgroundRegistered );
 	}
 	
 	private function FindInCombatIndicator():Void {
-		
-		if ( _hideCombatBackground) {
-			
-			if ( _root.combatbackground.i_CombatBackground == undefined ) {
+
+		if ( _root.combatbackground == undefined ) {
 			if (_findTargetThrashCount++ == 30) _findTargetThrashCount = 0;
 			else _global.setTimeout( Delegate.create(this, FindInCombatIndicator), 10);
 			return;
-			}
-
+		}
 		_findTargetThrashCount = 0;
-		
-		UtilsBase.PrintChatText("Found _root.combatbackground.i_CombatBackground");
-		
-		_combat = _root.combatbackground;
-		_combat.InCombatCheck = Delegate.create(this, InCombatCheck);	
-		_combat.SlotToggleCombat = _combat.InCombatCheck;
-		
-		//_combat.InCombat(isInCombat);
-		}
-	}
-	
-	public function InCombatCheck(isInCombat){ 
-		
-		UtilsBase.PrintChatText("Function Called");
 
-		if (Lore.IsLocked(m_AuxilliarySlotAchievement)) {
-			_combat.i_CombatBackground._x = 317; 
-		} else { 
-			_combat.i_CombatBackground._x = 345;
-		}
-	
-		if (isInCombat) { 
-			if ( _combat._visible == false) { _combat._visible = true; }
-			
-			UtilsBase.PrintChatText("in Combat");
+		var hudBackground:MovieClip = _root.combatbackground;
 		
-			_combat.i_CombatBackground.tweenTo(1, { _alpha:75 }, Strong.easeIn); 
+		/*
+		 * unregister module from Funcom's HUDController
+		 * no more Layout() will occur on the HUDBackground, such as when resolution or scale changes
+		 * or when the user changes the HUD scale slider in the options
+		 */
 		
-		} else { 
-			_combat.i_CombatBackground.tweenTo(2, { _alpha:0 }, Strong.easeOut);
-			_combat._visible = false;
-			
-			UtilsBase.PrintChatText("Not In Combat");
-		}
-	
+		_hudBackgroundRegistered = HUDController.GetModule( 'HUDBackground' );
+    
+		if ( _hudBackgroundRegistered != hudBackground ) return;
+		HUDController.DeregisterModule( 'HUDBackground' );
+
+		var position:Point = new Point( hudBackground.i_CombatBackground._x, hudBackground.i_CombatBackground._y );
+		_originalPosition = new Point( hudBackground.i_CombatBackground._x, hudBackground.i_CombatBackground._y );
+		
+		hudBackground.localToGlobal( position );
+		hudBackground._y += 500;
+		hudBackground.globalToLocal( position );
+		hudBackground.i_CombatBackground._y = position.y;
 	}
-		
+
 }

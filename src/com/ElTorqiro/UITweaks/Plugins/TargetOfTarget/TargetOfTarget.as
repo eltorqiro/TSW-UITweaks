@@ -3,11 +3,13 @@ import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 import com.ElTorqiro.UITweaks.PluginWrapper;
 import com.GameInterface.Game.Character;
+import com.Utils.Archive;
 import com.Utils.ID32;
 import com.Components.HealthBar;
 import mx.utils.Delegate;
 import gfx.core.UIComponent;
 import com.GameInterface.Game.TargetingInterface;
+import flash.geom.Point;
 
 class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
 
@@ -20,7 +22,6 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 	private var m_Offensive:MovieClip;
 	private var m_Defensive:MovieClip;
 	
-
 	//Stuff For Moving
 	private var m_DragProxy:MovieClip;
 	private var _dragObjects:Array;
@@ -34,7 +35,10 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 
 	public var singleDragModifier:Number = Key.CONTROL;
 	public var singleDragButton:Number = 1;
-
+	
+	//Setting Varables
+	private var _showDefTargetWindow:Boolean;
+	private var _showOffTargetWindow:Boolean;
 	
 	public function TargetOfTarget(wrapper:PluginWrapper) {
 		super(wrapper);
@@ -43,33 +47,27 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 	private function Activate() {
 		super.Activate();
 		
+		//Get Settings
+		_showDefTargetWindow = settings.FindEntry( 'showDefTarget', true );
+		_showOffTargetWindow = settings.FindEntry( 'showOffTarget', true );
+		
+		
 		_character = Character.GetClientCharacter();
 		_character.SignalOffensiveTargetChanged.Connect(UserTargetChanged, this);
 
 		m_Offensive = _wrapper.mc.attachMovie( 'totPanel', 'm_Offensive', _wrapper.mc.getNextHighestDepth() );
 		m_Defensive = _wrapper.mc.attachMovie( 'totPanel', 'm_Defensive', _wrapper.mc.getNextHighestDepth() );
 
+		m_Offensive.m_HealthBar.UserTargetChanged = m_Defensive.m_HealthBar.UserTargetChanged = Delegate.create( this, UserTargetChanged );
 		
 		m_Offensive.m_HealthBar.onLoad = m_Defensive.m_HealthBar.onLoad = function() {
 			
 			this.SetBarScale( 100, 100, undefined, 80 );
-			/**
-			 * Store For Later If We Decide To Make
-			 * It Shrink Horizontally
-			 *
-			
-			 //this.m_Bar._width *= 0.5;
-			this.m_ShieldBar._width *= 0.5;
-			
-			//this.PositionUpcomingShields(this.m_ShieldsOnTop);
-			this.PositionUpcomingShields = undefined;
-
-			this.m_SecondShield._x = this.m_ShieldBar._x + this.m_ShieldBar._width + 5;
-			this.m_ThirdShield._x = this.m_SecondShield._x + this.m_SecondShield._width + 2;
-			*/
+	
 			this._parent.m_Background._width = this._x + this._width + 5;
-
 			this._parent.m_NameBox.i_NameField.autoSize = 'left';
+			
+			this.UserTargetChanged();
 		};
 		
 		m_Offensive.m_Icon.gotoAndStop( 'offensive' );
@@ -86,9 +84,6 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 				TargetingInterface.SetTarget( _defensiveTargetOfTarget.GetID() );
 			}
 		});
-		
-		UserTargetChanged();
-		Layout();
 
 		SetupGlobalMouseHandlers( m_Offensive );
 		SetupGlobalMouseHandlers( m_Defensive );
@@ -101,6 +96,14 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 			_target.SignalOffensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 			_target.SignalDefensiveTargetChanged.Disconnect( TargetOfTargetDisplay, this );
 		}
+	
+		var settings:Archive = new Archive();
+		
+		settings.AddEntry( "offSaveLocation", new Point( m_Offensive._x, m_Offensive._y));
+		settings.AddEntry( "defSaveLocation", new Point( m_Defensive._x, m_Defensive._y));
+		settings.AddEntry( "showDefTarget", _showDefTargetWindow);
+		settings.AddEntry( "showOffTarget", _showOffTargetWindow);
+		
 	}
 	
 	
@@ -119,7 +122,7 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 
 	
 	private function TargetOfTargetDisplay():Void {
-		
+
 		_offensiveTargetOfTarget = Character.GetCharacter( _target.GetOffensiveTarget() );
 		UpdatePanel( m_Offensive, _offensiveTargetOfTarget );
 		
@@ -132,9 +135,9 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 		if ( character != undefined ) {
 			HealthBar( panel.m_HealthBar ).SetCharacter( character );
 			panel.m_NameBox.i_NameField.text = character.GetName();
-			panel._visible = true;
+			
+			panel._visible = (panel == m_Offensive && _showOffensiveTargetWindow) || (panel == m_Defensive && _showDefensiveTargetWindow);
 		}
-		
 		else {
 			panel._visible = false;
 		}
@@ -143,9 +146,20 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget extends com.E
 	
 	
 	private function Layout():Void {
-
-		//m_Offensive._xscale = m_Offensive._yscale = m_Defensive._xscale = m_Defensive._yscale = 65;
+		/**
+		 * Store For Later If We Decide To Make
+		 * It Shrink Horizontally
+		 *
 		
+		 //this.m_Bar._width *= 0.5;
+		this.m_ShieldBar._width *= 0.5;
+		
+		//this.PositionUpcomingShields(this.m_ShieldsOnTop);
+		this.PositionUpcomingShields = undefined;
+
+		this.m_SecondShield._x = this.m_ShieldBar._x + this.m_ShieldBar._width + 5;
+		this.m_ThirdShield._x = this.m_SecondShield._x + this.m_SecondShield._width + 2;
+		*/
 		m_Offensive._x = m_Defensive._x = 5; 
 		m_Defensive._y = m_Offensive._y + m_Offensive._height;
 	}
