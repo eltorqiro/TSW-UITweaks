@@ -53,6 +53,7 @@ class com.ElTorqiro.UITweaks.PluginHost {
 		for (var aNode:XMLNode = pluginsNode.firstChild; aNode != null; aNode = aNode.nextSibling) {
 
 			var plugin:Plugin = new Plugin( AddonInfo.Path.toLowerCase() + '_' + aNode.attributes.location, aNode.attributes.name, AddonInfo.Path + '/plugins/' + aNode.attributes.location, aNode.attributes.depth, aNode.attributes['sub-depth']);
+			plugin.description = aNode.attributes.description;
 			plugin.author = aNode.attributes.author;
 			plugin.contactURL = aNode.attributes['contact-url'];
 			

@@ -140,13 +140,13 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 	}
 	
     //Layout
-    public function Layout():Void
-    {
+    public function Layout():Void {
+		
         var contentSize:Point = m_Content.GetSize();
 		//var contentSize:Point = new Point( m_Background._width - _padding * 2, m_Background._height - m_Title._y - m_Title._height - padding * 2 );
 		
-		if ( contentSize.x + _padding * 2 < _minWidth ) contentSize.x = _minWidth;
-		if ( contentSize.y + _nonContentHeight < _minHeight ) contentSize.y = _minHeight;
+		//if ( contentSize.x + _padding * 2 < _minWidth ) contentSize.x = _minWidth;
+		//if ( contentSize.y + _nonContentHeight < _minHeight ) contentSize.y = _minHeight;
 		
 		
         m_Content._x = m_Background._x + _padding;
@@ -289,12 +289,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 		
 		m_Content.SetSize( resizeWidth - _padding * 2, resizeHeight - _nonContentHeight);
 		
-		/*
-		m_Background._width = width;
-		m_Background._height = height;
-		Layout();
-		*/
-        
         SignalSizeChanged.Emit();
     }
     
@@ -327,7 +321,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 
 	
     private function layoutButtons():Void {
-		var offset:Number = m_Background._width - 6;// _padding;
+		var offset:Number = m_Background._width - _padding;
 		var buttons:Array = [ m_CloseButton, m_HelpButton ];
 		
 		for ( var i:Number = 0; i < buttons.length; i++ ) {

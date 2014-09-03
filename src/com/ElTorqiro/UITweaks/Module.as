@@ -306,8 +306,8 @@ function ToggleConfigWindow():Void {
 	g_showConfig.GetValue() ? CreateConfigWindow() : DestroyConfigWindow();
 }
 
-function CreateConfigWindow():Void
-{
+function CreateConfigWindow():Void {
+	
 	// do nothing if window already open
 	if ( g_configWindow )  return;
 	
@@ -334,8 +334,8 @@ function CreateConfigWindow():Void
 	}, this);
 }
 
-function DestroyConfigWindow():Void
-{
+function DestroyConfigWindow():Void {
+	
 	if ( g_configWindow )
 	{	
 		g_configWindow.GetContent().Destroy();

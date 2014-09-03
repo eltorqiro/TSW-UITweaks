@@ -12,6 +12,7 @@ class com.ElTorqiro.UITweaks.Plugin {
 	public var id:String;
 	
 	public var name:String;
+	public var description:String;
 	public var author:String;
 	public var contactURL:String;
 	

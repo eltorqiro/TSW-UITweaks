@@ -155,7 +155,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	private function addCheckbox(id:String, label:String, data:Object, initial:Boolean, onChange:Object ):Void {
 		//UtilsBase.PrintChatText('addCheckbox');
 		
-		var el:CheckBox = _currentColumn.mc.attachMovie( 'CheckboxDark', id, _currentColumn.mc.getNextHighestDepth() );
+		var el:CheckBox = _currentColumn.mc.attachMovie( 'CheckboxDark', id, _currentColumn.mc.getNextHighestDepth(), { autoSize: 'left' } );
 		_currentColumn.elements.push( el );
 
 		el.label = label;

@@ -2,7 +2,8 @@
 <plugins>
 	<!-- plugin nodes have no children and have the following attributes:
 	
-		name: 			your plugin name
+		name: 			unique plugin name
+		description:	brief description of the plugin; will be shown in the config window
 		author: 		your name (e.g. TSW forum name or game character name)
 		contact-url: 	full url of a contact page for the plugin, such as a TSW forum thread
 		location: 		directory beneath the plugins/ folder that contains your plugin, no trailing slash
@@ -24,6 +25,7 @@
 	
 	<plugin
 		name="Ability Bar DeFX"
+		description="Removes several FX elements from the ability bar, such as button gloss and reflections."
 		author="ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="AbilityBarDeFX"
@@ -31,6 +33,7 @@
 	
 	<plugin
 		name="Inspecto Petronum"
+		description="Reworks the entire Inspection window, adding character statistics and better layout of gear."
 		author="ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="InspectoPetronum"
@@ -38,6 +41,7 @@
 	
 	<plugin
 		name="Mobile HUD"
+		description="Allows any HUD element to be repositioned on the screen."
 		author="ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="MobileHUD"
@@ -45,6 +49,7 @@
 
 	<plugin
 		name="Resize Altered States"
+		description="Resizes the combat states icons slightly in the Player Info and Target Window panels."
 		author="The009"
 		contact-url="http://forums.thesecretworld.com/"
 		location="ResizeAlteredStates"
@@ -52,6 +57,7 @@
 
 	<plugin
 		name="Character Sheet Zoom"
+		description="Prevents the character sheet from changing size based on camera zoom."
 		author="ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="CharacterSheetZoom"
@@ -59,6 +65,7 @@
 
 	<plugin
 		name="Max AP/SP Notifications"
+		description="Hides the AP/SP notification icons when at maximum levels of each."
 		author="ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="MaxAPSPNotifications"
