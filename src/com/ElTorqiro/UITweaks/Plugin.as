@@ -1,10 +1,12 @@
+import com.Utils.Archive;
+import com.Utils.Signal;
 import GUIFramework.ClipNode;
 import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import GUIFramework.SFClipLoader;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 
-class com.ElTorqiro.UITweaks.PluginWrapper {
+class com.ElTorqiro.UITweaks.Plugin {
 
 	// properties
 	public var id:String;
@@ -21,23 +23,28 @@ class com.ElTorqiro.UITweaks.PluginWrapper {
 	
 	public var mc:MovieClip;
 	
-	public var plugin:PluginBase;
-
-	public var enabled:Boolean;
+	private var _enabled:Boolean;
+	private var _isLoaded:Boolean;
+	public  var settings:Archive;
 	
-	public var state:Number;
+	public var state:String;
 	
+	public var SignalLoaded:Signal;
 	
-	public function PluginWrapper(id:String, name:String, path:String, depth:Number, subDepth:Number) {
+	public function Plugin(id:String, name:String, path:String, depth:Number, subDepth:Number) {
 		
 		this.id = id;
 		this.name = name;
 		this.path = path;
-		this.depth = depth;
-		this.subDepth = subDepth;
+		this.depth = depth ? depth : 3;
+		this.subDepth = subDepth ? subDepth : 0;
+		
+		SignalLoaded = new Signal();
 	}
 
 	public function Load():Void {
+		
+		if ( _isLoaded ) Unload();
 		
 		clipNode = SFClipLoader.LoadClip( path + '/plugin.swf', id, false, depth, subDepth);
 		clipNode.SignalLoaded.Connect( clipLoaded, this );
@@ -47,24 +54,26 @@ class com.ElTorqiro.UITweaks.PluginWrapper {
 
 		if ( success ) {
 			mc = clipNode.m_Movie;
-			plugin = new mc.plugin( this );
+			mc.Activate();
+			
+			_enabled = true;
+			_isLoaded = true;
 		}
-		
-		// fire callback
-		onLoad( this, success );
+
+		SignalLoaded.Emit( this, success );
 		
 		// TODO: implement failure to load message / handling
 	}
 	
-	public function onLoad(pluginWrapper:PluginWrapper, success:Boolean):Void {}
-	
 	public function Unload():Void {
 		
-		plugin.Deactivate();
+		mc.Deactivate();
 		mc.UnloadClip();
 		
-		onUnload( this );
+		_enabled = false;
+		_isLoaded = false;
 	}
-	
-	public function onUnload(pluginWrapper:PluginWrapper):Void {}
+
+	public function get enabled():Boolean { return _enabled };
+	public function get isLoaded():Boolean { return _isLoaded };
 }

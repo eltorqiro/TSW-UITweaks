@@ -50,11 +50,7 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 	{
 		super.configUI();
 
-		//m_Content = createEmptyMovieClip("m_Content", getNextHighestDepth() );
-		//m_ContentSize = attachMovie( 'ConfigWindowContentSize', 'm_ContentSize', getNextHighestDepth() );
-		//m_ContentSize._visible = false;
-		//m_ContentSize.hitTestDisable = true;
-		
+		/*
 		var Configuration:Object = {
 			title: 'test',
 			
@@ -89,6 +85,7 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 				}
 			]
 		};
+		*/
 		
 		var titleConfig:Object = {
 			title: 'title panel',
@@ -102,7 +99,7 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 			}},
 			
 			elements: [
-				{ id: 'm_PluginTitle', type: 'section', label: 'PluginTitle', color: 0xff8800 },
+				{ id: 'm_PluginTitle', type: 'section', label: 'PluginTitle', color: 0x00ccff },
 				{ id: 'm_PluginEnabled', type: 'checkbox', label: 'Enabled', data: { module: 'aaa_test' }, initial: true,
 					onChange: { context: this, fn: function(state:Boolean, data:Object) {
 						UtilsBase.PrintChatText('plugin state:' + state + ', data:' + data);
@@ -114,10 +111,14 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		m_TitlePanel = createEmptyMovieClip( 'm_TitlePanel', getNextHighestDepth() );
 		m_TitlePanel._x = 210;
 		var titlePanelBuilder:ConfigPanelBuilder = new ConfigPanelBuilder( m_TitlePanel, titleConfig );
-		
+		/*
+		lineStyle( 2, 0x666666, 0.8, true );
+		moveTo( 0, m_TitlePanel._height );
+		lineTo( m_TitlePanel._width, m_TitlePanel._height );
+		*/
 		panel = createEmptyMovieClip( 'm_ConfigPanel', getNextHighestDepth() );
 		panel._x = m_TitlePanel._x;
-		panel._y = m_TitlePanel._y + m_TitlePanel._height + 20;
+		panel._y = Math.round( m_TitlePanel._y + m_TitlePanel._height + 20 );
 		var configPanelBuilder:ConfigPanelBuilder = new ConfigPanelBuilder( panel, Configuration );
 		
 		
@@ -128,13 +129,15 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		
 		var data:Array = [];
 		for ( var i:Number = 0; i < PluginHost.plugins.length; i++ ) {
-			data.push( {label: PluginHost.plugins[i].name, enabled: true, data: PluginHost.plugins[i] } );
+			data.push( {label: PluginHost.plugins[i].name, enabled: PluginHost.plugins[i].enabled, data: PluginHost.plugins[i] } );
 			
 		}
 		
 		pluginList.dataProvider = data;
 		
 		pluginList.width = 200;
+		pluginList.height = 400;
+		
 		panel._x = pluginList.width + 10;
 		panel._y = m_PluginEnabled._y + m_PluginEnabled._height + 10;
 		
@@ -149,12 +152,10 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 	}
 
 	private function pluginListItemSelected(event:Object) {
-		m_PluginTitle.textField.text = pluginList.dataProvider[ pluginList.selectedIndex ].label;
-		m_PluginEnabled.selected = pluginList.dataProvider[ pluginList.selectedIndex ].enabled;
+		m_TitlePanel.m_Column_0.m_PluginTitle.textField.text = pluginList.dataProvider[ pluginList.selectedIndex ].label;
+		m_TitlePanel.m_Column_0.m_PluginEnabled.selected = pluginList.dataProvider[ pluginList.selectedIndex ].enabled;
 		
 		panel.clear();
-		
-		
 	}
 	
 	private function listrenderdone():Void {
@@ -173,7 +174,13 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 
 	public function GetSize():Point {
 		//return new Point( m_ContentSize._width, m_ContentSize._height );
-		return new Point( _width, _height );
+		
+		//return new Point( _width, _height );
+		
+		
+		var bounds:Object = this.getBounds( _parent );
+		
+		return new Point( bounds.xMax - bounds.xMin, bounds.yMax - bounds.yMin );
 	}
 	
 	/**

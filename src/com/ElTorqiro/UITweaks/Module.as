@@ -38,9 +38,6 @@ var clipNode:ClipNode;
 // config settings
 var g_settings:Object;
 
-// holder for all plugins
-var g_plugins:Array = [];
-
 
 /**
  * OnLoad
@@ -84,20 +81,22 @@ function onLoad():Void {
 	PluginHost.init();
 	PluginHost.SignalReady.Connect( PluginsReady, this );
 	
-	PluginHost.Load( AddonInfo.Path + '/plugins.xml' );
 }
 
 function PluginsReady():Void {
 	if ( !PluginHost.ready ) return;
 
 	// activate all plugins
+/*	
 	for (var i:Number = 0; i < PluginHost.plugins.length; i++) {
 		PluginHost.plugins[i].Load();
 	}
-	
+*/	
 }
 
 function OnModuleActivated():Void {
+
+	PluginHost.Load( AddonInfo.Path + '/plugins.xml' );
 	
 	PluginsReady();
 	
@@ -303,8 +302,7 @@ function PositionIcon(x:Number, y:Number)
 }
 
 
-function ToggleConfigWindow():Void
-{
+function ToggleConfigWindow():Void {
 	g_showConfig.GetValue() ? CreateConfigWindow() : DestroyConfigWindow();
 }
 
@@ -318,13 +316,13 @@ function CreateConfigWindow():Void
 	g_configWindow.title = AddonInfo.Name + " v" + AddonInfo.Version;
 	g_configWindow.showHelpButton = false;
 	g_configWindow.showFooter = false;
-	g_configWindow.minWidth = 500;
+	g_configWindow.minWidth = 600;
 	g_configWindow.minHeight = 400;
 	
 	// load the content panel
 	g_configWindow.SetContent( "com.ElTorqiro.UITweaks.Config.WindowContent" );
 
-	g_configWindow.SetSize( 500, 400 );
+	g_configWindow.SetSize( 600, 400 );
 	
 	// set position -- rounding of the values is critical here, else it will not reposition reliably
 	g_configWindow._x = Math.round(g_settings.configWindowPosition.x);
