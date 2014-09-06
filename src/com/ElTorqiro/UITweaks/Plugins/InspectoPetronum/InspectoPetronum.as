@@ -1,11 +1,9 @@
-import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.GameInterface.DistributedValue;
 import com.GameInterface.Inventory;
 import com.GameInterface.InventoryItem;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import flash.geom.Point;
-import com.ElTorqiro.UITweaks.Enums.States;
 import com.GameInterface.Game.Shortcut;
 import com.GameInterface.ProjectUtils;
 import com.Utils.GlobalSignal;
@@ -21,9 +19,9 @@ import flash.filters.DropShadowFilter;
 import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 import com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.LDB;
 import com.Components.ItemSlot;
-import com.ElTorqiro.UITweaks.PluginWrapper;
 
-class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
+
+class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 
 	// default window finding objects
 	private var _windowSearches:Object = {};
@@ -38,20 +36,16 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum extends c
 	public var statSectionSpacing:Number = iconPadding * 3;
 	
 
-	public function InspectoPetronum(wrapper:PluginWrapper) {
-		super(wrapper);
+	public function InspectoPetronum() {
+
 	}
 	
-	private function Activate() {
-		super.Activate();
-		
+	public function Activate() {
 		// create listener
 		GlobalSignal.SignalShowInspectWindow.Connect( AttachToWindow, this );
 	}
 	
-	private function Deactivate() {
-		super.Deactivate();
-
+	public function Deactivate() {
 		// detach from listener
 		GlobalSignal.SignalShowInspectWindow.Disconnect( AttachToWindow, this );
 		

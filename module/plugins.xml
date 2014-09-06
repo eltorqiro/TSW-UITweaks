@@ -50,7 +50,7 @@
 
 	<plugin
 		name="Resize Altered States"
-		description="Slightly downsizes the combat states icons in the Player Info and Target Window panels."
+		description="Resizes or hides the combat states icons in the Player Info and Target Window panels."
 		author="The009"
 		contact-url="http://forums.thesecretworld.com/"
 		location="ResizeAlteredStates"

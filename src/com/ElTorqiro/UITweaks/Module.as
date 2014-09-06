@@ -80,8 +80,8 @@ function OnModuleDeactivated():Void {
 	// deactivate all plugins
 	var settings:Archive = new Archive();
 	
-	for (var i:Number = 0; i < g_Plugins.length; i++) {
-		var plugin:Plugin = g_Plugins[i];
+	while( g_Plugins.length ) {
+		var plugin:Plugin = Plugin(g_Plugins.pop());
 		var pluginSettings:Archive = new Archive();
 		
 		pluginSettings.AddEntry( 'enabled', plugin.enabled );
