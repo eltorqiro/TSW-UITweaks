@@ -153,6 +153,8 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		m_PluginTitle.selected = plugin.enabled;
 		m_PluginList['renderers'][m_PluginList.selectedIndex].icon.gotoAndStop( plugin.enabled ? 'enabled' : 'disabled' );
 		
+		_configPanelBuilder.Destroy();
+		
 		if ( plugin.enabled ) {
 			var pluginConfig:Object = plugin.mc.getPluginConfiguration();
 			if ( pluginConfig == undefined || pluginConfig == { } ) {

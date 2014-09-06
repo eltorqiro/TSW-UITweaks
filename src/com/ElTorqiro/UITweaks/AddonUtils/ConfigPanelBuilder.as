@@ -148,7 +148,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	
 	// run when removing/closing the panel, so the onClose event can fire
 	public function Destroy():Void {
-		UtilsBase.PrintChatText('destroy');
+		//UtilsBase.PrintChatText('destroy');
 		
 		// fire onClose event
 		if ( _onClose != undefined ) {

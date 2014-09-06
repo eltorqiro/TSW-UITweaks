@@ -1,13 +1,13 @@
 TSW-UITweaks
 ============
-Configurable tweaks for default The Secret World UI elements
+Configurable tweaks and addons for the in-game GUI in The Secret World MMO
    
-Maintained by: Eltorqiro, The009
-  
+Written and Maintained by: ElTorqiro, The009
+   
    
 User Configuration
 ------------------
-None yet, to come in future release.
+An in-game config icon is available, which also integrates with Viper's Topbar Information Overload (VTIO).  Clicking the icon opens the configuration window where each plugin can be enabled/disabled and any available plugin settings can be selected.
    
    
 Installation
@@ -20,17 +20,18 @@ Uninstallation
 Delete the directory: YOUR_TSW_DIRECTORY\Data\Gui\Customized\Flash\ElTorqiro_UITweaks
    
    
+Source Code
+-----------
+You can get the source from GitHub at https://github.com/eltorqiro/TSW-UITweaks
+   
+   
 Plugins
 =======
  * Suppress Character Sheet Scaling
  * Suppress Max AP/SP Notification icons
- * Remove Ability Bar Reflections
+ * Ability Bar DeFX
  * Inspection Window Statistics
  * Resize Altered States
-   
-   
-Source Code
------------
-You can get the source from GitHub at https://github.com/eltorqiro/TSW-UITweaks
+ * Target Of Target
+ * In Combat Display Background Remover
 
-To compile, you may also need ElTorqiro's TSW addon utils package, which is also on GitHub at https://github.com/eltorqiro/TSW-Utils
