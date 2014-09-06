@@ -1,41 +1,24 @@
-import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.GameInterface.DistributedValue;
 import com.GameInterface.Game.Character;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
-import flash.geom.Point;
-import com.GameInterface.Game.Camera;
-import com.ElTorqiro.UITweaks.Enums.States;
 import com.GameInterface.Utils;
-import com.ElTorqiro.UITweaks.PluginWrapper;
 
-class com.ElTorqiro.UITweaks.Plugins.MaxAPSPNotifications.MaxAPSPNotifications extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.MaxAPSPNotifications.MaxAPSPNotifications {
 	
 	private var _targetMC:MovieClip;
 	private var _findTargetThrashCount:Number = 0;
 	
-	// TODO: make these configurable
-	private var _suppressMaxAP:Boolean = true;
-	private var _suppressMaxSP:Boolean = true;
+	private var _suppressMaxAP:Boolean;
+	private var _suppressMaxSP:Boolean;
 
 	
-	public function MaxAPSPNotifications(wrapper:PluginWrapper) {
-		super(wrapper);
+	public function MaxAPSPNotifications() {
+		_suppressMaxAP = true;
+		_suppressMaxSP = true;
 	}
 	
-	private function Activate() {
-		super.Activate();
-		
-		Suppress();
-	}
-	
-	private function Deactivate() {
-		super.Deactivate();
-		
-		Restore();
-	}
-	
-	private function Suppress():Void {
+	public function Suppress():Void {
 		if ( _root.animawheellink.SetVisible == undefined ) {
 			if (_findTargetThrashCount++ == 30) _findTargetThrashCount = 0;
 			else _global.setTimeout( Delegate.create(this, Suppress), 10);
@@ -53,16 +36,16 @@ class com.ElTorqiro.UITweaks.Plugins.MaxAPSPNotifications.MaxAPSPNotifications e
 		var currentSP:Number = character.GetTokens(_global.Enums.Token.e_Skill_Point);
 		
 		if ( currentAP >= maxAP ) {
-			_targetMC.SetVisible(_targetMC.m_AnimaPointsIcon,false);
+			_targetMC.SetVisible(_targetMC.m_AnimaPointsIcon, !_suppressMaxAP);
 		}
 		
 		if ( currentSP >= maxSP) {
-			_targetMC.SetVisible(_targetMC.m_SkillPointsIcon,false);
+			_targetMC.SetVisible(_targetMC.m_SkillPointsIcon, !_suppressMaxSP);
 		}
 	}
 	
 	
-	private function Restore():Void {
+	public function Restore():Void {
 		if ( _targetMC == undefined ) return;
 		
 		_targetMC.SlotCharacterAlive();
@@ -76,8 +59,24 @@ class com.ElTorqiro.UITweaks.Plugins.MaxAPSPNotifications.MaxAPSPNotifications e
 	 * @param	newValue
 	 * @param	oldValue
 	 */
-	function SlotTokenAmountChanged(id, newValue, oldValue)
-	{
+	function SlotTokenAmountChanged(id, newValue, oldValue)	{
 		if ( id == 1 || id == 2 ) Suppress();
 	}
+	
+	public function get suppressMaxAP():Boolean { return _suppressMaxAP; }
+	public function set suppressMaxAP(value:Boolean):Void {
+		if ( value == undefined ) return;
+		
+		_suppressMaxAP = value;
+		Suppress();
+	}
+	
+	public function get suppressMaxSP():Boolean { return _suppressMaxSP; }
+	public function set suppressMaxSP(value:Boolean):Void {
+		if ( value == undefined ) return;
+		
+		_suppressMaxSP = value;
+		Suppress();
+	}
+	
 }

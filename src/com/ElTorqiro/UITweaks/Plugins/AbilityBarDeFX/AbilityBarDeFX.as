@@ -1,4 +1,3 @@
-import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.GameInterface.DistributedValue;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
@@ -6,41 +5,26 @@ import flash.geom.Point;
 import com.ElTorqiro.UITweaks.Enums.States;
 import com.GameInterface.Game.Shortcut;
 import com.GameInterface.ProjectUtils;
-import com.ElTorqiro.UITweaks.PluginWrapper;
 
-class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX.AbilityBarDeFX extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
+
+class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX.AbilityBarDeFX {
 
 	// settings
-	// TODO: make these configurable
 	private var _hideReflections:Boolean = true;
 	private var _hideGloss:Boolean = true;
-	private var _repositionBar:Boolean = false;	// currently unused, TODO: position bar at bottom of screen
 	
 	// utility objects
 	private var _findMCThrashCount:Number = 0;
 	private var _lastSlot:Number;
-	
-	private var _sheet:MovieClip;
-	
-	public function AbilityBarDeFX(wrapper:PluginWrapper) {
-		super(wrapper);
-		
-		_lastSlot = ProjectUtils.GetUint32TweakValue("PlayerMaxActiveSpells") - 1;
-	}
-	
-	private function Activate() {
-		super.Activate();
-		
-		Apply();
-	}
-	
-	private function Deactivate() {
-		super.Deactivate();
 
-		Restore();
+	// state
+	private var _active = false;
+	
+	public function AbilityBarDeFX() {
+		_lastSlot = ProjectUtils.GetUint32TweakValue('PlayerMaxActiveSpells') - 1;
 	}
 	
-	private function Apply():Void {
+	public function Apply():Void {
 
 		// find last slot in ability bar
 		if ( _root.abilitybar['slot_' + _lastSlot] == undefined ) {
@@ -77,10 +61,12 @@ class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX.AbilityBarDeFX extends com.E
 		_root.abilitybar.UITweaks_AbilityBarDeFX = true;
 		
 		// trigger refresh of the abilitybar slots with the override in place
-		_root.abilitybar.SlotShortcutsRefresh();		
+		_root.abilitybar.SlotShortcutsRefresh();
+		
+		_active = true;
 	}
 
-	private function Restore():Void {
+	public function Restore():Void {
 		
 		if( _root.abilitybar.UITweaks_AbilityBarDeFX ) {
 		
@@ -100,10 +86,38 @@ class com.ElTorqiro.UITweaks.Plugins.AbilityBarDeFX.AbilityBarDeFX extends com.E
 			}
 		}
 
-		// remove property on abilitybar to indicate the plugin has not not applied
+		// remove property on abilitybar to indicate the plugin has not applied
 		delete _root.abilitybar.UITweaks_AbilityBarDeFX;
 		
 		// trigger refresh of the abilitybar slots
 		_root.abilitybar.SlotShortcutsRefresh();
+		
+		_active = false;
 	}
+	
+
+	public function get hideReflections():Boolean { return _hideReflections };
+	public function set hideReflections(value:Boolean):Void {
+		if ( _hideReflections == value || value == undefined ) return;
+
+		_hideReflections = value;
+		
+		if ( _active ) {
+			Restore();
+			Apply();
+		}
+	}
+
+	public function get hideGloss():Boolean { return _hideGloss };
+	public function set hideGloss(value:Boolean):Void {
+		if ( _hideGloss == value || value == undefined ) return;
+		
+		_hideGloss = value;
+
+		if ( _active ) {
+			Restore();
+			Apply();
+		}
+	}
+	
 }

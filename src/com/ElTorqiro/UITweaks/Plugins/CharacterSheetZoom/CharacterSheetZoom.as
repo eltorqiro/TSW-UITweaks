@@ -1,46 +1,33 @@
-import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import com.GameInterface.DistributedValue;
 import mx.utils.Delegate;
 import com.GameInterface.UtilsBase;
 import flash.geom.Point;
 import com.GameInterface.Game.Camera;
-import com.ElTorqiro.UITweaks.Enums.States;
-import com.ElTorqiro.UITweaks.PluginWrapper;
 
-class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
+
+class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom {
 
 	private var _characterSheetActiveVar:DistributedValue;
 	private var _findCharacterSheetThrashCount:Number = 0;
 
 	private var _sheet:MovieClip;
 	
-	// TODO: make these configurable
-	private var _scale:Number = 100;
-	private var _hideFadeLines:Boolean = true;
-	private var _suppressOnEnterFrameThrashing:Boolean = true;
+	private var _scale:Number;
+	private var _hideFadeLines:Boolean;
+	private var _suppressOnEnterFrameThrashing:Boolean;
 
 
-	public function CharacterSheetZoom(wrapper:PluginWrapper) {
-		super(wrapper);
-		
+	public function CharacterSheetZoom() {
 		_characterSheetActiveVar = DistributedValue.Create("character_sheet");
-	}
-	
-	private function Activate() {
-		super.Activate();
 		
+		_scale = 100;
+		_hideFadeLines = true;
+		_suppressOnEnterFrameThrashing = true;
+	}
+	
+	public function Suppress():Void {
 		_characterSheetActiveVar.SignalChanged.Connect(Suppress, this);
-		Suppress();
-	}
-	
-	private function Deactivate() {
-		super.Deactivate();
-
-		_characterSheetActiveVar.SignalChanged.Disconnect(Suppress, this);
-		Restore();
-	}
-	
-	private function Suppress():Void {
+		
 		if( !_characterSheetActiveVar.GetValue() ) {
 			_findCharacterSheetThrashCount = 0;
 			return;
@@ -64,7 +51,9 @@ class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom exten
 		}
 	}
 
-	private function Restore():Void {
+	public function Restore():Void {
+		_characterSheetActiveVar.SignalChanged.Disconnect(Suppress, this);
+		
 		if ( _sheet == undefined ) return;
 		
 		_sheet.UpdatePosition = _sheet.UpdatePositionSaved;
@@ -141,4 +130,20 @@ class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom exten
 			
 		_sheet.m_FadeLine._visible = !wasCapped && !_hideFadeLines;
 	}
+	
+	public function get scale():Number { return _scale };
+	public function set scale(value:Number):Void {
+		if ( value == undefined ) return;
+		
+		_scale = value;
+		_sheet.UpdatePosition();
+	}
+	
+	public function get hideFadeLines():Boolean { return _hideFadeLines };
+	public function set hideFadeLines(value:Boolean):Void {
+		if ( value == undefined ) return;
+		
+		_hideFadeLines = value;
+		_sheet.UpdatePosition();
+	}	
 }

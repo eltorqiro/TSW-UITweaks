@@ -26,6 +26,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     private var m_Content:WindowComponentContent;
     private var m_ResizeButton:MovieClip;	// Button
     private var m_TopFade:MovieClip;
+	private var m_Footer:MovieClip;
     private var m_Background:MovieClip;
     private var m_DropShadow:MovieClip;
     private var m_CloseButton:Button;
@@ -114,8 +115,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     }
     
     //On Load
-    private function configUI():Void
-    {
+    private function configUI():Void {
 		super.configUI();
 		
         m_ResizeButton.onPress = Delegate.create(this, ResizeDragHandler);
@@ -139,31 +139,33 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 	}
 	
     //Layout
-    public function Layout():Void
-    {
+    public function Layout():Void {
+		
         var contentSize:Point = m_Content.GetSize();
-		//var contentSize:Point = new Point( m_Background._width - _padding * 2, m_Background._height - m_Title._y - m_Title._height - padding * 2 );
 		
         m_Content._x = m_Background._x + _padding;
         m_Background._width = m_Content._x + contentSize.x + _padding;
         
-        if (m_Title.text == "" || m_Title == undefined)
-        {
+        if (m_Title.text == "" || m_Title == undefined) {
             m_Background._height = contentSize.y + _padding * 2;
             m_Content._y = m_Background._y + _padding;
             _nonContentHeight = m_Background._y + _padding * 2;
         }
-        else
-        {
+		
+        else {
 			m_Title._x = _padding;
 			m_Title._y = 3;
             m_Title._width = m_Background._width - _padding * 2;
             m_Content._y = Math.round(m_Title._y + m_Title._height) + _padding;
             m_Background._height = m_Content._y + contentSize.y + _padding ;
-			m_TopFade._width = m_Background._width;
-			_nonContentHeight = Math.round(m_Title._y + m_Title._height) + _padding * 2;
+			_nonContentHeight = m_Content._y + _padding;
         }
         
+		m_TopFade._width = m_Background._width;
+
+		m_Footer._width = m_Background._width;
+		m_Footer._y = m_Background._height - m_Footer._height;
+		
         m_DropShadow._width = m_Background._width + 31;
         m_DropShadow._height = m_Background._height + 31;
 
@@ -206,12 +208,18 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     
     //Mouse Resize Moving Handler
     private function MouseResizeMovingHandler():Void {	
+
+		_resizeWidth = this._xmouse + _resizeGrabOffset.x;
+		_resizeHeight = this._ymouse + _resizeGrabOffset.y;
+		
+		/*
 		_resizeWidth = Math.max(this._xmouse + _resizeGrabOffset.x, _minWidth);
 		_resizeHeight = Math.max(this._ymouse + _resizeGrabOffset.y, _minHeight);
         
         if (_maxWidth > 0) _resizeWidth = Math.min(_maxWidth, _resizeWidth);
         if (_maxHeight > 0) _resizeHeight = Math.min(_maxHeight, _resizeHeight);
-        
+        */
+		
         var xdiff:Number = Math.abs(m_Background._width - _resizeWidth);
         var ydiff:Number = Math.abs(m_Background._height - _resizeHeight);
         
@@ -221,8 +229,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     }
     
     //Resize Drag Release
-    private function ResizeDragReleaseHandler():Void
-    {
+    private function ResizeDragReleaseHandler():Void {
         Mouse.removeListener(_resizeListener);
 		SetSize(_resizeWidth, _resizeHeight);
 		
@@ -239,8 +246,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     }
     
     // Move Drag Handler
-    private function MoveDragHandler():Void
-    {
+    private function MoveDragHandler():Void {
         if (isDraggable)
         {
             if (!Mouse["IsMouseOver"](m_Content))
@@ -250,19 +256,18 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
                 var visibleRect = Stage["visibleRect"];
 
                 this.startDrag  (
-                                false,
-                                0 - this._width + _dragSafetyPadding - m_DropShadow._x,
-                                0 - this._height + _dragSafetyPadding - m_DropShadow._y,
-                                visibleRect.width - _dragSafetyPadding,
-                                visibleRect.height - _dragSafetyPadding
-                                );        
+					false,
+					0 - this._width + _dragSafetyPadding - m_DropShadow._x,
+					0 - this._height + _dragSafetyPadding - m_DropShadow._y,
+					visibleRect.width - _dragSafetyPadding,
+					visibleRect.height - _dragSafetyPadding
+                );        
             }
         }
     }
     
     //Move Drag Release
-    private function MoveDragReleaseHandler():Void
-    {
+    private function MoveDragReleaseHandler():Void {
         this.stopDrag();
     }
     
@@ -274,37 +279,14 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
         if (_maxWidth > 0) resizeWidth = Math.min( width, _maxWidth );
         if (_maxHeight > 0) resizeHeight = Math.min( height, _maxHeight );
 		
-        
 		m_Content.SetSize( resizeWidth - _padding * 2, resizeHeight - _nonContentHeight);
 		
-		/*
-		m_Background._width = width;
-		m_Background._height = height;
-		Layout();
-		*/
-        
         SignalSizeChanged.Emit();
     }
     
-    //Set Title
-    public function SetTitle(title:String, alignment:String):Void
-    {
-        m_Title.text = title;
-        
-        if (alignment == undefined)
-        {
-            alignment = "left";
-        }
-        
-        m_Title.autoSize = alignment;
-    }
-    
-
     //Set Content
-    public function SetContent(value:String):Void
-    {
-        if (m_Content)
-        {
+    public function SetContent(value:String):Void {
+        if (m_Content) {
             m_Content.removeMovieClip();
             m_Content = null;
         }
@@ -325,7 +307,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 			if( buttons[i]._visible ) {
 				offset -= buttons[i]._width + (i * _windowButtonSpacing);
 				buttons[i]._x = offset;
-				buttons[i]._y = 0;
+				buttons[i]._y = 6;// _padding;
 			}
 		}
 	}
@@ -355,7 +337,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 	public function get showFooter():Boolean { return _showFooter; }
 	public function set showFooter(value:Boolean):Void {
 		_showFooter = value;
-		m_Background.m_Footer._visible = value;
+		m_Footer._visible = value;
 	}
 
 	public function get showTopFade():Boolean { return _showTopFade; }
@@ -372,7 +354,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 
 		// TODO: implement AddonUtils addFilter which will copy the filters array, add the new filter, and set the array back -- neither push or splice work directly on the filters array
 		if ( value ) {
-			m_Title.filters = [ new DropShadowFilter(60, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false) ];
+			m_Title.filters = [ new DropShadowFilter(0 /*60*/, 90, 0x000000, 0.8, 8, 8, 3, 3, false, false, false) ];
 		}
 		
 		else {
@@ -388,11 +370,11 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 
 		// TODO: implement AddonUtils addFilter which will copy the filters array, add the new filter, and set the array back -- neither push or splice work directly on the filters array
 		if ( value ) {
-			var windowButtonShadow:DropShadowFilter = new DropShadowFilter(60, 90, 0x000000, 1, 4, 4, 1, 3, false, false, false);
+			var windowButtonShadow:DropShadowFilter = new DropShadowFilter(0 /*60*/, 90, 0x000000, 1, 4, 4, 1, 3, false, false, false);
 			
 			m_CloseButton.filters = [ windowButtonShadow ];
 			m_HelpButton.filters = [ windowButtonShadow ];
-			m_ResizeButton.filters = [ new DropShadowFilter(90, -90, 0x000000, 1, 8, 8, 1, 3, false, false, false) ];
+			m_ResizeButton.filters = [ new DropShadowFilter(0 /*90*/, -90, 0x000000, 1, 8, 8, 1, 3, false, false, false) ];
 		}
 		
 		else {
@@ -481,39 +463,20 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 		Layout();
 	}
 
-	
-	
-	
-	private function removeFilterType(filters:Array, type:Function):Void {
-		
-		var filtersClone:Array = filters;
-		
-		for ( var s:String in filtersClone ) {
-			if ( filtersClone[s] instanceof type ) {
-				filtersClone.splice( s, 1 );
-			}
-		}
-		
-		filters = filtersClone;
-	}
-	
     //Get Content
-    public function GetContent():WindowComponentContent
-    {
+    public function GetContent():WindowComponentContent {
         return m_Content;
     }
 	
 	public function SlotContentLoaded()	{
 		SignalContentLoaded.Emit();
 	}
-    
-	public function GetSize():Point
-	{
-		return m_Content.GetSize();
+
+	public function GetSize():Point	{
+		return new Point( m_Background._width, m_Background._height );
 	}
-    
-	public function GetNonContentSize():Point
-	{
+	
+	public function GetNonContentSize():Point {
 		return new Point(_padding * 2, _nonContentHeight);
 	}
 }

@@ -10,44 +10,30 @@ class com.ElTorqiro.UITweaks.AddonUtils.ScrollingListEnableDisableListItemRender
 	private var icon:MovieClip;
 	private var m_IsConfigured:Boolean;
     
-	public function ScrollingListEnableDisableListItemRenderer()
-    {
-        super();
-
+	public function ScrollingListEnableDisableListItemRenderer() {
         m_IsConfigured = false;
     }
-	private function configUI()
-	{
+	
+	private function configUI():Void {
 		super.configUI();
+
         m_IsConfigured = true;
         UpdateVisuals();
 	}
 		
-	public function setData(data:Object)
-	{
+	public function setData(data:Object):Void {
         super.setData( data );
 
-		icon.gotoAndStop( data.enabled ? 'enabled' : 'disabled' );
+		icon.gotoAndStop( data.plugin.enabled ? 'enabled' : 'disabled' );
 		
-        if ( m_IsConfigured )
-        {
+        if ( m_IsConfigured ) {
             UpdateVisuals();
         }
     }
 
-    private function UpdateVisuals()
-    {
-        if (data == undefined)
-		{
-			_visible = false;
-			return;
-		}
-        else
-		{
-			_visible = true;
-			
-			textField.text = data.label;
-			//textField.filters = [ new DropShadowFilter( 0, 90, 0x000000, 1, 4, 4, 3, 3, false, false, false ) ];
-		}
+	private function UpdateVisuals():Void {
+
+		visible = data != undefined;
+		label = data.label;
     }
 }

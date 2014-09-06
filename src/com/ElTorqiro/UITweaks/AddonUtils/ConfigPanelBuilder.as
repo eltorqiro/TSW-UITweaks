@@ -1,3 +1,42 @@
+/**
+ * 		var Configuration:Object = {
+			title: 'test',
+			
+			onOpen: { context: this, fn: function() {
+				ConfigOverlay( true );
+			}},
+			
+			onClose: { context: this, fn: function() {
+				ConfigOverlay( false );
+			}},
+			
+			elements: [
+				{ type: 'section', label: 'Override Modules', color: 0xff8800 },
+				{ type: 'checkbox', label: 'checkbox test', data: { module: 'aaa_test' }, initial: true,
+					onChange: { context: this, fn: function(state:Boolean, data:Object) {
+						UtilsBase.PrintChatText('checkbox state:' + state + ', data:' + data);
+					}}
+				},
+				{ type: 'dropdown', label: 'dropdown test', data: {}, items: [
+						{ label: 'Item 1', data: { module: 'item1data' } },
+						{ label: 'Item 2', data: { module: 'item2data' } },
+						{ label: 'Item 3', data: { module: 'item3data' } }
+					], initial: 1,
+					onChange: { context: this, fn: function(selectedIndex:Number, selectedData:Object, data:Object) {
+						UtilsBase.PrintChatText('selected:' + selectedIndex + ', selectedData:' + selectedData + ', data:' + data);
+					}}
+				},
+				{ type: 'slider', label: 'slider test', min: 0, max: 100, initial: 25, snap: 1, data: { module: 'slider' },
+					onChange: { context: this, fn: function(value:Number, data:Object) {
+						UtilsBase.PrintChatText('value:' + value + ', data:' + data);
+					}}
+				}
+			]
+		};
+
+ */
+
+
 import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 import com.GameInterface.UtilsBase;
@@ -31,6 +70,17 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	}
 	
 	public function Clear():Void {
+
+		if ( _panelMC != undefined ) {
+			_panelMC.clear();
+
+			for ( var s in _panelMC ) {
+				if ( _panelMC[s] instanceof MovieClip && _panelMC[s]._parent == _panelMC ) {
+					_panelMC[s].removeMovieClip();
+				}
+			}
+		}
+		
 		_columns = [];
 		addColumn();
 		_currentColumn = _columns[0];
@@ -41,8 +91,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		_sectionLabelColor = 0x00cc99;
 		_onOpen = undefined;
 		_onClose = undefined;
-		
-		if ( _panelMC != undefined ) _panelMC.clear();
 	}
 	
 	public function Build(conf:Object):Void {
@@ -93,7 +141,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		
 		// fire onOpen event
 		if ( _onOpen != undefined ) {
-			UtilsBase.PrintChatText('openHandler');		
+			//UtilsBase.PrintChatText('openHandler');		
 			Delegate.create( _onOpen.context, _onOpen.fn )();
 		}
 	}
@@ -104,7 +152,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		
 		// fire onClose event
 		if ( _onClose != undefined ) {
-			UtilsBase.PrintChatText('closeHandler');		
+			//UtilsBase.PrintChatText('closeHandler');		
 			Delegate.create( _onClose.context, _onClose.fn )();
 		}
 	}
@@ -122,7 +170,8 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	}
 	
 	private function addSection(id:String, label:String, color:Number):Void {
-		UtilsBase.PrintChatText('addSection');
+		//UtilsBase.PrintChatText('addSection');
+		
 		// reposition section if not at top of column
 		if ( _currentColumn.cursor.y > 0 ) {
 			_currentColumn.cursor.y += _sectionSpacing;
@@ -152,9 +201,9 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	}
 	
 	private function addCheckbox(id:String, label:String, data:Object, initial:Boolean, onChange:Object ):Void {
-		UtilsBase.PrintChatText('addCheckbox');
+		//UtilsBase.PrintChatText('addCheckbox');
 		
-		var el:CheckBox = _currentColumn.mc.attachMovie( 'CheckboxDark', id, _currentColumn.mc.getNextHighestDepth() );
+		var el:CheckBox = _currentColumn.mc.attachMovie( 'CheckboxDark', id, _currentColumn.mc.getNextHighestDepth(), { autoSize: 'left' } );
 		_currentColumn.elements.push( el );
 
 		el.label = label;
@@ -176,7 +225,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	}
 
 	private function addDropdown(id:String, label:String, data:Object, items:Array, initial:Number, onChange:Object ):Void {
-		UtilsBase.PrintChatText('addDropdown');
+		//UtilsBase.PrintChatText('addDropdown');
 		
 		var el:DropdownMenu = _currentColumn.mc.attachMovie( 'DropdownGray', id, _currentColumn.mc.getNextHighestDepth() );
 		_currentColumn.elements.push( el );
@@ -214,7 +263,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	}
 
 	private function addSlider(id:String, label:String, data:Object, min:Number, max:Number, initial:Number, snap:Number, onChange:Object ):Void {
-		UtilsBase.PrintChatText('addSlider');
+		//UtilsBase.PrintChatText('addSlider');
 		
 		var el:Slider = _currentColumn.mc.attachMovie( 'Slider', id, _currentColumn.mc.getNextHighestDepth() );
 		_currentColumn.elements.push( el );
@@ -251,22 +300,22 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	}
 	
 	private function checkboxChangeHandler(event:Object):Void {
-		UtilsBase.PrintChatText('checkboxChangeHandler');
+		//UtilsBase.PrintChatText('checkboxChangeHandler');
 		Delegate.create( event.target.changeHandler.context, event.target.changeHandler.fn )( event.target.selected, event.target.data );
 	}
 
 	private function dropdownChangeHandler(event:Object):Void {
-		UtilsBase.PrintChatText('dropdownChangeHandler');
+		//UtilsBase.PrintChatText('dropdownChangeHandler');
 		Delegate.create( event.target.changeHandler.context, event.target.changeHandler.fn )( event.target.selectedIndex, event.target.items[ event.target.selectedIndex ].data, event.target.data );
 	}
 
 	private function dropdownStateChangeHandler(event:Object):Void {
-		UtilsBase.PrintChatText('dropdownStateChangeHandler');
+		//UtilsBase.PrintChatText('dropdownStateChangeHandler');
 		if ( event.state == 'up' ) removeFocus();
 	}
 	
 	private function sliderChangeHandler(event:Object):Void {
-		UtilsBase.PrintChatText('sliderChangeHandler');
+		//UtilsBase.PrintChatText('sliderChangeHandler');
 		event.target.valueTextField.text = String( event.target.value );
 		Delegate.create( event.target.changeHandler.context, event.target.changeHandler.fn )( event.target.value, event.target.data );
 	}
