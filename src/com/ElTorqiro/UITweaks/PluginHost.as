@@ -54,7 +54,7 @@ class com.ElTorqiro.UITweaks.PluginHost {
 
 			var plugin:Plugin = new Plugin( AddonInfo.Path.toLowerCase() + '_' + aNode.attributes.location, aNode.attributes.name, AddonInfo.Path + '/plugins/' + aNode.attributes.location, aNode.attributes.depth, aNode.attributes['sub-depth']);
 			plugin.description = aNode.attributes.description;
-			plugin.author = aNode.attributes.author;
+			plugin.author = aNode.attributes.author != undefined ? aNode.attributes.author : 'Unknown';
 			plugin.contactURL = aNode.attributes['contact-url'];
 			
 			var pluginSettings:Archive = accountSettings.FindEntry( aNode.attributes.location, new Archive() );

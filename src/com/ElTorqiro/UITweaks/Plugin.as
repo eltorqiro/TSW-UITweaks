@@ -13,7 +13,7 @@ class com.ElTorqiro.UITweaks.Plugin {
 	
 	public var name:String;
 	public var description:String;
-	public var author:String;
+	public var _author:String;
 	public var contactURL:String;
 	
 	public var path:String;
@@ -31,6 +31,7 @@ class com.ElTorqiro.UITweaks.Plugin {
 	public var state:String;
 	
 	public var SignalLoaded:Signal;
+	public var SignalUnloaded:Signal;
 	
 	public function Plugin(id:String, name:String, path:String, depth:Number, subDepth:Number) {
 		
@@ -40,7 +41,10 @@ class com.ElTorqiro.UITweaks.Plugin {
 		this.depth = depth ? depth : 3;
 		this.subDepth = subDepth ? subDepth : 0;
 		
+		this.author = 'Unknown';
+		
 		SignalLoaded = new Signal();
+		SignalUnloaded = new Signal();
 	}
 
 	public function Load():Void {
@@ -55,7 +59,7 @@ class com.ElTorqiro.UITweaks.Plugin {
 
 		if ( success ) {
 			mc = clipNode.m_Movie;
-			mc.Activate();
+			mc.onPluginActivated(settings);
 			
 			_enabled = true;
 			_isLoaded = true;
@@ -68,13 +72,24 @@ class com.ElTorqiro.UITweaks.Plugin {
 	
 	public function Unload():Void {
 		
-		mc.Deactivate();
+		if ( !isLoaded ) return;
+		
+		if ( mc.onPluginDeactivated != undefined ) {
+			settings = mc.onPluginDeactivated();
+		}
 		mc.UnloadClip();
 		
 		_enabled = false;
 		_isLoaded = false;
+		
+		SignalUnloaded.Emit( this );
 	}
 
 	public function get enabled():Boolean { return _enabled };
 	public function get isLoaded():Boolean { return _isLoaded };
+	
+	public function get author():String { return _author; };
+	public function set author(value:String):Void {
+		if ( value != undefined ) _author = value;
+	}
 }

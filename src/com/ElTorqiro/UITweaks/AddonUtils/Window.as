@@ -115,8 +115,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     }
     
     //On Load
-    private function configUI():Void
-    {
+    private function configUI():Void {
 		super.configUI();
 		
         m_ResizeButton.onPress = Delegate.create(this, ResizeDragHandler);
@@ -143,11 +142,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     public function Layout():Void {
 		
         var contentSize:Point = m_Content.GetSize();
-		//var contentSize:Point = new Point( m_Background._width - _padding * 2, m_Background._height - m_Title._y - m_Title._height - padding * 2 );
-		
-		//if ( contentSize.x + _padding * 2 < _minWidth ) contentSize.x = _minWidth;
-		//if ( contentSize.y + _nonContentHeight < _minHeight ) contentSize.y = _minHeight;
-		
 		
         m_Content._x = m_Background._x + _padding;
         m_Background._width = m_Content._x + contentSize.x + _padding;
@@ -235,8 +229,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     }
     
     //Resize Drag Release
-    private function ResizeDragReleaseHandler():Void
-    {
+    private function ResizeDragReleaseHandler():Void {
         Mouse.removeListener(_resizeListener);
 		SetSize(_resizeWidth, _resizeHeight);
 		
@@ -253,8 +246,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
     }
     
     // Move Drag Handler
-    private function MoveDragHandler():Void
-    {
+    private function MoveDragHandler():Void {
         if (isDraggable)
         {
             if (!Mouse["IsMouseOver"](m_Content))
@@ -292,19 +284,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
         SignalSizeChanged.Emit();
     }
     
-    //Set Title
-    public function SetTitle(title:String, alignment:String):Void {
-        m_Title.text = title;
-        
-        if (alignment == undefined)
-        {
-            alignment = "left";
-        }
-        
-        m_Title.autoSize = alignment;
-    }
-    
-
     //Set Content
     public function SetContent(value:String):Void {
         if (m_Content) {
@@ -484,39 +463,20 @@ class com.ElTorqiro.UITweaks.AddonUtils.Window extends UIComponent
 		Layout();
 	}
 
-	
-	
-	
-	private function removeFilterType(filters:Array, type:Function):Void {
-		
-		var filtersClone:Array = filters;
-		
-		for ( var s:String in filtersClone ) {
-			if ( filtersClone[s] instanceof type ) {
-				filtersClone.splice( s, 1 );
-			}
-		}
-		
-		filters = filtersClone;
-	}
-	
     //Get Content
-    public function GetContent():WindowComponentContent
-    {
+    public function GetContent():WindowComponentContent {
         return m_Content;
     }
 	
 	public function SlotContentLoaded()	{
 		SignalContentLoaded.Emit();
 	}
-    
-	public function GetSize():Point
-	{
-		return m_Content.GetSize();
+
+	public function GetSize():Point	{
+		return new Point( m_Background._width, m_Background._height );
 	}
-    
-	public function GetNonContentSize():Point
-	{
+	
+	public function GetNonContentSize():Point {
 		return new Point(_padding * 2, _nonContentHeight);
 	}
 }

@@ -1,3 +1,42 @@
+/**
+ * 		var Configuration:Object = {
+			title: 'test',
+			
+			onOpen: { context: this, fn: function() {
+				ConfigOverlay( true );
+			}},
+			
+			onClose: { context: this, fn: function() {
+				ConfigOverlay( false );
+			}},
+			
+			elements: [
+				{ type: 'section', label: 'Override Modules', color: 0xff8800 },
+				{ type: 'checkbox', label: 'checkbox test', data: { module: 'aaa_test' }, initial: true,
+					onChange: { context: this, fn: function(state:Boolean, data:Object) {
+						UtilsBase.PrintChatText('checkbox state:' + state + ', data:' + data);
+					}}
+				},
+				{ type: 'dropdown', label: 'dropdown test', data: {}, items: [
+						{ label: 'Item 1', data: { module: 'item1data' } },
+						{ label: 'Item 2', data: { module: 'item2data' } },
+						{ label: 'Item 3', data: { module: 'item3data' } }
+					], initial: 1,
+					onChange: { context: this, fn: function(selectedIndex:Number, selectedData:Object, data:Object) {
+						UtilsBase.PrintChatText('selected:' + selectedIndex + ', selectedData:' + selectedData + ', data:' + data);
+					}}
+				},
+				{ type: 'slider', label: 'slider test', min: 0, max: 100, initial: 25, snap: 1, data: { module: 'slider' },
+					onChange: { context: this, fn: function(value:Number, data:Object) {
+						UtilsBase.PrintChatText('value:' + value + ', data:' + data);
+					}}
+				}
+			]
+		};
+
+ */
+
+
 import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 import com.GameInterface.UtilsBase;
@@ -31,6 +70,17 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 	}
 	
 	public function Clear():Void {
+
+		if ( _panelMC != undefined ) {
+			_panelMC.clear();
+
+			for ( var s in _panelMC ) {
+				if ( _panelMC[s] instanceof MovieClip && _panelMC[s]._parent == _panelMC ) {
+					_panelMC[s].removeMovieClip();
+				}
+			}
+		}
+		
 		_columns = [];
 		addColumn();
 		_currentColumn = _columns[0];
@@ -41,8 +91,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.ConfigPanelBuilder {
 		_sectionLabelColor = 0x00cc99;
 		_onOpen = undefined;
 		_onClose = undefined;
-		
-		if ( _panelMC != undefined ) _panelMC.clear();
 	}
 	
 	public function Build(conf:Object):Void {

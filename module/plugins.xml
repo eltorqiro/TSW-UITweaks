@@ -14,6 +14,7 @@
 
 		<plugin
 			name="Magical Plugin"
+			description="Performs some magic on the UI."
 			author="Anonymous Rex"
 			contact-url="http://forums.thesecretworld.com/showthread=123456"
 			location="MagicalPlugin"
@@ -49,7 +50,7 @@
 
 	<plugin
 		name="Resize Altered States"
-		description="Resizes the combat states icons slightly in the Player Info and Target Window panels."
+		description="Slightly downsizes the combat states icons in the Player Info and Target Window panels."
 		author="The009"
 		contact-url="http://forums.thesecretworld.com/"
 		location="ResizeAlteredStates"
@@ -66,7 +67,7 @@
 	<plugin
 		name="Max AP/SP Notifications"
 		description="Hides the AP/SP notification icons when at maximum levels of each."
-		author="ElTorqiro"
+		author="The009 &amp; ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="MaxAPSPNotifications"
 	/>
