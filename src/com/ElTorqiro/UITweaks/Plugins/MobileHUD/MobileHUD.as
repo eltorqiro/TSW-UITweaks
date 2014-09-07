@@ -1,5 +1,4 @@
 import com.GameInterface.UtilsBase;
-import com.ElTorqiro.UITweaks.Plugins.PluginBase;
 import flash.geom.Point;
 import mx.utils.Delegate;
 import com.Utils.HUDController;
@@ -8,23 +7,22 @@ import com.GameInterface.DistributedValue;
 import flash.filters.GlowFilter;
 import com.GameInterface.Tooltip.TooltipUtils;
 import com.GameInterface.Tooltip.TooltipInterface;
-import com.ElTorqiro.UITweaks.PluginWrapper;
 
 
-class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD extends com.ElTorqiro.UITweaks.Plugins.PluginBase {
+class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD {
 
 	private var _modules:Object = { };
 	private var _overlayLayer:MovieClip;
 	
+	private var _hooked:Boolean;
+	
 	private var _overlayColour:Number = 0x0099ff;
 	private var _overlayBoxMinSize:Number = 12;
 	
-	public static var Configuration:Object;
-	
-	public function MoveAnyHUD(wrapper:PluginWrapper) {
-		super(wrapper);
+
+	public function MobileHUD() {
 		
-		_modules['HUDBackground'] = { };
+		//_modules['HUDBackground'] = { };
 		_modules['AbilityBar'] = { };
 		_modules['AAPassivesBar'] = { };
 		_modules['SprintBar'] = { };
@@ -48,45 +46,14 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD extends com.ElTorqiro.U
 		//_modules['AchievementLoreWindow'] = { };
 		//_modules['WalletController'] = { };
 		
-
-		if( Configuration == undefined ) {
-		
-			var panel:Array;
-			panel.push( { type: 'section', label: 'Override Modules' } );
-			for ( var s:String in _modules ) {
-				panel.push( { type: 'checkbox', label: s, data: { module: s }, onClick: function(state:Boolean, data:Object) {
-						SetModuleOverride( data.module, state );
-					}	
-				} );
-			}
-			
-			Configuration = {
-				title: 'test',
-				
-				onOpen: function() {
-					ConfigOverlay( true );
-				},
-				
-				onClose: function() {
-					ConfigOverlay( false );
-				},
-				
-				panel: panel
-			};
-
-		}
 	}
 
-	private function Activate() {
-		super.Activate();
-		
-		_global.setTimeout( Delegate.create(this, HookClips), 2000, true );
-		
-		//_root._alpha = 50;
+	public function Activate() {
+		//_global.setTimeout( Delegate.create(this, HookClips), 2000, true );
+		HookClips();
 	}
 
-	private function Deactivate() {
-		super.Deactivate();
+	public function Deactivate() {
 
 		ConfigOverlay( false );
 		
@@ -97,18 +64,28 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD extends com.ElTorqiro.U
 				_modules[s] = { };
 			}
 		}
+		
+		_hooked = false;
 	}
 
 	private function LayoutClips():Void {
 		//UtilsBase.PrintChatText( 'b:' + _dirty );
 	}
 	
-	private function ConfigOverlay(show:Boolean):Void {
+	public function ConfigOverlay(show:Boolean):Void {
 		
 		if ( _overlayLayer ) _overlayLayer.removeMovieClip();
 		if ( !show ) return;
 
 		_overlayLayer = _root.createEmptyMovieClip( 'm_UITweaks_ConfigOverlay', _root.getNextHighestDepth() );
+
+		// show info panel briefly if clips aren't hooked
+		if ( !_hooked ) {
+			
+			
+			_global.setTimeout( Delegate.create(this, ConfigOverlay), 2000, show );
+			return;
+		}
 		
 		for ( var s:String in _modules ) {
 			
@@ -172,9 +149,8 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD extends com.ElTorqiro.U
 
 			HUDController.DeregisterModule( s );
 		}
+		
+		_hooked = true;
 	}
 	
-	private function SetModuleOverride(module:String, override:Boolean):Void {
-		UtilsBase.PrintChatText( 'module:' + module + ', override:' + override );
-	}
 }

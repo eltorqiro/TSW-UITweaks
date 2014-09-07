@@ -116,7 +116,14 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		//SignalSizeChanged.Emit();
 	}
 	
+	public function Destroy():Void {
+		_configPanelBuilder.Destroy();
+	}
+	
 	private function pluginListItemSelected(event:Object):Void {
+		
+		_configPanelBuilder.Destroy();
+		
 		var plugin:Plugin = m_PluginList.dataProvider[ m_PluginList.selectedIndex ].plugin;
 		
 		m_PluginTitle.label = m_PluginList.dataProvider[ m_PluginList.selectedIndex ].label;
@@ -142,7 +149,7 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		_togglePluginLoadSlot = plugin.SignalLoaded.Connect( updateEnabledIndicators, this );
 		_togglePluginUnloadSlot = plugin.SignalUnloaded.Connect( updateEnabledIndicators, this );
 		
-		plugin.enabled ? plugin.Unload() : plugin.Load();
+		plugin.enabled ? _configPanelBuilder.Destroy() || plugin.Unload() : plugin.Load();
 	}
 	
 	private function updateEnabledIndicators(plugin:Plugin):Void {
@@ -152,8 +159,6 @@ class com.ElTorqiro.UITweaks.Config.WindowContent extends WindowComponentContent
 		
 		m_PluginTitle.selected = plugin.enabled;
 		m_PluginList['renderers'][m_PluginList.selectedIndex].icon.gotoAndStop( plugin.enabled ? 'enabled' : 'disabled' );
-		
-		_configPanelBuilder.Destroy();
 		
 		if ( plugin.enabled ) {
 			var pluginConfig:Object = plugin.mc.getPluginConfiguration();

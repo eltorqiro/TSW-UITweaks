@@ -175,7 +175,9 @@ function CreateConfigWindow():Void {
 
 function DestroyConfigWindow():Void {
 	
-	if ( g_configWindow ) {	
+	if ( g_configWindow ) {
+		g_configWindow.GetContent().Destroy();
+		
 		g_settings.configWindowPosition.x = g_configWindow._x;
 		g_settings.configWindowPosition.y = g_configWindow._y;
 		
