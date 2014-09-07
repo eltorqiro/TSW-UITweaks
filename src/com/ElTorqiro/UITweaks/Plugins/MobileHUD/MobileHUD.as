@@ -49,8 +49,8 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD {
 	}
 
 	public function Activate() {
-		//_global.setTimeout( Delegate.create(this, HookClips), 2000, true );
-		HookClips();
+		_global.setTimeout( Delegate.create(this, HookClips), 2000, true );
+		//HookClips();
 	}
 
 	public function Deactivate() {
@@ -82,7 +82,16 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD {
 		// show info panel briefly if clips aren't hooked
 		if ( !_hooked ) {
 			
+			/*
+			var loader:MovieClip = _overlayLayer.attachMovie( 'loader', 'm_Loader', _overlayLayer.getNextHighestDepth() );
+			UtilsBase.PrintChatText( 's:' + _overlayLayer + ', loader:' + loader );			
 			
+			loader._xscale = loader._yscale = 200;
+			//loader._x = (Stage.visibleRect.width + loader._width) / 2;
+			//loader._y = (Stage.visibleRect.height + loader._height) / 2;
+			loader._x = 200;
+			loader._y = 200;
+			*/
 			_global.setTimeout( Delegate.create(this, ConfigOverlay), 2000, show );
 			return;
 		}
@@ -108,6 +117,7 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD {
 			box._alpha = 60;
 			
 			box.mc = mc;
+			box.moduleName = s;
 			
 			TooltipUtils.AddTextTooltip(box, s, 200, TooltipInterface.e_OrientationVertical, true, false);
 
@@ -128,6 +138,13 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD {
 				this.startDrag(false, Stage.visibleRect.left - this._width + 10, Stage.visibleRect.top - this._height + 10, Stage.visibleRect.right - 10, Stage.visibleRect.bottom - 10);
 			};
 			
+			box.onPressAux = function() {
+				HUDController.RegisterModule( this.moduleName, this.mc );
+				HUDController.DeregisterModule( this.moduleName );
+				this._x = this.mc._x;
+				this._y = this.mc._y;
+			};
+			
 			box.onRelease = box.onReleaseOutside = function() {
 				this.stopDrag();
 				this.onMouseMove = undefined;
@@ -141,16 +158,23 @@ class com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD {
 	private function HookClips():Void {
 		
 		for ( var s:String in _modules ) {
-			_modules[s] = {
-				name: s,
-				mc: HUDController.GetModule( s ),
-				hijacked: true
-			};
-
+			var module:Object = _modules[s];
+			
+			module.name = s;
+			module.mc = HUDController.GetModule( s );
+			module.hijacked = true;
+			
 			HUDController.DeregisterModule( s );
+			
+			// restore position if available
+			if ( _modules[s].position != undefined ) {
+				_modules[s].mc._x = _modules[s].position.x;
+				_modules[s].mc._y = _modules[s].position.y;
+			}
 		}
 		
 		_hooked = true;
 	}
 	
+	public function get modules():Object { return _modules; }
 }

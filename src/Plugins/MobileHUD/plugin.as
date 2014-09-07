@@ -1,27 +1,41 @@
 import com.Utils.Archive;
 import com.GameInterface.UtilsBase;
 import com.ElTorqiro.UITweaks.Plugins.MobileHUD.MobileHUD;
+import com.Utils.Signal;
+import flash.geom.Point;
 
 var mobileHUD:MobileHUD;
+
+var SignalPluginReady:Signal = new Signal();
 
 function onLoad():Void {
 	mobileHUD = new MobileHUD();
 }
 
 function onPluginActivated(settings:Archive):Void {
-	//deFX.hideReflections = settings.FindEntry( 'hideReflections' );
-	//deFX.hideGloss = settings.FindEntry( 'hideGloss' );
+
+	for ( var s:String in mobileHUD.modules ) {
+		mobileHUD.modules[s].position = settings.FindEntry( s + '_position', undefined );
+	}
 	
 	mobileHUD.Activate();
+
+	SignalPluginReady.Emit( this );
 }
 
 function onPluginDeactivated():Archive {
+
+	var settings:Archive = new Archive();
+	for ( var s:String in mobileHUD.modules ) {
+		var module:Object = mobileHUD.modules[s];
+		
+		if ( module.hijacked ) {
+			settings.AddEntry( s + '_position', new Point(module.mc._x, module.mc._y) );
+		}
+	}
+	
 	mobileHUD.Deactivate();
 	
-	var settings:Archive = new Archive();
-	//settings.AddEntry( 'hideReflections', deFX.hideReflections );
-	//settings.AddEntry( 'hideGloss', deFX.hideGloss );
-
 	return settings;
 }
 
@@ -34,19 +48,7 @@ function getPluginConfiguration():Object {
 		
 		onClose: { context: this, fn: function() {
 			mobileHUD.ConfigOverlay( false );
-		}},
+		}}
 		
-		elements: [
-			{ type: 'checkbox', label: 'Remove button reflections', data: { }, initial: deFX.hideReflections,
-				onChange: { context: this, fn: function(state:Boolean, data:Object) {
-					deFX.hideReflections = state;
-				}}
-			},
-			{ type: 'checkbox', label: 'Hide button gloss effect', data: { }, initial: deFX.hideGloss,
-				onChange: { context: this, fn: function(state:Boolean, data:Object) {
-					deFX.hideGloss = state;
-				}}
-			}
-		]
 	};
 }
