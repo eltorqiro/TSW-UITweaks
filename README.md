@@ -27,11 +27,11 @@ You can get the source from GitHub at https://github.com/eltorqiro/TSW-UITweaks
    
 Plugins
 =======
- * Suppress Character Sheet Scaling
- * Suppress Max AP/SP Notification icons
- * Ability Bar DeFX
- * Inspection Window Statistics
- * Resize Altered States
- * Target Of Target
- * In Combat Display Background Remover
-
+ * Ability Bar DeFX - ability bar visual fx adjustments.
+ * Black Background Removal - hide the black faded background at the bottom of the screen.
+ * Character Sheet Zoom - manual static character sheet zoom setting.
+ * Inspecto Petronum - revamped Character Inspection panel, including equipment statistics.
+ * Max AP/SP Notification icons - suppress the AP/SP notification icons if at max values.
+ * Mobile HUD - allow manual positioning of most HUD elements.
+ * Resize Altered States - manual static size adjustment for combat states (e.g. Weakened etc).
+ * Target Of Target - display windows for your offensive target's offensive & defensive target; great for tanking and healing! 
