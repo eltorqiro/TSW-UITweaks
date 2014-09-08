@@ -78,6 +78,8 @@
 		author="The009"
 		contact-url="http://forums.thesecretworld.com/"
 		location="TargetOfTarget"
+		depth="2"
+		sub-depth="0"
 	/>
 	
 	<plugin

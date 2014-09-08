@@ -33,25 +33,24 @@ function getPluginConfiguration():Object {
 
 	return {
 		onOpen: { context: this, fn: function() {
-			targetOfTarget.m_Offensive._visible = targetOfTarget.showOffTargetWindow;
-			targetOfTarget.m_Defensive._visible = targetOfTarget.showDefTargetWindow;
+			targetOfTarget.ConfigMode( true );
+
 		}},
 		
 		onClose: { context: this, fn: function() {
-			targetOfTarget.TargetOfTargetDisplay();
+			targetOfTarget.ConfigMode( false );
 		}},
 		
 		elements: [
-			{ type: 'checkbox', label: 'Show Defensive Target of Target', data: { }, initial: targetOfTarget.showDefTargetWindow,
-				onChange: { context: this, fn: function(state:Boolean, data:Object) {
-					targetOfTarget.showDefTargetWindow = state;
-					targetOfTarget.m_Defensive._visible = state;
-				}}
-			},
-			{ type: 'checkbox', label: 'Show Offensive Target of Target', data: { }, initial: targetOfTarget.showOffTargetWindow,
+			{ type: 'checkbox', label: 'Enable Offensive Target of Target Window', data: { }, initial: targetOfTarget.showOffTargetWindow,
 				onChange: { context: this, fn: function(state:Boolean, data:Object) {
 					targetOfTarget.showOffTargetWindow = state;
-					targetOfTarget.m_Offensive._visible = state;
+				}}
+			},
+			
+			{ type: 'checkbox', label: 'Enable Defensive Target of Target Window', data: { }, initial: targetOfTarget.showDefTargetWindow,
+				onChange: { context: this, fn: function(state:Boolean, data:Object) {
+					targetOfTarget.showDefTargetWindow = state;
 				}}
 			}
 		]

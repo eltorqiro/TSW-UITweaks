@@ -40,16 +40,20 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget {
 	private var _showDefTargetWindow:Boolean;
 	private var _showOffTargetWindow:Boolean;
 	
+	private var _configMode:Boolean;
+	
 	public function TargetOfTarget(hostMC:MovieClip) {
 		_hostMC = hostMC;
 		
 		_showDefTargetWindow = true;
 		_showOffTargetWindow = true;
+		
+		_character = Character.GetClientCharacter();
 	}
 
 	public function Activate(offDisplayLocation:Point, defDisplayLocation:Point) {
 		
-		_character = Character.GetClientCharacter();
+		//_character = Character.GetClientCharacter();
 		_character.SignalOffensiveTargetChanged.Connect(UserTargetChanged, this);
 
 		m_Offensive = _hostMC.attachMovie( 'totPanel', 'm_Offensive', _hostMC.getNextHighestDepth() );
@@ -125,6 +129,7 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget {
 	}
 
 	public function TargetOfTargetDisplay():Void {
+		if ( _configMode ) return;
 
 		_offensiveTargetOfTarget = Character.GetCharacter( _target.GetOffensiveTarget() );
 		UpdatePanel( m_Offensive, _offensiveTargetOfTarget );
@@ -212,16 +217,18 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget {
 		// only allow one mouse button to be pressed at once
 		if ( _mouseDown != -1 ) return;
 		_mouseDown = button;
-		
-		// TODO: check if no modifiers held down, and only fire click if that is the case, otherwise fire appropriate start drag etc
-		if ( Key.isDown( dualDragModifier ) && button == dualDragButton ) {
-			_dragging = true;
-			DragStartHandler( [ m_Offensive, m_Defensive ] );
-		}
-		
-		else if ( Key.isDown( singleDragModifier ) && button == singleDragButton ) {
-			_dragging = true;
-			DragStartHandler( [ getClickedPanel() ] );
+
+		if( _configMode ) {
+			// TODO: check if no modifiers held down, and only fire click if that is the case, otherwise fire appropriate start drag etc
+			if ( Key.isDown( dualDragModifier ) && button == dualDragButton ) {
+				_dragging = true;
+				DragStartHandler( [ m_Offensive, m_Defensive ] );
+			}
+			
+			else if ( Key.isDown( singleDragModifier ) && button == singleDragButton ) {
+				_dragging = true;
+				DragStartHandler( [ getClickedPanel() ] );
+			}
 		}
 		
 		else {
@@ -241,21 +248,45 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget {
 	private function handleReleaseOutside(controllerIdx:Number, button:Number):Void {
 		handleMouseRelease(controllerIdx, 0, button);
 	}
+
+	public function ConfigMode(enabled:Boolean):Void {
+		
+		_configMode = enabled;
+		
+		if ( _configMode) {
+			m_Offensive._visible = true;
+			m_Defensive._visible = true;
+			
+			showDefTargetWindow = showDefTargetWindow;
+			showOffTargetWindow = showOffTargetWindow;
+			
+			HealthBar(m_Offensive.m_Healthbar).SetCharacter( _character );
+			HealthBar(m_Defensive.m_Healthbar).SetCharacter( _character );
+			
+			m_Offensive.m_NameBox.i_NameField.text = 'Offensive Target of Target Window';
+			m_Defensive.m_NameBox.i_NameField.text = 'Defensive Target of Target Window';
+		}
+		
+		else {
+			TargetOfTargetDisplay();
+		}
+		
+	}
 	
 	public function get showDefTargetWindow():Boolean { return _showDefTargetWindow; }
 	public function set showDefTargetWindow(value:Boolean):Void {
-		if ( value == undefined ) return;
 		
 		_showDefTargetWindow = value;
-		m_Defensive._visible = value;
+		
+		m_Defensive._alpha = _configMode && !value ? 30 : 100;
 	}
 	
 	public function get showOffTargetWindow():Boolean { return _showOffTargetWindow; }
 	public function set showOffTargetWindow(value:Boolean):Void {
-		if ( value == undefined ) return;
 		
 		_showOffTargetWindow = value;
-		m_Offensive._visible = value;
+		
+		m_Offensive._alpha = _configMode && !value ? 30 : 100;
 	}
 	
 }
