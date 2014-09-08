@@ -94,12 +94,8 @@ function OnModuleDeactivated():Void {
 	}
 	
 	DistributedValue.SetDValue(AddonInfo.Author + '_' + AddonInfo.Name + '_AccountPluginSettings', settings);
-}
+	
 
-function OnUnload():Void {
-	
-	g_Module.detachIcon();
-	
 	// save module settings
 	var saveData = new Archive();
 	for(var i:String in g_settings) {
@@ -107,6 +103,13 @@ function OnUnload():Void {
 	}
 	
 	DistributedValue.SetDValue(AddonInfo.Author + '_' + AddonInfo.Name + '_Data', saveData);
+}
+
+function OnUnload():Void {
+	
+	// TODO: this causes a crash on reloadui, need some way to remove icon clip safely
+	//g_Module.detachIcon();
+	
 }
 
 function onXMLLoaded(success:Boolean):Void {
