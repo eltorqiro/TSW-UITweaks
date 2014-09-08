@@ -39,10 +39,10 @@
 		contact-url="http://forums.thesecretworld.com/"
 		location="InspectoPetronum"
 	/>
-	
+
 	<plugin
 		name="Mobile HUD"
-		description="Allows any HUD element to be repositioned on the screen."
+		description="Allows most HUD elements to be repositioned on the screen."
 		author="ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="MobileHUD"
@@ -70,6 +70,22 @@
 		author="The009 &amp; ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="MaxAPSPNotifications"
+	/>
+
+	<plugin
+		name="Target of Target"
+		description="Displays the offensive and defensive target of your currently selected offensive target."
+		author="The009"
+		contact-url="http://forums.thesecretworld.com/"
+		location="TargetOfTarget"
+	/>
+	
+	<plugin
+		name="Black Background Removal"
+		description="Removes the black fade background behind the in-combat indicator at the bottom of the screen."
+		author="The009 &amp; ElTorqiro"
+		contact-url="http://forums.thesecretworld.com/"
+		location="InCombatBGRemover"
 	/>
 	
 </plugins>
