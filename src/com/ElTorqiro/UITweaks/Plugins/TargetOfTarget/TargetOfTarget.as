@@ -155,13 +155,13 @@ class com.ElTorqiro.UITweaks.Plugins.TargetOfTarget.TargetOfTarget {
 	private function DefaultLayout(TargetWindow):Void {
 		
 		if ( TargetWindow == "offDisplayLocation" ) {
-				m_Offensive._x = _root.targetinfo._x + _root.targetinfo._width + 2;
+				m_Offensive._x = _root.targetinfo._x;
 				m_Offensive._y =  Stage.visibleRect.height - 300;
 		}
 		
 		if ( TargetWindow == "defDisplayLocation" ) {
 			m_Defensive._x = m_Offensive._x;
-			m_Defensive._y = m_Offensive._y + m_Defensive._height + 1;
+			m_Defensive._y = m_Offensive._y + m_Offensive._height + 3;
 		}
 
 	}
