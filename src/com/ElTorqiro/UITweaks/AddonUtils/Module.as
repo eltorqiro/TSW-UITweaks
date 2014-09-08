@@ -68,6 +68,10 @@ class com.ElTorqiro.UITweaks.AddonUtils.Module {
 		_iconClip.SignalLoaded.Connect( iconClipLoaded, this );
 	}
 	
+	public function detachIcon():Void {
+		_iconClip.m_Movie.UnloadClip();
+	}
+	
 	private function iconClipLoaded(clipNode, loaded):Void {
 		
 		_iconMC = _iconClip.m_Movie.m_Icon;
@@ -223,6 +227,8 @@ class com.ElTorqiro.UITweaks.AddonUtils.Module {
 	public function set icon(value:MovieClip):Void {
 		_iconMC = value;
 	}
+	
+	public function get iconClip():ClipNode { return _iconClip; }
 	
 	public function get isVTIOLOaded():Boolean { return Boolean(_VTIOLoaded.GetValue()); }
 	public function get isRegisteredWithVTIO():Boolean { return _isRegisteredWithVTIO; }

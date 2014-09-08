@@ -3,7 +3,6 @@ import com.ElTorqiro.UITweaks.AddonInfo;
 import com.Utils.Archive;
 import XML;
 import com.GameInterface.GUIUtils.XmlParser;
-import com.ElTorqiro.UITweaks.PluginHost;
 import com.ElTorqiro.UITweaks.Plugin;
 
 import com.ElTorqiro.UITweaks.AddonUtils.Module;
@@ -28,7 +27,7 @@ var g_Module:Module;
 
 var g_XML:XML;
 var g_Plugins:Array;
-
+var g_XMLLoaded:Boolean;
 
 /**
  * onLoad
@@ -61,27 +60,30 @@ function onLoad():Void {
 	g_showConfig.SignalChanged.Connect(ToggleConfigWindow, this);
 
 	g_Plugins = new Array();
-}
-
-function OnModuleActivated():Void {
 	
 	g_XML = new XML();
-
 	g_XML.onLoad = onXMLLoaded;
 	g_XML.ignoreWhite = true;
 	g_XML.load( g_Module.modulePath + '/plugins.xml' );
 }
 
-function OnModuleDeactivated():Void {
+function OnModuleActivated():Void {
+	g_Module.iconClip.m_Movie._visible = true;
+	
+	PluginsReady();
+}
 
+function OnModuleDeactivated():Void {
+	g_Module.iconClip.m_Movie._visible = false;
+	
 	// destroy config window
 	g_showConfig.SetValue(false);
 	
 	// deactivate all plugins
 	var settings:Archive = new Archive();
 	
-	while( g_Plugins.length ) {
-		var plugin:Plugin = Plugin(g_Plugins.pop());
+	for ( var i:Number = 0; i < g_Plugins.length; i++ ) {
+		var plugin:Plugin = Plugin(g_Plugins[i]);
 		var pluginSettings:Archive = new Archive();
 		
 		pluginSettings.AddEntry( 'enabled', plugin.enabled );
@@ -95,6 +97,8 @@ function OnModuleDeactivated():Void {
 }
 
 function OnUnload():Void {
+	
+	g_Module.detachIcon();
 	
 	// save module settings
 	var saveData = new Archive();
@@ -113,8 +117,6 @@ function onXMLLoaded(success:Boolean):Void {
 	// TODO: check if pluginsNode is actually the <plugins> node
 	//UtilsBase.PrintChatText('pluginsNode:' + pluginsNode.nodeName );
 
-	var accountSettings:Archive = DistributedValue.GetDValue(AddonInfo.Author + '_' + AddonInfo.Name + '_AccountPluginSettings');
-	
 	for (var aNode:XMLNode = pluginsNode.firstChild; aNode != null; aNode = aNode.nextSibling) {
 
 		var plugin:Plugin = new Plugin( g_Module.modulePath.toLowerCase() + '_' + aNode.attributes.location, aNode.attributes.name, g_Module.modulePath + '/plugins/' + aNode.attributes.location, aNode.attributes.depth, aNode.attributes['sub-depth']);
@@ -122,21 +124,32 @@ function onXMLLoaded(success:Boolean):Void {
 		plugin.author = aNode.attributes.author;
 		plugin.contactURL = aNode.attributes['contact-url'];
 		
-		var pluginSettings:Archive = accountSettings.FindEntry( plugin.name );
-		
-		plugin.settings = pluginSettings.FindEntry( 'settings' );
-		
-		// load if saved enabled
-		if ( pluginSettings.FindEntry('enabled', false) ) plugin.Load();
-		
 		g_Plugins.push( plugin );
 	}
 	
 	// sort the array alphabetically
 	g_Plugins.sortOn( 'name', Array.CASEINSENSITIVE );
+	
+	g_XML = null;
+	g_XMLLoaded = true;
+	PluginsReady();
 }
 
+function PluginsReady():Void {
+	if ( !g_XMLLoaded ) return;
 
+	var accountSettings:Archive = DistributedValue.GetDValue(AddonInfo.Author + '_' + AddonInfo.Name + '_AccountPluginSettings');
+	
+	for ( var i:Number = 0; i < g_Plugins.length; i++ ) {
+		var plugin:Plugin = Plugin(g_Plugins[i]);
+		
+		// load if saved enabled
+		var pluginSettings:Archive = accountSettings.FindEntry( plugin.name );
+		plugin.settings = pluginSettings.FindEntry( 'settings' );
+
+		if ( pluginSettings.FindEntry('enabled', false) ) plugin.Load();
+	}
+}
 
 
 function ToggleConfigWindow():Void {
