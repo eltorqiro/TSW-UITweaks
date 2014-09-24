@@ -1,6 +1,4 @@
-0.5.2 beta -- 2014-09-20
-
- ! Bug Fixes And Feature Updates
+Next -- Next
 
  + Add slider to Inspecto Patronum for Redraw Wait Time for people with slower computers.
  
