@@ -29,7 +29,7 @@ function getPluginConfiguration():Object {
 
 	return {
 	  elements: [
-		{ type: 'slider', label: 'Redraw Wait Time ( MS )', min: 1, max: 1000, initial: remover.waitTime, snap: 1, data: { },
+		{ type: 'slider', label: 'Redraw Wait Time ( MS )', min: 100, max: 1000, initial: remover.waitTime, snap: 1, data: { },
 		onChange: { context: this, fn: function(value:Number, data:Object) {
 		remover.waitTime = value;
 		}}
