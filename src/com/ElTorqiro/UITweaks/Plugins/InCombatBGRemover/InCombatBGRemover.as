@@ -10,12 +10,16 @@ class com.ElTorqiro.UITweaks.Plugins.InCombatBGRemover.InCombatBGRemover {
 	private var _originalPosition:Point;
 	private var _hudBackgroundRegistered:MovieClip;
 	
+	// redraw wait time.
+	public var removerReDraw:Number;
+		
 	public function InCombatBGRemover() {
 
 	}
 
 	public function Activate() {
-		_global.setTimeout( Delegate.create(this, HideBackground), 200 );
+		if ( !removerReDraw ) removerReDraw = 100;
+		_global.setTimeout( Delegate.create(this, HideBackground), removerReDraw );
 	}
 
 	public function Deactivate() {
@@ -55,4 +59,9 @@ class com.ElTorqiro.UITweaks.Plugins.InCombatBGRemover.InCombatBGRemover {
 		hudBackground.i_CombatBackground._y = position.y;
 	}
 
+	public function get waitTime():Number { return removerReDraw; }
+	public function set waitTime(value:Number):Void {
+		if ( value == undefined ) return;
+			removerReDraw = value;
+	}
 }

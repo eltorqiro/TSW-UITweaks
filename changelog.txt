@@ -1,3 +1,8 @@
+NEXT -- NEXT
+
+ + Add slider to In Combat Black Background Remover for Redraw Wait Time for people with slower computers.
+ 
+
 0.5.1 beta -- 2014-09-08
 
  ! initial beta release to public

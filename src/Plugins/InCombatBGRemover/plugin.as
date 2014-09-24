@@ -11,15 +11,29 @@ function onLoad():Void {
 function onPluginActivated(settings:Archive):Void {
 	
 	remover.Activate();
+	
+	if( settings != undefined ) {
+		remover.waitTime = settings.FindEntry('WaitTime');
+	}
 }
 
 function onPluginDeactivated():Archive {
 	remover.Deactivate();
 	
-	return undefined;
+	var settings:Archive = new Archive();
+	settings.AddEntry( 'WaitTime', remover.removerReDraw );
+	return settings;
 }
 
 function getPluginConfiguration():Object {
 
-	return undefined;
+	return {
+	  elements: [
+		{ type: 'slider', label: 'Redraw Wait Time ( MS )', min: 1, max: 1000, initial: remover.waitTime, snap: 1, data: { },
+		onChange: { context: this, fn: function(value:Number, data:Object) {
+		remover.waitTime = value;
+		}}
+		}
+	  ]
+	};
 }
