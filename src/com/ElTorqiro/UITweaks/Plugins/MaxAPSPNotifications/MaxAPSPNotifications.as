@@ -30,7 +30,7 @@ class com.ElTorqiro.UITweaks.Plugins.MaxAPSPNotifications.MaxAPSPNotifications {
 		var character:Character = Character.GetClientCharacter();
 		
 		var maxAP:Number = Utils.GetGameTweak("LevelTokensCap") + character.GetStat(_global.Enums.Stat.e_PersonalAnimaTokenCap, 2);
-		var maxSP:Number = Utils.GetGameTweak("SkillTokensCap");
+		var maxSP:Number = Utils.GetGameTweak("SkillTokensCap") + character.GetStat(_global.Enums.Stat.e_PersonalSkillTokenCap, 2);		
 		
 		var currentAP:Number = character.GetTokens(_global.Enums.Token.e_Anima_Point);
 		var currentSP:Number = character.GetTokens(_global.Enums.Token.e_Skill_Point);
