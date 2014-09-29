@@ -1,6 +1,7 @@
 NEXT -- NEXT
 
  + Add slider to In Combat Black Background Remover for Redraw Wait Time for people with slower computers.
+ + Add slider to Inspecto Patronum for Redraw Wait Time for people with slower computers.
  
 
 0.5.1 beta -- 2014-09-08
