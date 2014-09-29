@@ -35,12 +35,17 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 	public var gearSectionSpacing:Number = iconPadding * 6;
 	public var statSectionSpacing:Number = iconPadding * 3;
 	
-
+	// time to wait before inspection window re-draw.
+	public var inspectReDraw:Number;
+	
 	public function InspectoPetronum() {
-
+		
 	}
 	
 	public function Activate() {
+		
+		if ( !inspectReDraw ) inspectReDraw = 100;
+	
 		// create listener
 		GlobalSignal.SignalShowInspectWindow.Connect( AttachToWindow, this );
 	}
@@ -70,7 +75,7 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 		// if we made it this far, the window has been found, so build content on it
 		delete _windowSearches[characterID];
 		
-		_global.setTimeout( Delegate.create( this, Build ), 100, window );
+		_global.setTimeout( Delegate.create( this, Build ), inspectReDraw, window );
 	}
 	
 	
@@ -597,4 +602,10 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 		statBoxMC.cursor.y += fields.name.textHeight;
 	}
 	
+	public function get waitTime():Number { return inspectReDraw; }
+	public function set waitTime(value:Number):Void {
+		if ( value == undefined ) return;
+		
+		inspectReDraw = value;
+	}
 }
