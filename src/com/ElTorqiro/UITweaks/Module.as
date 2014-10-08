@@ -95,7 +95,10 @@ function OnModuleDeactivated():Void {
 	
 	DistributedValue.SetDValue(AddonInfo.Author + '_' + AddonInfo.Name + '_AccountPluginSettings', settings);
 	
-
+	// update icon settings
+	g_settings.iconPosition = g_Module.iconPosition;
+	g_settings.iconScale = g_Module.iconScale;
+	
 	// save module settings
 	var saveData = new Archive();
 	for(var i:String in g_settings) {
