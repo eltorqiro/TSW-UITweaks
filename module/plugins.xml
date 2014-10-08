@@ -33,7 +33,7 @@
 	/>
 	
 	<plugin
-		name="Inspecto Petronum"
+		name="Inspecto Patronum"
 		description="Reworks the entire Inspection window, adding character statistics and better layout of gear."
 		author="ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
