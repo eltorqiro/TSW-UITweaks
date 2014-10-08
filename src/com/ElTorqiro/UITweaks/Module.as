@@ -40,7 +40,7 @@ function onLoad():Void {
 	g_settings = {
 		configWindowPosition: new Point( 200, 200 ),
 		configWindowSize: new Point( 600, 400 ),
-		iconPosition: new Point( (Stage.visibleRect.width - g_icon._width) / 2, (Stage.visibleRect.height - g_icon._width) / 4 ),
+		iconPosition: new Point( Math.round((Stage.visibleRect.width - g_icon._width) / 2), Math.round((Stage.visibleRect.height - g_icon._width) / 4 )),
 		iconScale: 100
 	};
 

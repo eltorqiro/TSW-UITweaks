@@ -56,6 +56,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Module {
 		centreScaleIcon = true;
 		
 		autoRegisterWithVTIO = true;
+		_isRegisteredWithVTIO = false;
 		_VTIOLoaded = DistributedValue.Create( 'VTIO_IsLoaded' );
 		
 		_toggleDV = DistributedValue.Create( dvName );
@@ -94,10 +95,10 @@ class com.ElTorqiro.UITweaks.AddonUtils.Module {
 	}
 
 	public function attachDefaultIconBehaviours():Void {
-		
+
 		_iconMC.onMousePress = Delegate.create( this, function(buttonID) {
 			closeTooltip();
-			
+
 			// dragging icon with CTRL held down, only if VTIO not present
 			if ( !isRegisteredWithVTIO && buttonID == 1 && Key.isDown(Key.CONTROL) ) {
 				_iconMC.startDrag(
@@ -153,8 +154,10 @@ class com.ElTorqiro.UITweaks.AddonUtils.Module {
 		// don't re-register
 		if ( isRegisteredWithVTIO ) return false;
 		
-		if ( !isVTIOLOaded ) {
+		// only try to register if VTIO is available
+		if ( !isVTIOLoaded ) {
 			_VTIOLoaded.SignalChanged.Connect( registerWithVTIO, this );
+			return;
 		}
 
 		// register with VTIO
@@ -230,7 +233,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.Module {
 	
 	public function get iconClip():ClipNode { return _iconClip; }
 	
-	public function get isVTIOLOaded():Boolean { return Boolean(_VTIOLoaded.GetValue()); }
+	public function get isVTIOLoaded():Boolean { return Boolean(_VTIOLoaded.GetValue()); }
 	public function get isRegisteredWithVTIO():Boolean { return _isRegisteredWithVTIO; }
 	
 	public function get modulePath():String { return _modulePath; };
