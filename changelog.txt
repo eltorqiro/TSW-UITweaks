@@ -1,3 +1,10 @@
+0.5.3 beta -- 2014-10-09
+
+ ! Inspecto Patronum has been renamed to the correct spelling - you must re-enable the plugin
+
+ * icon can now be manipulated when not using VTIO, instructions in tooltip
+   
+   
 0.5.2 beta -- 2014-09-29
    
  + Add slider to In Combat Black Background Remover for Redraw Wait Time for people with slower computers.
