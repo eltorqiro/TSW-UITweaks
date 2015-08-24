@@ -15,11 +15,9 @@ Since each plugin is intended to work against the default UI, any custom mods yo
 Plugins
 -------
  * Ability Bar DeFX - ability bar visual fx adjustments.
- * Black Background Removal - hide the black faded background at the bottom of the screen.
+ * Black Background Removal - hide the black faded background at the bottom of the screen, but still allow the in-combat indicator to show.
  * Character Sheet Zoom - manual static character sheet zoom setting.
  * Inspecto Patronum - revamped Character Inspection panel, including equipment statistics.
- * Max AP/SP Notification icons - suppress the AP/SP notification icons if at max values.
- * Mobile HUD - allow manual positioning of most HUD elements.
  * Resize Altered States - manual static size adjustment for combat states (e.g. Weakened etc).
  * Target Of Target - display windows for your offensive target's offensive & defensive target; great for tanking and healing! 
    
@@ -31,8 +29,8 @@ An in-game config icon is available, which also integrates with Viper's Topbar I
    
 Known Issues
 ------------
- * MobileHUD often resets all elements to top left corner after a cutscene.  Since TSW Issue #10 will introduce some kind of hud movement feature, this entire plugin may not be needed after Issue #10 is released.
-   
+Switching characters causes the config window to become empty.  The workaround is to do a /reloadui after switching characters.
+
    
 Installation
 ------------

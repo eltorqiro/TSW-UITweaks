@@ -20,6 +20,7 @@ import com.ElTorqiro.UITweaks.AddonUtils.AddonUtils;
 import com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.LDB;
 import com.Components.ItemSlot;
 
+import com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.ItemStats;
 
 class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 
@@ -208,6 +209,8 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 			secAegisPercent: { },
 			
 			aegisPercent: { label: LDB.GetText('StatNames', 'AvgAegisConversionPercent'), stat: 'aegis damage' },
+			aegisShield: { label: LDB.GetText('StatNames', 'AegisShield'), stat: 'aegis shield' },
+			aegisHealing: { label: LDB.GetText('StatNames', 'AegisHealing'), stat: 'aegis healing' },
 			
 			health: { label: LDB.GetText('StatNames', 'Health') },
 			
@@ -235,7 +238,7 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 		var items:Array = [];
 		
 		for ( var s:String in content.m_InspectionInventory.m_Items ) {
-			items.push( AddonUtils.GetItemStats(content.m_InspectionInventory, content.m_InspectionInventory.m_Items[s].m_InventoryPos) );
+			items.push( ItemStats.GetItemStats(content.m_InspectionInventory, content.m_InspectionInventory.m_Items[s].m_InventoryPos) );
 		}
 		
 		for( var s:String in items ) {
@@ -248,30 +251,28 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 			// weapons and talismans
 			if ( item.type == _global.Enums.ItemType.e_ItemType_Chakra || item.type == _global.Enums.ItemType.e_ItemType_Weapon ) {
 				
+				// capture max and average QL for talismans and weapons only
+				if ( stats.maxQL.values.base.value < item.rank ) stats.maxQL.values.base.value = item.rank;
+				stats.avgQL.values.base.value += item.rank;
+				stats.avgQL.values.base.count++;
+
 				// base item stats
 				for ( var a:String in item.attributes ) {
-
-					// capture max and avereage QL for talismans and weapons only
-					if ( item.type == _global.Enums.ItemType.e_ItemType_Chakra || item.type == _global.Enums.ItemType.e_ItemType_Weapon ) {
-						if ( stats.maxQL.values.base.value < item.rank ) stats.maxQL.values.base.value = item.rank;
-						stats.avgQL.values.base.value += item.rank;
-						stats.avgQL.values.base.count++;
-					}
-					
 					statsMap[a].values[ item.typePosition ].value += item.attributes[a].value;
 					statsMap[a].values[ item.typePosition ].count++;
 				}
 				
 				// glyph
-				for ( var a:String in item.glyph.attributes ) {
+				
+				// capture max and average QL for talismans and weapons only
+				if ( item.glyph ) {
+					if ( stats.maxQL.values.base.value < item.glyph.rank ) stats.maxQL.values.base.value = item.glyph.rank;
+					stats.avgQL.values.base.value += item.glyph.rank;
+					stats.avgQL.values.base.count++;
+				}
 
-					// capture max and avereage QL for talismans and weapons only
-					if ( item.type == _global.Enums.ItemType.e_ItemType_Chakra || item.type == _global.Enums.ItemType.e_ItemType_Weapon ) {
-						if ( stats.maxQL.values.base.value < item.glyph.rank ) stats.maxQL.values.base.value = item.glyph.rank;
-						stats.avgQL.values.base.value += item.glyph.rank;
-						stats.avgQL.values.base.count++;
-					}
-					
+				// glyph stats
+				for ( var a:String in item.glyph.attributes ) {
 					statsMap[a].values[ item.typePosition ].value += item.glyph.attributes[a].value;
 					statsMap[a].values[ item.typePosition ].count++;
 				}
@@ -285,9 +286,16 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 
 
 			// aegis items
-			else if ( item.type == _global.Enums.ItemType.e_ItemType_AegisGeneric || item.type == _global.Enums.ItemType.e_ItemType_AegisWeapon ) {
-					statsMap[ 'aegis damage' ].values[ item.typePosition ].value += item.attributes[ 'aegis damage' ].value;
-					statsMap[ 'aegis damage' ].values[ item.typePosition ].count++;
+			else if ( 	item.type == _global.Enums.ItemType.e_ItemType_AegisGeneric
+						|| item.type == _global.Enums.ItemType.e_ItemType_AegisWeapon
+						|| item.type == _global.Enums.ItemType.e_ItemType_AegisShield
+					) {
+				
+					for ( var a:String in item.attributes ) {
+						statsMap[ a ].values[ item.typePosition ].value += item.attributes[a].value;
+						statsMap[ a ].values[ item.typePosition ].count++;
+					}
+				
 			}
 			
 		}
@@ -299,9 +307,18 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 		if ( stats.aegisPercent.values.secondary.value > 0 )
 			stats.aegisPercent.values.secondary.value = Math.round( stats.aegisPercent.values.secondary.value / stats.aegisPercent.values.secondary.count * 100 ) / 100;
 
+		if ( stats.aegisHealing.values.primary.value > 0 ) {
+			stats.aegisHealing.values.primary.value = Math.round( stats.aegisHealing.values.primary.value / stats.aegisHealing.values.primary.count * 100 ) / 100;
+		}
+
+		if ( stats.aegisHealing.values.secondary.value > 0 ) {
+			stats.aegisHealing.values.secondary.value = Math.round( stats.aegisHealing.values.secondary.value / stats.aegisHealing.values.secondary.count * 100 ) / 100;
+		}
+
 		// implied ql average
-		if ( stats.avgQL.values.base.value > 0 )
+		if ( stats.avgQL.values.base.value > 0 ) {		
 			stats.avgQL.values.base.value = Math.floor( stats.avgQL.values.base.value / stats.avgQL.values.base.count * 100 ) / 100;
+		}
 		
 		// info not from gear
 		//stats.health.values.base = content.m_InspectionCharacter.GetStat( _global.Enums.Stat.e_Health );
@@ -357,6 +374,8 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.InspectoPetronum {
 		
 		statBox.cursor.y += statSectionSpacing;
 		AddStatLine( statBox, stats, 'aegisPercent' );
+		AddStatLine( statBox, stats, 'aegisHealing' );
+		AddStatLine( statBox, stats, 'aegisShield' );
 
 
 		// align values and names -- this is done here as the max required width of values is now available

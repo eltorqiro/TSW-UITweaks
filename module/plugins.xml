@@ -41,14 +41,6 @@
 	/>
 
 	<plugin
-		name="Mobile HUD"
-		description="Allows most HUD elements to be repositioned on the screen."
-		author="ElTorqiro"
-		contact-url="http://forums.thesecretworld.com/"
-		location="MobileHUD"
-	/>
-
-	<plugin
 		name="Resize Altered States"
 		description="Resizes or hides the combat states icons in the Player Info and Target Window panels."
 		author="The009"
@@ -62,14 +54,6 @@
 		author="ElTorqiro"
 		contact-url="http://forums.thesecretworld.com/"
 		location="CharacterSheetZoom"
-	/>
-
-	<plugin
-		name="Max AP/SP Notifications"
-		description="Hides the AP/SP notification icons when at maximum levels of each."
-		author="The009 &amp; ElTorqiro"
-		contact-url="http://forums.thesecretworld.com/"
-		location="MaxAPSPNotifications"
 	/>
 
 	<plugin

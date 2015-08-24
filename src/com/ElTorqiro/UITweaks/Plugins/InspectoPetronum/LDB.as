@@ -20,7 +20,7 @@ defence : Valeur de défense
 block : Valeur de parade
 physProt : Protection physique
 magProt : Protection magique
-aegisPercent : Avg. AEGIS %
+aegisPercent : Avg. AEGIS Damage %
 
 de:
 German has a space in between number and % symbol, such as in AEGIS controllers
@@ -42,7 +42,7 @@ defence : Verteidigungswert
 block : Blockwert
 physProt : Körperlicher Schutz
 magProt : Magischer Schutz
-aegisPercent : Avg. AEGIS %
+aegisPercent : Avg. AEGIS Damage %
 */
 
 class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.LDB {
@@ -55,6 +55,7 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.LDB {
 	// LDB categories
 	private static var StatNames:Object = { };
 	private static var Labels:Object = { };
+	private static var ItemNames:Object = { };
 
 	
 	/**
@@ -82,10 +83,22 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.LDB {
 			PhysicalProtection: { standard: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_PhysicalMitigation) },
 			MagicalProtection: 	{ standard: LDBFormat.LDBGetText("SkillTypeNames", _global.Enums.SkillType.e_Skill_MagicalMitigation) },
 			
-			AvgAegisConversionPercent: { standard: "Avg. AEGIS %",
-									en: "Avg. AEGIS %",
-									fr: "Moyenne NQ",
-									de: "Durchschnitt QS"
+			AvgAegisConversionPercent: { standard: "Aegis Damage %",
+									en: "Aegis Damage Avg. %",
+									fr: "Moyenne Aegis Dommages %",
+									de: "Durchschnittliche Aegis Schaden %"
+			},
+			
+			AegisShield:	{ standard: "Aegis Shield",
+									en: "Aegis Shield",
+									fr: "Aegis Bouclier",
+									de: "Aegis Schutz"
+			},
+
+			AegisHealing:	{ standard: "Aegis Healing Avg.",
+									en: "Aegis Healing Avg.",
+									fr: "Moyenne Aegis Guérison",
+									de: "Durchschnittliche Aegis Heilung"
 			},
 			
 			Health: { standard: "Health",
@@ -113,6 +126,27 @@ class com.ElTorqiro.UITweaks.Plugins.InspectoPetronum.LDB {
 									fr: "Statistiques de l'équipement",
 									de: "Ausrüstung Statistiken"
 			}
+		};
+		
+		ItemNames = {
+			AECapacitor: { standard: "AE Capacitor",
+							en: "AE Capacitor",
+							fr: "Condensateur AE",
+							de: "AE-Kondensator"
+			},
+			
+			AERampartCapacitor: { standard: "AE Rampart Capacitor",
+							en: "AE Rampart Capacitor",
+							fr: "Condensateur AE - Rempart",
+							de: "AE-Wallkondensator"
+			},
+
+			AEConvalescenceCapacitor: { standard: "AE Convalescence Capacitor",
+							en: "AE Convalescence Capacitor",
+							fr: "Condensateur AE - Convalescence",
+							de: "AE-Konvaleszenzkondensator"
+			}
+
 		};
 	}
 	

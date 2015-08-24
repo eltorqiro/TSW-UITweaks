@@ -35,7 +35,7 @@ var g_XMLLoaded:Boolean;
  * GMF_DONT_UNLOAD is enabled in Modules.xml
  */
 function onLoad():Void {
-
+	
 	// default config related settings
 	g_settings = {
 		configWindowPosition: new Point( 200, 200 ),
