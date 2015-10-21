@@ -74,4 +74,19 @@
 		location="InCombatBGRemover"
 	/>
 	
+	<plugin
+		name="Resize Windows"
+		description="Resizes windows that cannot be configured in the default settings."
+		author="Julian Paolo Thiry (Aedani)"
+		contact-url="http://forums.thesecretworld.com/"
+		location="Resizer"
+	/>
+	<plugin
+		name="Fix 4K"
+		description="Fixes inherent problems with the game at 4K resolution. Disables the warning popup that should appear (but fails to) when allocating skills that do not increase your gear level. Fixes the background of the ability wheel so that abilities may be dragged into place again."
+		author="Julian Paolo Thiry (Aedani)"
+		contact-url="http://forums.thesecretworld.com/"
+		location="Fix4K"
+	/>
+	
 </plugins>
