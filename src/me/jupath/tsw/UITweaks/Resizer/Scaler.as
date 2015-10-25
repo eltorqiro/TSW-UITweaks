@@ -1,13 +1,12 @@
 import com.GameInterface.DistributedValue;
 import com.Utils.Signal;
 import mx.utils.Delegate;
+import com.ElTorqiro.UITweaks.AddonUtils.WaitFor;
 
 //To override the private method MoveDragHandler and have 'this' references function correctly, need to extend WinComp.
-class com.ElTorqiro.UITweaks.Plugins.Resizer.Scaler extends com.Components.WinComp {
+class me.jupath.tsw.UITweaks.Resizer.Scaler extends com.Components.WinComp {
 
-	private var _delayInterval:Number = 50; //ms
-	private var _maxDelay:Number = 1000; //ms
-	
+	private var waitForId:Number;
 	private var _dv:DistributedValue;
 	private var _signal:Signal;
 	private var _windowName:String;
@@ -89,18 +88,26 @@ class com.ElTorqiro.UITweaks.Plugins.Resizer.Scaler extends com.Components.WinCo
 
 	private function DoScale():Void {
 		if (_dv == null || _dv.GetValue() == true) {
-			_delay = _maxDelay;
-			Scale();
+			waitForId = WaitFor.start( Delegate.create(this, waitForWindow), 10, 2000, Delegate.create(this, Scale) );
 		}
 	}
+	
+	private function waitForWindow():Boolean {
+		return _root[_windowName];
+	}
+	
+	public function stopWaitFor() : Void {
+		WaitFor.stop( waitForId );
+		waitForId = undefined;
+	}
+
 	private function Scale():Void {
+		stopWaitFor();
+
 		var window = _root[_windowName];
 		if (window != undefined) {
 			if (_zoom) ZoomWindow(window, _scale);
 			else ScaleWindow(window, _scale);
-		} else {
-			_delay -= _delayInterval;
-			if (_delay > 0) _global.setTimeout( Delegate.create(this, Scale), _delayInterval);
 		}
 	}
 	
