@@ -1,45 +1,51 @@
 ElTorqiro_UITweaks
 ==================
-Configurable tweaks and addons for the default in-game UI in The Secret World MMO
-   
-Written and Maintained by: ElTorqiro, The009
+A collection of configurable tweaks for the default UI in the MMORPG "The Secret World"
    
    
 What is this?
 -------------
-UITweaks is a collection of configurable tweaks and addons for the default UI. It uses a plugin architecture, which allows for in-game enabling/disabling of each plugin, and does not overwrite any of the default game files.
+ElTorqiro_UITweaks is a collection of configurable tweaks and addons for the default UI. It uses a plugin architecture, which allows for in-game enabling/disabling of each plugin, and does not override or modify any of the default game files.
 
-Since each plugin is intended to work against the default UI, any custom mods you use that overwrite default UI files will probably cause strange compatibility issues.
+Join the conversation with feedback, bug reports, and update information on the official TSW forums at https://forums.thesecretworld.com/showthread.php?81645-MOD-ElTorqiro_UITweaks
    
    
 Plugins
 -------
- * Ability Bar DeFX - ability bar visual fx adjustments.
- * Black Background Removal - hide the black faded background at the bottom of the screen, but still allow the in-combat indicator to show.
- * Character Sheet Zoom - manual static character sheet zoom setting.
- * Inspecto Patronum - revamped Character Inspection panel, including equipment statistics.
- * Resize Altered States - manual static size adjustment for combat states (e.g. Weakened etc).
- * Target Of Target - display windows for your offensive target's offensive & defensive target; great for tanking and healing! 
+* Ability Bar FX - Customises the look of the buttons in the ability bar.
+* Bag Lock - Prevents inventory windows being accidentally moved.
+* Black Background Removal - Removes the blurry black background from the bottom of the screen, while still allowing the default "in-combat" indicator to be used.
+* Character Sheet Zoom - Locks the character sheet zoom at a selectable level.
+* Inspecto Patronum - Redraws inspection windows with new visuals and complete gear stats of the target.
+* State Icons Size - Allows the _altered states_ icons in player and target info panels to be resized or hidden.
    
    
-User Configuration
-------------------
-An in-game config icon is available, which also integrates with Viper's Topbar Information Overload (VTIO).  Clicking the icon opens the configuration window where each plugin can be enabled/disabled and any available plugin settings can be selected.
+Important Notes
+---------------
+* Since each plugin is intended to work against the default UI, any custom mods you use that override default UI files will probably cause strange compatibility issues.
+  
+  
+Donations
+---------
+I don't accept real-money donations for my mods.  If you would like to show your support, you can do so by sending in-game pax to my character Tufenuf.  I will use it to buy the in-game items I would otherwise have been able to grind out myself, if I weren't spending time writing mods.
+  
+  
+Configuration
+-------------
+The mod includes an on-screen icon which can be clicked to bring up a comprehensive configuration panel.  If you have Viper's Topbar Information Overload (VTIO) installed, or an equivalent handler, the icon will be available in a VTIO slot.
    
-   
-Known Issues
-------------
-Switching characters causes the config window to become empty.  The workaround is to do a /reloadui after switching characters.
-
+Check the instructions inside the configuration panel for plugin-specific configuration details.  Tip: You can toggle each plugin on/off by double-clicking its entry in the plugin list, as well as using the "Plugin Enabled" checkbox.
+  
    
 Installation
 ------------
-Extract the contents of the zip file into: YOUR_TSW_DIRECTORY\Data\Gui\Customized\Flash
-This will add the appropriate directory and put the files in the right place.
-
-Uninstallation
---------------
-Delete the directory: YOUR_TSW_DIRECTORY\Data\Gui\Customized\Flash\ElTorqiro_UITweaks
+The mod is released with CurseMod support, so you can use the Curse client to handle adding and removing it from the game.  Manual installation can also be done, as follows:
+  
+Manual Installation
+Ensure the game is closed, then extract only the Flash folder from the zip file into TSW_GAME_FOLDER\Data\Gui\Customized
+  
+Manual Uninstallation
+Ensure the game is closed, then delete the folder TSW_GAME_FOLDER\Data\Gui\Customized\Flash\ElTorqiro_UITweaks
    
    
 Source Code
@@ -47,3 +53,11 @@ Source Code
 You can get the source from GitHub at https://github.com/eltorqiro/TSW-UITweaks
    
    
+Contributors
+------------
+Aside from the author of the UITweaks framework (ElTorqiro), testing and development of some of the plugins prior to v1.0.0 was carried out by The009.  Thanks go out to him for his ideas and support.
+  
+  
+Licenses
+--------
+* "Screwdriver and wrench" icon originally created by Freepik from ( http://www.flaticon.com ), used with permission under the CC BY 3.0 license ( http://creativecommons.org/licenses/by/3.0/ ).  It was sourced from ( http://www.flaticon.com/free-icon/screwdriver-and-wrench_109 ).  The icon has been changed from its original appearance.

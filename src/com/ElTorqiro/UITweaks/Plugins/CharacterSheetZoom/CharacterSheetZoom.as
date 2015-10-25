@@ -1,73 +1,117 @@
+import com.ElTorqiro.UITweaks.Plugins.Plugin;
+
 import com.GameInterface.DistributedValue;
-import mx.utils.Delegate;
-import com.GameInterface.UtilsBase;
+import gfx.utils.Delegate;
 import flash.geom.Point;
 import com.GameInterface.Game.Camera;
 
+import com.ElTorqiro.UITweaks.AddonUtils.WaitFor;
 
-class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom {
 
-	private var _characterSheetActiveVar:DistributedValue;
-	private var _findCharacterSheetThrashCount:Number = 0;
+/**
+ * 
+ * 
+ */
+class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom extends Plugin {
 
-	private var _sheet:MovieClip;
-	
-	private var _scale:Number;
-	private var _hideFadeLines:Boolean;
-	private var _suppressOnEnterFrameThrashing:Boolean;
-
+	// plugin properties
+	public var id:String = "characterSheetZoom";
+	public var name:String = "Character Sheet Zoom";
+	public var description:String = "Locks the character sheet zoom at a selectable level.";
+	public var author:String = "ElTorqiro";
+	public var prefsVersion:Number = 1;
 
 	public function CharacterSheetZoom() {
-		_characterSheetActiveVar = DistributedValue.Create("character_sheet");
 		
-		_scale = 100;
-		_hideFadeLines = true;
-		_suppressOnEnterFrameThrashing = true;
+		prefs.add( "fadelines.hide", true );
+		prefs.add( "zoom.level", 100 );
+		
+	}
+
+	public function onLoad() : Void {
+		super.onLoad();
+		
+		charSheetMonitor = DistributedValue.Create("character_sheet");
+		charSheetMonitor.SignalChanged.Connect( apply, this );
 	}
 	
-	public function Suppress():Void {
-		_characterSheetActiveVar.SignalChanged.Connect(Suppress, this);
-		
-		if( !_characterSheetActiveVar.GetValue() ) {
-			_findCharacterSheetThrashCount = 0;
-			return;
-		}
+	public function apply() : Void {
+		stopWaitFor();
 
-		if ( _root.charactersheet.UpdatePosition == undefined ) {
-			if (_findCharacterSheetThrashCount++ == 30) _findCharacterSheetThrashCount = 0;
-			else _global.setTimeout( Delegate.create(this, Suppress), 10);
-			return;
+		if ( enabled && charSheetMonitor.GetValue() ) {
+			waitForId = WaitFor.start( waitForTest, 10, 2000, Delegate.create(this, hook) );
 		}
-		_findCharacterSheetThrashCount = 0;
-		_sheet = _root.charactersheet;
 		
-		_sheet.UpdatePositionSaved = _sheet.UpdatePosition;
-		_sheet.UpdatePosition = Delegate.create(this, UpdatePosition);
-		_sheet.UpdatePosition();
-		
-		if ( _suppressOnEnterFrameThrashing ) {
-			_sheet.onEnterFrameSaved = _sheet.onEnterFrame;
-			_sheet.onEnterFrame = function() { };
+		// set state if character sheet became closed
+		else {
+			hooked = false;
 		}
 	}
 
-	public function Restore():Void {
-		_characterSheetActiveVar.SignalChanged.Disconnect(Suppress, this);
-		
-		if ( _sheet == undefined ) return;
-		
-		_sheet.UpdatePosition = _sheet.UpdatePositionSaved;
-		_sheet.UpdatePositionSaved = undefined;
-		
-		if ( _suppressOnEnterFrameThrashing ) {
-			_sheet.onEnterFrame = _sheet.onEnterFrameSaved;
-			_sheet.onEnterFrameSaved = undefined;
-		}
-		
-		_sheet = undefined;			
+	private function waitForTest() : Boolean {
+		return _root.charactersheet.UpdatePosition;
 	}
 	
-	private function UpdatePosition():Void {
+	public function stopWaitFor() : Void {
+		WaitFor.stop( waitForId );
+		waitForId = undefined;
+	}
+	
+	public function onModuleDeactivated() : Void {
+		stopWaitFor();
+		hooked = false;
+	}
+	
+	public function hook() : Void {
+		stopWaitFor();
+		if ( hooked ) return;
+
+		var charSheet = _root.charactersheet;
+
+		// unlink onEnterFrame which does a heap of thrashing for nothing
+		charSheet.UITweaks_CharacterSheetZoom_onEnterFrame_Original = charSheet.onEnterFrame;
+		charSheet.onEnterFrame = undefined;
+		
+		// hook UpdatePosition function, which is responsible for zoom
+		charSheet.UITweaks_CharacterSheetZoom_UpdatePosition_Original = charSheet.UpdatePosition;
+		charSheet.UpdatePosition = Delegate.create( this, redraw );
+		
+		hooked = true;
+		
+		// redraw with hook in place
+		redraw();
+	}
+
+	public function revert() : Void {
+		stopWaitFor();
+		if ( !hooked ) return;
+
+		var charSheet = _root.charactersheet;
+		if ( !charSheet ) return;
+		
+		// restore UpdatePosition
+		if ( charSheet.UITweaks_CharacterSheetZoom_UpdatePosition_Original ) {
+			charSheet.UpdatePosition = charSheet.UITweaks_CharacterSheetZoom_UpdatePosition_Original;
+			delete charSheet.UITweaks_CharacterSheetZoom_UpdatePosition_Original;
+		}
+		
+		// restore onEnterFrame thrash
+		if ( charSheet.UITweaks_CharacterSheetZoom_onEnterFrame_Original ) {
+			charSheet.onEnterFrame = charSheet.UITweaks_CharacterSheetZoom_onEnterFrame_Original;
+			delete charSheet.UITweaks_CharacterSheetZoom_onEnterFrame_Original;
+		}
+		
+		hooked = false;
+		
+		charSheet.UpdatePosition();
+		
+	}
+	
+	private function redraw() : Void {
+		
+		if ( !hooked ) return;
+		
+		var _sheet = _root.charactersheet;
 		
 		//    var camDist:Number = m_Character.GetCameraDistance();
 		var camDist:Number =  Camera.GetZoom();
@@ -84,7 +128,7 @@ class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom {
 
 		//scale = Math.max( minScale, scale );
 		//scale = maxScale;
-		scale = _scale / 100;
+		scale = prefs.getVal( "zoom.level" ) / 100;
 
 		/*
 		if ( pos.x < 0 ) // Camera to close to make a projection
@@ -128,22 +172,61 @@ class com.ElTorqiro.UITweaks.Plugins.CharacterSheetZoom.CharacterSheetZoom {
 		_sheet._x = newPosX;
 		_sheet._y = newPosY;
 			
-		_sheet.m_FadeLine._visible = !wasCapped && !_hideFadeLines;
+		_sheet.m_FadeLine._visible = !wasCapped && !prefs.getVal( "fadelines.hide" );
+	}
+
+	/**
+	 * handle pref value changes for the plugin
+	 * 
+	 * @param	name
+	 * @param	newValue
+	 * @param	oldValue
+	 */
+	private function prefChangeHandler( name:String, newValue, oldValue ) : Void {
+		
+		switch ( name ) {
+			
+			case "fadelines.hide":
+			case "zoom.level":
+				redraw();
+			break;
+				
+		}
+		
+	}
+
+	public function getConfigPanelLayout() : Array {
+
+		return [
+		
+			{	id: "zoom.level",
+				type: "slider",
+				min: 20,
+				max: 200,
+				step: 1,
+				valueFormat: "%i%%",
+				label: "Zoom Level",
+				tooltip: "Zoom Level",
+				data: { pref: "zoom.level" }
+			},
+			
+			{	id: "fadelines.hide",
+				type: "checkbox",
+				label: "Hide faded lines",
+				tooltip: "Hides the faded lines that are drawn between your character and the equipment slots.",
+				data: { pref: "fadelines.hide" }
+			}
+				
+		];
+		
 	}
 	
-	public function get scale():Number { return _scale };
-	public function set scale(value:Number):Void {
-		if ( value == undefined ) return;
-		
-		_scale = value;
-		_sheet.UpdatePosition();
-	}
+	/**
+	 * internal variables
+	 */
 	
-	public function get hideFadeLines():Boolean { return _hideFadeLines };
-	public function set hideFadeLines(value:Boolean):Void {
-		if ( value == undefined ) return;
-		
-		_hideFadeLines = value;
-		_sheet.UpdatePosition();
-	}	
+	private var waitForId:Number;
+	private var hooked:Boolean;
+	private var charSheetMonitor:DistributedValue;
+
 }

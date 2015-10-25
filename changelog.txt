@@ -1,3 +1,21 @@
+1.0.0 -- 2015-10-25
+
+ ! release is a completely new structure -- ensure old version is fully deleted before installing
+
+ + added new plugin, BagLock, which helps prevent accidental inventory window manipulation
+ + Ability Bar FX has several new cosmetic features
+ 
+ * Inspecto Patronum now opens inspection windows seamlessly, with no redraw hitch
+ * config window options for plugins are now always available, even if the plugin is not enabled
+ * config window now remembers which plugin you last had selected before closing it
+
+ * updated to new standard ElTorqiro config window visuals
+ * (tech) plugins are now part of the core architecture rather than being separate SWFs
+ * (tech) pre-hook scans are now more efficient
+
+ - removed Target of Target plugin; this is now available as a completely separate mod with more features
+ 
+
 0.6.0 -- 2015-08-24
 
  ! release has two plugins removed - you can safely delete their folders from your UITWeaks installation if you want to

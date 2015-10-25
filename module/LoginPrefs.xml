@@ -2,7 +2,6 @@
 
 <Root>
   <Value name="ElTorqiro_UITweaks" value="true" />
-  <Value name="ElTorqiro_UITweaks_ShowConfig" value="false" />
-  <Archive name="ElTorqiro_UITweaks_Data" />
-  <Archive name="ElTorqiro_UITweaks_AccountPluginSettings" />
+  <Value name="ElTorqiro_UITweaks_Debug" value="false" />
+  <Archive name="ElTorqiro_UITweaks_Preferences" />
 </Root>
