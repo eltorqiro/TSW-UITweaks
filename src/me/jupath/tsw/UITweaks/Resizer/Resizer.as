@@ -12,6 +12,8 @@ class me.jupath.tsw.UITweaks.Resizer.Resizer extends Plugin {
 	public var description:String = "Resizes windows not available in the default settings.";
 	public var author:String = "Julian Paolo Thiry (Aedani)";
 	public var prefsVersion:Number = 1;
+	
+	private var adjustPosition = false;
 
 	public function Resizer() {
 		prefs.add( "scale.challengeJournal", 100 );
@@ -27,27 +29,27 @@ class me.jupath.tsw.UITweaks.Resizer.Resizer extends Plugin {
 	
 	public function onLoad() : Void {
 		super.onLoad();
-		_missionReward = new Scaler(null, GUI.Mission.MissionSignals.SignalMissionReportSent, "missionrewardcontroller", true);
-		_missionJournal = new Scaler(DistributedValue.Create("mission_journal_window"), null, "missionjournalwindow", false);
-		_friends = new Scaler(DistributedValue.Create("friends_window"), null, "friends", false);
-		_pets = new Scaler(DistributedValue.Create("petInventory_window"), null, "petinventory", false);
-		_social = new Scaler(DistributedValue.Create("group_search_window"), null, "groupsearch", false);
-		_deliveredItems = new Scaler(DistributedValue.Create("claim_window"), null, "claimwindow", false);
-		_lockoutTimers = new Scaler(DistributedValue.Create("lockoutTimers_window"), null, "lockouttimers", false);
-		_challengeJournal = new Scaler(DistributedValue.Create("challengeJournal_window"), null, "challengejournal", false);
-		_shop = new Scaler(null, com.GameInterface.ShopInterface.SignalOpenShop, "shopcontroller", false);
+		_missionReward = new Scaler(null, GUI.Mission.MissionSignals.SignalMissionReportSent, "missionrewardcontroller", true, prefs.getVal("scale.missionReward"));
+		_missionJournal = new Scaler(DistributedValue.Create("mission_journal_window"), null, "missionjournalwindow", false, prefs.getVal("scale.missionJournal"));
+		_friends = new Scaler(DistributedValue.Create("friends_window"), null, "friends", false, prefs.getVal("scale.friends"));
+		_pets = new Scaler(DistributedValue.Create("petInventory_window"), null, "petinventory", false, prefs.getVal("scale.pets"));
+		_social = new Scaler(DistributedValue.Create("group_search_window"), null, "groupsearch", false, prefs.getVal("scale.social"));
+		_deliveredItems = new Scaler(DistributedValue.Create("claim_window"), null, "claimwindow", false, prefs.getVal("scale.deliveredItems"));
+		_lockoutTimers = new Scaler(DistributedValue.Create("lockoutTimers_window"), null, "lockouttimers", false, prefs.getVal("scale.lockoutTimers"));
+		_challengeJournal = new Scaler(DistributedValue.Create("challengeJournal_window"), null, "challengejournal", false, prefs.getVal("scale.challengeJournal"));
+		_shop = new Scaler(null, com.GameInterface.ShopInterface.SignalOpenShop, "shopcontroller", false, prefs.getVal("scale.shop"));
 	}
 	
 	public function apply() : Void {
-		_missionReward.Activate();
-		_missionJournal.Activate();
-		_friends.Activate();
-		_pets.Activate();
-		_social.Activate();
-		_deliveredItems.Activate();
-		_lockoutTimers.Activate();
-		_challengeJournal.Activate();
-		_shop.Activate();
+		_missionReward.Activate(adjustPosition);
+		_missionJournal.Activate(adjustPosition);
+		_friends.Activate(adjustPosition);
+		_pets.Activate(adjustPosition);
+		_social.Activate(adjustPosition);
+		_deliveredItems.Activate(adjustPosition);
+		_lockoutTimers.Activate(adjustPosition);
+		_challengeJournal.Activate(adjustPosition);
+		_shop.Activate(adjustPosition);
 	}
 
 	public function revert() : Void {
@@ -62,8 +64,13 @@ class me.jupath.tsw.UITweaks.Resizer.Resizer extends Plugin {
 		_shop.Deactivate();
 	}
 	
-	//No Apply
-	public function onModuleActivated() : Void { }
+	private function pluginEnabledHandler( name:String, newValue, oldValue ) : Void {
+		adjustPosition = true;
+		if ( name == "plugin.enabled" ) {
+			newValue ? apply() : revert();
+		}
+		adjustPosition = false;
+	}
 
 	/**
 	 * handle pref value changes for the plugin
@@ -103,7 +110,6 @@ class me.jupath.tsw.UITweaks.Resizer.Resizer extends Plugin {
 			case "scale.shop":
 				_shop.scale = newValue;
 				break;
-				
 		}
 		
 	}

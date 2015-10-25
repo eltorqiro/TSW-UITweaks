@@ -13,18 +13,20 @@ class me.jupath.tsw.UITweaks.Resizer.Scaler extends com.Components.WinComp {
 	private var _zoom:Boolean;
 	private var _scale:Number;
 	private var _delay:Number;
+	private var _adjustPosition:Boolean;
 
-	public function Scaler(dv:DistributedValue, signal:Signal, windowName:String, zoom:Boolean) {
+	public function Scaler(dv:DistributedValue, signal:Signal, windowName:String, zoom:Boolean, scale:Number) {
 		_dv = dv;
 		_signal = signal;
 		if (_signal == null && _dv != null) _signal = _dv.SignalChanged;
 		_windowName = windowName;
 		_zoom = zoom;
-		_scale = 100;
+		_scale = scale;
 	}
 	
-	public function Activate():Void {
+	public function Activate(adjustPosition:Boolean):Void {
 		if (_signal != null) _signal.Connect(DoScale, this);
+		_adjustPosition = adjustPosition;
 		DoScale();
 	}
 
@@ -39,8 +41,12 @@ class me.jupath.tsw.UITweaks.Resizer.Scaler extends com.Components.WinComp {
 		var mWindow = window.m_Window;
 		if (mWindow != undefined) {
 			//Keep top left corner of content in the same place
-			mWindow._x = (mWindow._x * window._xscale / 100.0) * (1.0 / (scale / 100.0));
-			mWindow._y = (mWindow._y * window._yscale / 100.0) * (1.0 / (scale / 100.0));
+			if (_adjustPosition) {
+				mWindow._x = (mWindow._x * window._xscale / 100.0) * (1.0 / (scale / 100.0));
+				mWindow._y = (mWindow._y * window._yscale / 100.0) * (1.0 / (scale / 100.0));
+			} else {
+				_adjustPosition = true;
+			}
 			//Override the positioning restrictions to fit the new scale
 			mWindow.m_Background.onPress = Delegate.create(mWindow, MoveDragHandlerOverride);
 		}
