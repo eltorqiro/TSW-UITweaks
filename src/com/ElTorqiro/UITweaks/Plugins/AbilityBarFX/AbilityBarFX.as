@@ -148,7 +148,7 @@ class com.ElTorqiro.UITweaks.Plugins.AbilityBarFX.AbilityBarFX extends Plugin {
 		];
 					
 		// button shadow
-		slot.m_Ability.filters = !prefs.getVal( "button.shadow.enable" ) ? [] : [ new DropShadowFilter(
+		slot.m_Ability.m_BackgroundGradient.filters = !prefs.getVal( "button.shadow.enable" ) ? [] : [ new DropShadowFilter(
 			prefs.getVal( "button.shadow.distance" ) * 10,
 			degreesToRadians(prefs.getVal( "button.shadow.angle" )),
 			0,
