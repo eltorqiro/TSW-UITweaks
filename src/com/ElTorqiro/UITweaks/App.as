@@ -28,6 +28,8 @@ import com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto;
 import com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock;
 import me.jupath.tsw.UITweaks.Fix4K.Fix4K;
 import me.jupath.tsw.UITweaks.Resizer.Resizer;
+import com.ElTorqiro.UITweaks.Plugins.BooDecksFocusFix.BooDecksFocusFix;
+
 
 /**
  * 
@@ -58,7 +60,8 @@ class com.ElTorqiro.UITweaks.App {
 			new Inspecto(),
 			new BagLock(),
 			new Fix4K(),
-			new Resizer()
+			new Resizer(),
+			new BooDecksFocusFix()
 		];
 		plugins.sortOn( 'name', Array.CASEINSENSITIVE );
 		
