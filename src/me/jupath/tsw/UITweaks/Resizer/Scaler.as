@@ -2,6 +2,7 @@ import com.GameInterface.DistributedValue;
 import com.Utils.Signal;
 import mx.utils.Delegate;
 import com.ElTorqiro.UITweaks.AddonUtils.WaitFor;
+import me.jupath.tsw.UITweaks.Resizer.Resizer;
 
 //To override the private method MoveDragHandler and have 'this' references function correctly, need to extend WinComp.
 class me.jupath.tsw.UITweaks.Resizer.Scaler extends com.Components.WinComp {
@@ -14,14 +15,16 @@ class me.jupath.tsw.UITweaks.Resizer.Scaler extends com.Components.WinComp {
 	private var _scale:Number;
 	private var _delay:Number;
 	private var _adjustPosition:Boolean;
+	private var _plugin:Resizer;
 
-	public function Scaler(dv:DistributedValue, signal:Signal, windowName:String, zoom:Boolean, scale:Number) {
+	public function Scaler(dv:DistributedValue, signal:Signal, windowName:String, zoom:Boolean, scale:Number, plugin:Resizer) {
 		_dv = dv;
 		_signal = signal;
 		if (_signal == null && _dv != null) _signal = _dv.SignalChanged;
 		_windowName = windowName;
 		_zoom = zoom;
 		_scale = scale;
+		_plugin = plugin;
 	}
 	
 	public function Activate(adjustPosition:Boolean):Void {
@@ -93,7 +96,7 @@ class me.jupath.tsw.UITweaks.Resizer.Scaler extends com.Components.WinComp {
 	}
 
 	private function DoScale():Void {
-		if (_dv == null || _dv.GetValue() == true) {
+		if (_dv == null || _dv.GetValue() == true && _plugin.enabled ) {
 			waitForId = WaitFor.start( Delegate.create(this, waitForWindow), 10, 2000, Delegate.create(this, Scale) );
 		}
 	}
