@@ -81,6 +81,8 @@ class me.jupath.tsw.UITweaks.Resizer.Resizer extends Plugin {
 	 */
 	private function prefChangeHandler( name:String, newValue, oldValue ) : Void {
 		
+		if ( !enabled ) return;
+		
 		switch ( name ) {
 			
 			case "scale.challengeJournal":
