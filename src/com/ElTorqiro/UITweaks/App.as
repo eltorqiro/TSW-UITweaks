@@ -26,6 +26,8 @@ import com.ElTorqiro.UITweaks.Plugins.HudBackgroundRemoval.HudBackgroundRemoval;
 import com.ElTorqiro.UITweaks.Plugins.ResizeStates.ResizeStates;
 import com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto;
 import com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock;
+import me.jupath.tsw.UITweaks.Fix4K.Fix4K;
+import me.jupath.tsw.UITweaks.Resizer.Resizer;
 
 /**
  * 
@@ -54,7 +56,9 @@ class com.ElTorqiro.UITweaks.App {
 			new HudBackgroundRemoval(),
 			new ResizeStates(),
 			new Inspecto(),
-			new BagLock()
+			new BagLock(),
+			new Fix4K(),
+			new Resizer()
 		];
 		plugins.sortOn( 'name', Array.CASEINSENSITIVE );
 		
