@@ -77,15 +77,10 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 			for ( var s:String in map ) {
 				var pref:Boolean = prefs.getVal( "override." + s );
 				
-				if ( pref && Key.isDown(map[s]) ) {
-					override = true;
+				if ( pref ) {
+					override = Key.isDown( map[s] );
+					if ( !override ) break;
 				}
-				
-				else if ( pref || ( !pref && Key.isDown(map[s]) ) ) {
-					override = false;
-					break;
-				}
-				
 			}
 			
 			if ( override ) {
@@ -169,7 +164,7 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 			},
 
 			{	type: "text",
-				text: "Inventory bags can only be moved, resized, auto-sorted, or deleted by holding down the override key combination.\n\nAll other features, such as pinning, searching, and renaming, retain their default behaviour.\n\nNewly added bags can be manipulated normally until the inventory is re-opened."
+				text: "Inventory bags can only be moved, resized, auto-sorted, or deleted by holding down the override key combination.\n\nAll other features, such as pinning, searching, and renaming, retain their default behaviour, and newly added bags can be manipulated normally until the inventory is re-opened.\n\nNote that the game leaves the Alt key in a \"stuck down\" state when you hit Alt-Tab.  Therefore, if you use it as part of your override combo, you will need to tap Alt once when you come back into the game to \"unstick\" it."
 			}
 		];
 		
