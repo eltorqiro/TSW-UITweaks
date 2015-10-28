@@ -97,13 +97,13 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.LDB {
 
 			AegisHealing:	{ standard: "Aegis Healing Avg.",
 									en: "Aegis Healing Avg.",
-									fr: "Moyenne Aegis GuÃ©rison",
+									fr: "Moyenne Aegis Guérison",
 									de: "Durchschnittliche Aegis Heilung"
 			},
 			
 			Health: { standard: "Health",
 									en: "Health",
-									fr: "SantÃ©",
+									fr: "Santé",
 									de: "Gesundheit"
 			},
 			
@@ -123,8 +123,8 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.LDB {
 		Labels = {
 			EquipmentStatistics: { standard: "Equipment Statistics",
 									en: "Equipment Statistics",
-									fr: "Statistiques de l'Ã©quipement",
-									de: "AusrÃ¼stung Statistiken"
+									fr: "Statistiques de l'équipement",
+									de: "Ausrüstung Statistiken"
 			}
 		};
 		
