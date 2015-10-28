@@ -1,13 +1,16 @@
 import com.Components.WinComp;
+
 import flash.filters.DropShadowFilter;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
-
 import mx.transitions.easing.Strong;
 
 
 /**
  * 
+ * Window class used for, among other things, config windows.
+ * 
+ * Must be linked to a symbol for instantiation, e.g. using attachMovie()
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.UI.Window extends WinComp {

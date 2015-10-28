@@ -14,6 +14,7 @@ import com.ElTorqiro.UITweaks.AddonUtils.MovieClipHelper;
 
 /**
  * 
+ * Builds a panel full of configuration related widgets, based on a supplied definition
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.UI.PanelBuilder extends UIComponent {

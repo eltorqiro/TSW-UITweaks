@@ -1,11 +1,12 @@
+import gfx.core.UIComponent;
 import com.Utils.Rect;
 import flash.geom.Point;
-import gfx.core.UIComponent;
 
-import com.GameInterface.UtilsBase;
 
 /**
+ * Used by the GemController to create individual overlays around each gem target
  * 
+ * This cannot be instantiated using new GemOverlay(), but must instead be attached to a movieclip symbol.  However, creating instances of GemOverlay outside of GemController is reasonably useless.
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemOverlay extends UIComponent {

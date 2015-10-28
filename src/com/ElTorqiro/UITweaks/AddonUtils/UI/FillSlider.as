@@ -3,8 +3,12 @@ import gfx.utils.Constraints;
 
 import com.Utils.Format;
 
+
 /**
  * 
+ * A Slider component that "fills up" the track bar from the left side up to the thumb position.
+ * 
+ * Useful for things like volume meters or the like.
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.UI.FillSlider extends Slider {

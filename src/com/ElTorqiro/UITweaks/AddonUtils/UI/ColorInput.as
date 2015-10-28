@@ -5,7 +5,10 @@ import com.Utils.Format;
 
 
 /**
+ *
+ * An input field component that only allows hex-based colour values to be entered.
  * 
+ * Will colorize the sub-clip named "preview" when the value changes
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.UI.ColorInput extends TextInput {

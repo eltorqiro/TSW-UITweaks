@@ -3,7 +3,7 @@ import com.GameInterface.DistributedValue;
 
 
 /**
- * 
+ * Provides a convenient wrapper for VTIO registration functionality, which can be used in as little as a single line in an addon
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.VTIOConnector {
@@ -23,13 +23,14 @@ class com.ElTorqiro.UITweaks.AddonUtils.VTIOConnector {
 	 * registers addon with VTIO
 	 * will delay registration until VTIO is ready, if necessary
 	 * 
-	 * SignalAddonRegistered is emitted once registration is complete
+	 * SignalAddonRegistered is emitted, and the callback function is called, once registration is complete
 	 * 
-	 * @param	id
-	 * @param	author
-	 * @param	version
-	 * @param	dv
-	 * @param	icon
+	 * @param	id			addon id, passed to VTIO
+	 * @param	author		addon author, passed to VTIO
+	 * @param	version		addon version string, passed to VTIO
+	 * @param	dv			name of distributed value which toggles the addon active state, passed to VTIO
+	 * @param	icon		optional; reference to MovieClip containing the app icon VTIO will duplicate for its topbar slot
+	 * @param	callback	optional; callback function to call when registration has occurred
 	 */
 	public function register( id:String, author:String, version:String, dv:String, icon:MovieClip, callback:Function ) : Void {
 
@@ -96,6 +97,9 @@ class com.ElTorqiro.UITweaks.AddonUtils.VTIOConnector {
 		return _isRegistered;
 	}
 	
+	/**
+	 * the layer and depth that VTIO icons have to be in so they appear correctly in VTIO
+	 */
 	public static var e_VtioDepthLayer:Number = _global.Enums.ViewLayer.e_ViewLayerTop;
 	public static var e_VtioSubDepth:Number = 2;
 }

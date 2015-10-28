@@ -1,28 +1,31 @@
-
-
 /**
  * 
+ * Contains functions used to manipulate movieclip and class linkages
+ * - e.g. create a clip+class without needing a symbol in the library for it, or create an instance of a symbol with a class specified at runtime
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.MovieClipHelper {
 	
+	/**
+	 * static class only, cannot be instantiated
+	 */
 	private function MovieClipHelper() { }
 	
 	/**
 	 * creates an empty movieclip from a class, without needing it to be linked to a symbol in the library
-	 * - class definitions used by this method must contain a public static string __className which uniquely identifies the class, minus the "__Packages." prefix
+	 * - class definitions used by this method must have MovieClip in their inheritance chain, and contain a public static string __className which uniquely identifies the class, minus the "__Packages." prefix
 	 * - instances created this way fully support duplicateMovieClip and are in all other ways treated the same as a regular attachMovie() would be
-	 * - the class can attach its own internal movieclips to display visual elements
+	 * - tip: the class can attach its own internal movieclips to display visual elements
 	 * 
-	 * @param	classRef	must contain a static var __className containing the fully qualified path of the class
-	 * @param	name
-	 * @param	parent
-	 * @param	depth
-	 * @param	initObj
+	 * @param	classRef	the class to use, which must contain a static var __className containing the fully qualified path of the class
+	 * @param	name		name that will be given to the created movieclip
+	 * @param	parent		parent clip which will host the new clip
+	 * @param	depth		depth within the parent the clip will be placed at
+	 * @param	initObj		initObj which will be passed to the clip when it is created, same as regular MovieClip.attachMovie()
 	 * 
-	 * @return
+	 * @return	the created MovieClip instance; override the type on return to the same type as classRef
 	 */
-	public static function createMovieWithClass( classRef:Function, name:String, parent:MovieClip, depth:Number, initObj:Object ) : Object {
+	public static function createMovieWithClass( classRef:Function, name:String, parent:MovieClip, depth:Number, initObj:Object ) : MovieClip {
 		
 		if ( parent == undefined || classRef.__className == undefined ) return;
 		if ( depth == undefined ) depth = parent.getNextHighestDepth();
@@ -34,19 +37,21 @@ class com.ElTorqiro.UITweaks.AddonUtils.MovieClipHelper {
 	}
 
 	/**
-	 * attaches a symbol from the library, and links it to a class
-	 * - instances created this way do not support duplicateMovieClip, which will instead duplicate a raw movieclip (or whatever class the symbol was originally linked to in the library)
+	 * creates an instance of a symbol from the library, and then links the instance to a class
+	 * - class definitions used by this method must have MovieClip in their inheritance chain
+	 * - instances created this way do not support duplicateMovieClip, which will instead duplicate an empty movieclip (or whatever class the symbol was originally linked to in the library)
+	 * - the onLoad() event handler will be executed synchronously immediately after the constructor, instead of in the next frame
 	 * 
-	 * @param	id
-	 * @param	classRef
-	 * @param	name
-	 * @param	parent
-	 * @param	depth
-	 * @param	initObj
+	 * @param	id			id of the symbol in the library
+	 * @param	classRef	class to link to the instance
+	 * @param	name		name that will be given to the created movieclip
+	 * @param	parent		parent clip which will host the new clip
+	 * @param	depth		depth within the parent the clip will be placed at
+	 * @param	initObj		initObj which will be "passed" to the clip after it has been created but before the constructor runs; the effect should be the same as regular MovieClip.attachMovie()
 	 * 
-	 * @return
+	 * @return	the created MovieClip instance; override the type on return to the same type as classRef
 	 */
-	public static function attachMovieWithClass( id:String, classRef:Function, name:String, parent:MovieClip, depth:Number, initObj:Object ) : Object {
+	public static function attachMovieWithClass( id:String, classRef:Function, name:String, parent:MovieClip, depth:Number, initObj:Object ) : MovieClip {
 
 		var mc:MovieClip = parent.attachMovie( id, name, depth, initObj );
 
@@ -66,19 +71,20 @@ class com.ElTorqiro.UITweaks.AddonUtils.MovieClipHelper {
 	}
 
 	/**
-	 * attaches a symbol from the library, first registering it with a class, then clearing the registration
+	 * temporarily registers a class with a symbol, then attaches an instance of the symbol, and finally clears the registration
+	 * - class definitions used by this method must have MovieClip in their inheritance chain
 	 * - instances created this way *may* not support duplicateMovieClip
-	 * - instances use the full Flash flow for movieclip creation, the same as regular attachMovie()
+	 * - instances are otherwise completely natively attached, the same as if the symbol had always been linked to the class
 	 * - this is a good alternative for keeping symbol+className linkages unique per project
 	 * 
-	 * @param	id
-	 * @param	classRef
-	 * @param	name
-	 * @param	parent
-	 * @param	depth
-	 * @param	initObj
+	 * @param	id			id of the symbol to create an instance of
+	 * @param	classRef	class to use when creating the instance
+	 * @param	name		name that will be given to the instance
+	 * @param	parent		parent movieclip the instance will be created under
+	 * @param	depth		depth within the parent the instance will be placed at
+	 * @param	initObj		initObj which will be passed to the instance during creation, the same as regular MovieClip.attachMovie()
 	 * 
-	 * @return
+	 * @return	the created MovieClip instance; override the type on return to the same type as classRef
 	 */
 	public static function attachMovieWithRegister( id:String, classRef:Function, name:String, parent:MovieClip, depth:Number, initObj:Object ) : MovieClip {
 		
@@ -90,18 +96,16 @@ class com.ElTorqiro.UITweaks.AddonUtils.MovieClipHelper {
 	}
 	
 	/**
-	 * changes the class of an existing movieclip
-	 * - instances modified this way do not support duplicateMovieClip
+	 * changes the class prototype of an existing movieclip instance
+	 * - instances modified this way do not support duplicateMovieClip; which will instead create an instance of whichever symbol+class was used when the clip was originally attached
 	 * - it is best to only ever do this on clips that start off as raw MovieClip objects, as extended classes *may* have listeners or other behaviour which doesn't necessarily go out of scope
 	 * 
-	 * @param	id
-	 * @param	classRef
-	 * @param	name
-	 * @param	parent
-	 * @param	depth
-	 * @param	initObj
+	 * - after the class is changed, the constructor will be called, immediately followed synchronously by onLoad()
 	 * 
-	 * @return
+	 * @param	clip		the movieclip to change class on
+	 * @param	classRef	class to change the clip to
+	 * 
+	 * @return	clip
 	 */
 	public static function changeMovieClass( clip:MovieClip, classRef:Function ) : MovieClip {
 		

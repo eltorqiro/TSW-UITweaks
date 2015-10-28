@@ -1,40 +1,40 @@
 import flash.geom.ColorTransform;
-
 import com.GameInterface.UtilsBase;
-
+import flash.geom.Point;
 
 /**
  * 
+ * Contains many utility functions which are commonly used in addons
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.CommonUtils {
 	
 	private function CommonUtils() { }
-	
+
 	/**
-	 * Colorize movieclip using color multiply method rather than flat color
+	 * Prints the content of an object into the chat window
 	 * 
-	 * Courtesy of user "bummzack" at http://gamedev.stackexchange.com/a/51087
+	 * @param	o The object to dump
+	 */
+	public static function varDump( o:Object ) : Void {
+		for ( var s:String in o ) {
+			UtilsBase.PrintChatText( s + ": " + o[s] );
+		}
+	}
+
+	/**
+	 * Test if an object has no properties
 	 * 
-	 * @param	object The object to colorizee
-	 * @param	color Color to apply
-	 */	
-	public static function colorize( object:MovieClip, color:Number ) : Void {
-		// get individual color components 0-1 range
-		var r:Number = ((color >> 16) & 0xff) / 255;
-		var g:Number = ((color >> 8) & 0xff) / 255;
-		var b:Number = ((color) & 0xff) / 255;
-
-		// get the color transform and update its color multipliers
-		var ct:ColorTransform = object.transform.colorTransform;
-		ct.redMultiplier = r;
-		ct.greenMultiplier = g;
-		ct.blueMultiplier = b;
-
-		// assign transform back to sprite/movieclip
-		object.transform.colorTransform = ct;
-	}	
-
+	 * @param	object
+	 * @return	true if there is at least one property in object
+	 */
+	public static function isObjectEmpty( object:Object ) : Boolean {
+		var isEmpty:Boolean = true;
+		for (var n in object) { isEmpty = false; break; }
+		
+		return isEmpty;
+	}
+	
 	/**
 	 * Test if a number is within the valid RGB colour range
 	 * 
@@ -49,10 +49,10 @@ class com.ElTorqiro.UITweaks.AddonUtils.CommonUtils {
 	 * Converts a numeric color value into a HTML compatible hex string, excluding the leading #
 	 * 
 	 * @param	color	Numeric value representing an RGB color
-	 * @return	color converted into a hex string, e.g. "FF88AA", or an empty string if a non-valid RGB value is passed
+	 * @return	color converted into a hex string, e.g. "FF88AA", or '000000' if a non-valid RGB value is passed
 	 */
 	public static function colorToHex( color:Number ) : String {
-		if ( !isRGB(color) ) return '';
+		if ( !isRGB(color) ) return "000000";
 		
 		var colArr:Array = color.toString(16).toUpperCase().split('');
 		var numChars:Number = colArr.length;
@@ -191,6 +191,32 @@ class com.ElTorqiro.UITweaks.AddonUtils.CommonUtils {
 	}
 
 	/**
+	 * Colorize movieclip using color multiply method rather than flat color
+	 * 
+	 * Courtesy of user "bummzack" at http://gamedev.stackexchange.com/a/51087
+	 * 
+	 * - also refer to com.Utils.Colors.Tint() for a different method including alpha level
+	 * 
+	 * @param	object The object to colorizee
+	 * @param	color Color to apply
+	 */	
+	public static function colorize( object:MovieClip, color:Number ) : Void {
+		// get individual color components 0-1 range
+		var r:Number = ((color >> 16) & 0xff) / 255;
+		var g:Number = ((color >> 8) & 0xff) / 255;
+		var b:Number = ((color) & 0xff) / 255;
+
+		// get the color transform and update its color multipliers
+		var ct:ColorTransform = object.transform.colorTransform;
+		ct.redMultiplier = r;
+		ct.greenMultiplier = g;
+		ct.blueMultiplier = b;
+
+		// assign transform back to sprite/movieclip
+		object.transform.colorTransform = ct;
+	}	
+	
+	/**
 	 * Draws a rectangle on an existing movieclip, with options for rounded corners
 	 * 
 	 * Does not process any fill or line on the draw, begin those on the movieclip prior to calling this function
@@ -229,14 +255,31 @@ class com.ElTorqiro.UITweaks.AddonUtils.CommonUtils {
 		mc.curveTo(x, y, topLeftCorner+x, y);
 		mc.lineTo(topLeftCorner+x, y);
 	}
-	
-	/*
-	 * internal variables
-	 */
 
-	 
-	/*
-	 * properties
+	/**
+	 * Checks if a movieclip is fully within the visible area of the Stage, and returns the closest coordinates that would make it so
+	 * 
+	 * @param	mc		MovieClip to check
+	 * @param	buffer	the number of screen-pixels that must remain inside the screen; leave undefined to use the entire movieclip
+	 * @return	Point which would bring the movieclip fully into Stage.visibleRect (in mc-local coordinates)
 	 */
+	public static function getOnScreen( mc:MovieClip, buffer:Number ) : Point {
+		
+		// TODO: adjust for global / visible coordinates and back to local
+		// Not sure how to do this successfully, as localToGlobal seems to give a result that is 2x bigger than (e.g. a real 500 becomes a "global" 1000)
+		//    var s_ResolutionScaleMonitor = DistributedValueBase.GetDValue("GUIResolutionScale");
+		//    var s_HUDScaleMonitor = DistributedValueBase.GetDValue("GUIScaleHUD");
+		
+		var onScreenPosition:Point = new Point(mc._x, mc._y);
+		
+		// check if bounds are outside visible area
+		if ( mc._x < 0 ) onScreenPosition.x = 0;
+		else if ( mc._x + mc._width > Stage.visibleRect.width ) onScreenPosition.x = Stage.visibleRect.width - mc._x - mc._width;
+
+		if ( mc._y < 0 ) onScreenPosition.y = 0;
+		else if ( mc._y + mc._height > Stage.visibleRect.height ) onScreenPosition.y = Stage.visibleRect.height - mc._y - mc._y;
+
+		return onScreenPosition;
+	}
 	
 }

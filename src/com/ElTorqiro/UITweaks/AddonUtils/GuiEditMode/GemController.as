@@ -1,5 +1,6 @@
-import flash.geom.Point;
 import gfx.core.UIComponent;
+
+import flash.geom.Point;
 
 import com.ElTorqiro.UITweaks.AddonUtils.MovieClipHelper;
 import com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemOverlay;
@@ -7,12 +8,21 @@ import com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemOverlay;
 
 /**
  * 
+ * Provides a common interface for managing Gui Edit Mode (gem) handling for movieclips
+ * 
+ * Target clips that are to be managed by this controller should contain a SignalGeometryChanged, which is emitted whenever a change in size, scale, or position of the clip occurs.
+ * If this is not implemented, then the gem overlay for the clip will not know when the clip is moved by things other than the overlay being dragged.  This may not be important for some clips which don't move any other time.
+ * 
+ * - only create instance of the controller using the create() factory method, do not instantiate using new GemController()
  * 
  */
 class com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemController extends UIComponent {
 	
 	public static var __className:String = "com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemController";
 
+	/**
+	 * do not call this directly
+	 */
 	public function GemController() {
 
 		dragging = false;
@@ -20,7 +30,9 @@ class com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemController extends UIComp
 		dragOverlay = null;
 		
 		prevMousePos = null;
-		 
+
+		overlays = [ ];
+		
 		if ( groupMoveModifiers == undefined ) {
 		
 			groupMoveModifiers = [
@@ -42,17 +54,20 @@ class com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemController extends UIComp
 		
 	}
 	
-	private function configUI() : Void {
-
-		overlays = [ ];
+	private function draw() : Void {
 		
-		if ( targets instanceof MovieClip ) {
-			targets = [ targets ];
+		// remove previous overlays
+		var overlay:GemOverlay;
+		while ( overlay = GemOverlay( overlays.pop() ) ) {
+			overlay.removeMovieClip();
 		}
 		
-		for ( var i:Number = 0; i < targets.length; i++ ) {
+		// add new overlays
+		for ( var i:Number = 0; i < _targets.length; i++ ) {
 			
-			var overlay:GemOverlay = GemOverlay( MovieClipHelper.attachMovieWithClass( overlayLinkage, GemOverlay, "", this, getNextHighestDepth(), { target: targets[i], padding: overlayPadding } ) );
+			if ( !targets[i] ) continue;
+			
+			var overlay:GemOverlay = GemOverlay( MovieClipHelper.attachMovieWithClass( overlayLinkage, GemOverlay, "", this, getNextHighestDepth(), { target: _targets[i], padding: overlayPadding } ) );
 			
 			overlay.addEventListener( "press", this, "pressHandler" );
 			overlay.addEventListener( "release", this, "releaseHandler" );
@@ -64,7 +79,7 @@ class com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemController extends UIComp
 		}
 		
 	}
-
+	
 	private function pressHandler( event:Object ) : Void {
 		
 		prevMousePos = new Point( _xmouse, _ymouse );
@@ -155,7 +170,6 @@ class com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemController extends UIComp
 	
 	private var prevMousePos:Point;
 	 
-	private var targets;
 	private var overlays:Array;
 	
 	private var groupMoveModifiers:Array;
@@ -166,5 +180,20 @@ class com.ElTorqiro.UITweaks.AddonUtils.GuiEditMode.GemController extends UIComp
 	/**
 	 * properties
 	 */
-	 
+
+	private var _targets:Array;
+	public function get targets() { return _targets; }
+	public function set targets( value ) {
+		
+		if ( value instanceof MovieClip ) {
+			_targets = [ value ];
+		}
+		
+		else {
+			_targets = value;
+		}
+		
+		initialized && invalidate();
+	}
+
 }
