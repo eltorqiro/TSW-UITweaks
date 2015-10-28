@@ -15,8 +15,11 @@ Plugins
 * Ability Bar FX - Customises the look of the buttons in the ability bar.
 * Bag Lock - Prevents inventory windows being accidentally moved.
 * Black Background Removal - Removes the blurry black background from the bottom of the screen, while still allowing the default "in-combat" indicator to be used.
+* BooDecks Focus Fix - Prevents BooDecks from hijacking all textfields in the game with broken tab handling.
 * Character Sheet Zoom - Locks the character sheet zoom at a selectable level.
+* Fix 4K - [ by Julian Paolo Thiry (Aedani) ] - Fixes inherent problems with the game at 4K resolution.
 * Inspecto Patronum - Redraws inspection windows with new visuals and complete gear stats of the target.
+* Resize Windows - [ by Julian Paolo Thiry (Aedani) ] - Resizes windows not available in the default settings.
 * State Icons Size - Allows the _altered states_ icons in player and target info panels to be resized or hidden.
    
    
@@ -28,6 +31,8 @@ Important Notes
 Donations
 ---------
 I don't accept real-money donations for my mods.  If you would like to show your support, you can do so by sending in-game pax to my character Tufenuf.  I will use it to buy the in-game items I would otherwise have been able to grind out myself, if I weren't spending time writing mods.
+
+Please consider supporting the other plugin authors for their hard work!
   
   
 Configuration
@@ -56,6 +61,8 @@ You can get the source from GitHub at https://github.com/eltorqiro/TSW-UITweaks
 Contributors
 ------------
 Aside from the author of the UITweaks framework (ElTorqiro), testing and development of some of the plugins prior to v1.0.0 was carried out by The009.  Thanks go out to him for his ideas and support.
+
+Other mod authors have also contributed plugins to UITweaks (which is awesome).  Their names are listed against their plugins in the plugin list.  Please encourage and support them if you like their plugins!
   
   
 Licenses

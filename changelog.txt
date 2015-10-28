@@ -1,3 +1,14 @@
+1.1.0 -- 2015-10-28
+
+ + added new plugin, Fix 4K, which has been contributed by Julian Paolo Thiry (Aedani)
+ + added new plugin, Resize Windows, which has been contributed by Julian Paolo Thiry (Aedani)
+ + added new plugin, BooDecks Focus Fix, which fixes the BooDecks problem of breaking textfield tab handling in the game
+ 
+ * Ability Bar FX now applies its button dropshadow to the button background, which may help people vanishing ability bar icons for people also using BooDecks
+ * fixed French and German translations in Inspecto Patronum showing invalid characters for accented letters
+ * BagLock now uses non-exclusive key modifier combos, which will help people who use Alt-Tab (more info in the plugin config text)
+
+
 1.0.0 -- 2015-10-25
 
  ! release is a completely new structure -- ensure old version is fully deleted before installing
