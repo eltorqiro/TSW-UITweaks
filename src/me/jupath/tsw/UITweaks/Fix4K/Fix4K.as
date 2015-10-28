@@ -11,7 +11,7 @@ class me.jupath.tsw.UITweaks.Fix4K.Fix4K extends Plugin {
 	// plugin properties
 	public var id:String = "fix4K";
 	public var name:String = "Fix 4K";
-	public var description:String = "Fixes inherent problems with the game at 4K resolution. Disables the warning popup that should appear (but fails to) when allocating skills that do not increase your gear level. Fixes the background of the ability wheel so that abilities may be dragged into place again.";
+	public var description:String = "Fixes inherent problems with the game at 4K resolution.";
 	public var author:String = "Julian Paolo Thiry (Aedani)";
 	public var prefsVersion:Number = 1;
 
@@ -75,6 +75,14 @@ class me.jupath.tsw.UITweaks.Fix4K.Fix4K extends Plugin {
 		}
 	}
 
+	public function getConfigPanelLayout() : Array {
+		return [
+			{	type: "text",
+				text: "Disables the warning popup that should appear (but fails to) when allocating skills that do not increase your gear level.\n\nFixes the background of the ability wheel so that abilities may be dragged into place again."
+			}
+		];
+	};
+	
 	/**
 	 * internal variables
 	 */
