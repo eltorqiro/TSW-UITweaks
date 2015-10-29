@@ -1,3 +1,8 @@
+1.2.0 -- 2015-10-29
+
+ + BagLock has a new option to prevent items being moved inside pinned bags when the inventory is closed
+ 
+
 1.1.0 -- 2015-10-28
 
  + added new plugin, Fix 4K, which has been contributed by Julian Paolo Thiry (Aedani)

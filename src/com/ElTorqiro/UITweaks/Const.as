@@ -12,7 +12,7 @@ class com.ElTorqiro.UITweaks.Const {
 	public static var AppID:String = "ElTorqiro_UITweaks";
 	public static var AppName:String = "UITweaks";
 	public static var AppAuthor:String = "ElTorqiro";
-	public static var AppVersion:String = "1.1.0";
+	public static var AppVersion:String = "1.2.0";
 	
 	public static var PrefsVersion:Number = 10020;
 	
