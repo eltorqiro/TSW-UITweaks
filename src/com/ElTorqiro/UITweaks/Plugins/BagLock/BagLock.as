@@ -1,4 +1,7 @@
+import com.Components.ItemSlot;
 import com.ElTorqiro.UITweaks.Plugins.Plugin;
+import GUI.Inventory.IconBox;
+import GUI.Inventory.ItemIconBox;
 
 import gfx.utils.Delegate;
 import com.GameInterface.DistributedValue;
@@ -26,44 +29,7 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 		prefs.add( "override.control", true );
 		prefs.add( "override.alt", false );
 		
-	}
-
-	public function onLoad() : Void {
-		super.onLoad();
-		
-		backpackMonitor = DistributedValue.Create("inventory_visible");
-		backpackMonitor.SignalChanged.Connect( apply, this );
-		
-	}
-	
-	public function apply() : Void {
-		stopWaitFor();
-		
-		// only apply if the backpack is open
-		if ( enabled && backpackMonitor.GetValue() ) {
-			waitForId = WaitFor.start( Delegate.create( this, waitForTest ), 100, 3000, Delegate.create( this, hook ) );
-		}
-	}
-	
-	public function waitForTest() : Boolean {
-		return _root.backpack2.m_ModuleActivated;
-	}
-	
-	public function onModuleDeactivated() : Void {
-		stopWaitFor();
-	}
-
-	public function stopWaitFor() : Void {
-		WaitFor.stop( waitForId );
-		waitForId = undefined;
-	}
-	
-	public function hook() : Void {
-		stopWaitFor();
-
-		var bags:Array = _root.backpack2.m_IconBoxes;
-		
-		var pressDelegate:Function = function( buttonIdx:Number ) {
+		pressDelegate = function( buttonIdx:Number ) {
 			
 			var prefs = this.UITweaks_BagLock_Prefs;
 			
@@ -88,6 +54,85 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 			}
 		}
 		
+	}
+
+	public function onLoad() : Void {
+		super.onLoad();
+		
+		backpackMonitor = DistributedValue.Create("inventory_visible");
+		backpackMonitor.SignalChanged.Connect( apply, this );
+		
+	}
+	
+	public function apply() : Void {
+		stopWaitFor();
+		
+		// only apply if enabled
+		if ( enabled ) {
+			waitForId = WaitFor.start( Delegate.create( this, waitForTest ), 100, 3000, Delegate.create( this, hook ) );
+		}
+	}
+	
+	public function waitForTest() : Boolean {
+		return _root.backpack2.m_ModuleActivated;
+	}
+	
+	public function onModuleDeactivated() : Void {
+		stopWaitFor();
+	}
+
+	public function stopWaitFor() : Void {
+		WaitFor.stop( waitForId );
+		waitForId = undefined;
+	}
+	
+	public function hook() : Void {
+		stopWaitFor();
+
+		var bags:Array = _root.backpack2.m_IconBoxes;
+		
+		for ( var s:String in bags ) {
+			
+			var bag = bags[s];
+			
+			// apply or revert hook on window chrome only when inventory is open
+			if ( backpackMonitor.GetValue() ) {
+				hookWindowChrome( bag, enabled );
+			}
+					
+			// apply or revert hook on item slots
+			if ( bag["m_IsPinned"] ) {
+				
+				var hookSlots:Boolean = enabled && !backpackMonitor.GetValue();
+				
+				if ( (hookSlots && !bag.UITweaks_BagLock_SlotsHooked) || (!hookSlots && bag.UITweaks_BagLock_SlotsHooked) ) {
+
+					// shortcutbar uses m_Slots and is a one dimensional array
+					if ( s == "-1" ) {
+						hookItemSlots( bag.m_Slots, hookSlots );
+					}
+					
+					else {
+						var columns:Array = bag.m_ItemSlots;
+						for ( var x:String in columns ) {
+							hookItemSlots( columns[x], hookSlots );
+						}
+					}
+					
+					hookSlots ? bag.UITweaks_BagLock_SlotsHooked = true : delete bag.UITweaks_BagLock_SlotsHooked;
+				}
+			}
+		}
+		
+	}
+
+	private function hookWindowChrome( bag, setHook:Boolean ) : Void {
+
+		// only take action if it is needed
+		if ( (setHook && window.UITweaks_BagLock_ChromeHooked) || (!setHook && !window.UITweaks_BagLock_ChromeHooked ) ) return;
+		
+		var window:MovieClip = bag["m_WindowMC"];
+		
 		var funcMap:Object = {
 			i_Background: "onMousePress",
 			i_FrameName: "onPress",
@@ -96,37 +141,58 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 			i_TrashButton: "onPress",
 			i_SortButton: "onPress"
 		};
-		
-		for ( var s:String in bags ) {
+
+		for ( var elementName:String in funcMap ) {
 			
-			var bagMC = bags[s].m_WindowMC;
+			var element:MovieClip = window[ elementName ];
+			var funcName:String = funcMap[ elementName ];
 			
-			for ( var elementName:String in funcMap ) {
+			if ( setHook ) {
+				element.UITweaks_BagLock_Press_Original = element[ funcName ];
+				element[ funcName ] = Delegate.create( element, pressDelegate );
 				
-				var element:MovieClip = bagMC[ elementName ];
-				var funcName:String = funcMap[ elementName ];
+				element.UITweaks_BagLock_Prefs = prefs;
+			}
+			
+			else {
+				element[ funcName ] = element.UITweaks_BagLock_Press_Original;
+				delete element.UITweaks_BagLock_Press_Original;
 				
-				// if not hooked and it should be, set hook
-				if ( enabled && !element.UITweaks_BagLock_Press_Original ) {
-					element.UITweaks_BagLock_Press_Original = element[ funcName ];
-					element[ funcName ] = Delegate.create( element, pressDelegate );
-					
-					element.UITweaks_BagLock_Prefs = prefs;
-				}
-				
-				// else if is hooked and should not be, remove hook
-				else if ( !enabled && element.UITweaks_BagLock_Press_Original ) {
-					element[ funcName ] = element.UITweaks_BagLock_Press_Original;
-					delete element.UITweaks_BagLock_Press_Original;
-					delete element.UITweaks_BagLock_Prefs;
-				}
-				
+				delete element.UITweaks_BagLock_Prefs;
 			}
 			
 		}
+
+		setHook ? window.UITweaks_BagLock_ChromeHooked = true : delete window.UITweaks_BagLock_ChromeHooked;
+	}
+	
+	private function hookItemSlots( slots:Array, setHook:Boolean ) : Void {
+		
+		for ( var i:String in slots ) {
+			
+			var slot = slots[i];
+
+			if ( setHook ) {
+				slot.UITweaks_BagLock_StartDraggingItem_Original = slot["StartDraggingItem"];
+				slot["StartDraggingItem"] = undefined;
+			
+				slot.UITweaks_BagLock_StartSplittingItem_Original = slot["StartSplittingItem"];
+				slot["StartSplittingItem"] = undefined;
+			}
+
+			else {
+				slot["StartDraggingItem"] = slot.UITweaks_BagLock_StartDraggingItem_Original;
+				delete slot.UITweaks_BagLock_StartDraggingItem_Original;
+
+				slot["StartSplittingItem"] = slot.UITweaks_BagLock_StartSplittingItem_Original;
+				delete slot.UITweaks_BagLock_StartSplittingItem_Original;
+			}
+		}
 		
 	}
-
+	
+	private function pressDelegate( buttonIdx:Number ) : Void { }
+	
 	public function revert() : Void {
 		hook();
 	}
