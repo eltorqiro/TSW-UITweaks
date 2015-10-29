@@ -8,7 +8,6 @@ import com.GameInterface.DistributedValue;
 
 import com.ElTorqiro.UITweaks.AddonUtils.WaitFor;
 
-import com.GameInterface.UtilsBase;
 
 /**
  * 
@@ -29,9 +28,11 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 		prefs.add( "override.control", true );
 		prefs.add( "override.alt", false );
 		
+		prefs.add( "items.lock.whenPinned", true );
+		
 		pressDelegate = function( buttonIdx:Number ) {
 			
-			var prefs = this.UITweaks_BagLock_Prefs;
+			var prefs = this._parent.UITweaks_BagLock_Prefs;
 			
 			var map:Object = {
 				shift: Key.SHIFT,
@@ -89,7 +90,8 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 	public function hook() : Void {
 		stopWaitFor();
 
-		var bags:Array = _root.backpack2.m_IconBoxes;
+		var backpack = _root.backpack2;
+		var bags:Array = backpack.m_IconBoxes;
 		
 		for ( var s:String in bags ) {
 			
@@ -103,23 +105,16 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 			// apply or revert hook on item slots
 			if ( bag["m_IsPinned"] ) {
 				
-				var hookSlots:Boolean = enabled && !backpackMonitor.GetValue();
+				var lockSlots:Boolean = enabled && !backpackMonitor.GetValue() && prefs.getVal("items.lock.whenPinned");
 				
-				if ( (hookSlots && !bag.UITweaks_BagLock_SlotsHooked) || (!hookSlots && bag.UITweaks_BagLock_SlotsHooked) ) {
+				if ( (lockSlots && !bag.UITweaks_BagLock_SlotsLocked) || (!lockSlots && bag.UITweaks_BagLock_SlotsLocked) ) {
 
-					// shortcutbar uses m_Slots and is a one dimensional array
-					if ( s == "-1" ) {
-						hookItemSlots( bag.m_Slots, hookSlots );
-					}
+					var funcName:String = lockSlots ? "Disconnect" : "Connect";
 					
-					else {
-						var columns:Array = bag.m_ItemSlots;
-						for ( var x:String in columns ) {
-							hookItemSlots( columns[x], hookSlots );
-						}
-					}
+					bag.SignalMouseDownItem[funcName]( backpack.SlotMouseDownItem, backpack );
+					bag.SignalStartDragItem[funcName]( backpack.SlotStartDragItem, backpack );
 					
-					hookSlots ? bag.UITweaks_BagLock_SlotsHooked = true : delete bag.UITweaks_BagLock_SlotsHooked;
+					lockSlots ? bag.UITweaks_BagLock_SlotsLocked = true : delete bag.UITweaks_BagLock_SlotsLocked;
 				}
 			}
 		}
@@ -128,10 +123,10 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 
 	private function hookWindowChrome( bag, setHook:Boolean ) : Void {
 
+		var window:MovieClip = bag.m_WindowMC;
+
 		// only take action if it is needed
-		if ( (setHook && window.UITweaks_BagLock_ChromeHooked) || (!setHook && !window.UITweaks_BagLock_ChromeHooked ) ) return;
-		
-		var window:MovieClip = bag["m_WindowMC"];
+		if ( (setHook && window.UITweaks_BagLock_Prefs) || (!setHook && !window.UITweaks_BagLock_Prefs ) ) return;
 		
 		var funcMap:Object = {
 			i_Background: "onMousePress",
@@ -150,45 +145,16 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 			if ( setHook ) {
 				element.UITweaks_BagLock_Press_Original = element[ funcName ];
 				element[ funcName ] = Delegate.create( element, pressDelegate );
-				
-				element.UITweaks_BagLock_Prefs = prefs;
 			}
 			
 			else {
 				element[ funcName ] = element.UITweaks_BagLock_Press_Original;
 				delete element.UITweaks_BagLock_Press_Original;
-				
-				delete element.UITweaks_BagLock_Prefs;
 			}
 			
 		}
 
-		setHook ? window.UITweaks_BagLock_ChromeHooked = true : delete window.UITweaks_BagLock_ChromeHooked;
-	}
-	
-	private function hookItemSlots( slots:Array, setHook:Boolean ) : Void {
-		
-		for ( var i:String in slots ) {
-			
-			var slot = slots[i];
-
-			if ( setHook ) {
-				slot.UITweaks_BagLock_StartDraggingItem_Original = slot["StartDraggingItem"];
-				slot["StartDraggingItem"] = undefined;
-			
-				slot.UITweaks_BagLock_StartSplittingItem_Original = slot["StartSplittingItem"];
-				slot["StartSplittingItem"] = undefined;
-			}
-
-			else {
-				slot["StartDraggingItem"] = slot.UITweaks_BagLock_StartDraggingItem_Original;
-				delete slot.UITweaks_BagLock_StartDraggingItem_Original;
-
-				slot["StartSplittingItem"] = slot.UITweaks_BagLock_StartSplittingItem_Original;
-				delete slot.UITweaks_BagLock_StartSplittingItem_Original;
-			}
-		}
-		
+		setHook ? window.UITweaks_BagLock_Prefs = prefs : delete window.UITweaks_BagLock_Prefs;
 	}
 	
 	private function pressDelegate( buttonIdx:Number ) : Void { }
@@ -196,13 +162,35 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 	public function revert() : Void {
 		hook();
 	}
+
+	private function prefChangeHandler( name:String, newValue, oldValue ) : Void {
+	
+		switch ( name ) {
+			
+			case "items.lock.whenPinned":
+				hook();
+			break;
+			
+		}
+		
+	}
 	
 	public function getConfigPanelLayout() : Array {
 
 		return [
-			
+
+			{	id: "items.lock.whenPinned",
+				type: "checkbox",
+				label: "Lock items in pinned bags when inventory is closed",
+				tooltip: "Prevents items from being moved in pinned bags when the inventory is closed.  Items can still be right-clicked to use them.",
+				data: { pref: "items.lock.whenPinned" }
+			},
+
+			{	type: "group"
+			},
+		
 			{	type: "h2",
-				text: "OVERRIDE KEY COMBINATION"
+				text: "BAG MOVEMENT OVERRIDE COMBO"
 			},
 			
 			{	id: "override.shift",
