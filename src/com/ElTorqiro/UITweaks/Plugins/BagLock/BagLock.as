@@ -24,6 +24,7 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 
 	public function BagLock() {
 		
+		prefs.add( "bags.lock.enabled", true );
 		prefs.add( "override.shift", true );
 		prefs.add( "override.control", true );
 		prefs.add( "override.alt", false );
@@ -99,7 +100,7 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 			
 			// apply or revert hook on window chrome only when inventory is open
 			if ( backpackMonitor.GetValue() ) {
-				hookWindowChrome( bag, enabled );
+				hookWindowChrome( bag, enabled && prefs.getVal( "bags.lock.enabled" ) );
 			}
 					
 			// apply or revert hook on item slots
@@ -168,6 +169,7 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 		switch ( name ) {
 			
 			case "items.lock.whenPinned":
+			case "bags.lock.enabled":
 				hook();
 			break;
 			
@@ -188,9 +190,16 @@ class com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock extends Plugin {
 
 			{	type: "group"
 			},
-		
+					
+			{	id: "bags.lock.enabled",
+				type: "checkbox",
+				label: "Lock bags",
+				tooltip: "Prevents bags from being moved, resized, sorted or trashed accidentally.",
+				data: { pref: "bags.lock.enabled" }
+			},
+			
 			{	type: "h2",
-				text: "BAG MOVEMENT OVERRIDE COMBO"
+				text: "BAG LOCK OVERRIDE COMBO"
 			},
 			
 			{	id: "override.shift",
