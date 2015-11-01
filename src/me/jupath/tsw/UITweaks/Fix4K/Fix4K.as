@@ -49,21 +49,11 @@ class me.jupath.tsw.UITweaks.Fix4K.Fix4K extends Plugin {
 	private function fixSkillHive() : Void {
 		stopWaitFor();
 
-		var window = _root.skillhive.i_SkillhiveBackground.i_Background;
-		var screenWidth:Number = Stage["visibleRect"].width;
-		var backgroundWidth:Number = window._width;
-		window._width = screenWidth;
-		window._x -= (screenWidth - backgroundWidth) / 2;
-	}
-
-	public function revert() : Void {
-		stopWaitFor();
-		
-		var window = _root.skillhive.i_SkillhiveBackground.i_Background;
-		if (window != undefined) {
-			window._width = 2500;
-			window._x = 0;
-		}
+		var window = _root.skillhive;
+		window.m_DefaultSkillhiveBackgroundWidth = window.i_SkillhiveBackground.i_Background._width = Stage["visibleRect"].width;
+		//Would love to know why calling these methods directly does not work, but adding a timeout does....
+		setTimeout(Delegate.create(window, window.Layout), 10);
+		setTimeout(Delegate.create(window, window.UpdateBackgroundAndBarPositions, true), 10);
 	}
 	
 	private function prefChangeHandler( name:String, newValue, oldValue ) : Void {
