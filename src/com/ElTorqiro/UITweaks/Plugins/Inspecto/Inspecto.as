@@ -66,7 +66,7 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto extends Plugin {
 		
 		// hook window loaded signal so we know when elements have finished moving
 		var window = controller.m_InspectionWindows[ characterId.toString() ];
-		if ( window ) {
+		if ( window && !window.UITweaks_ContentLoadedDelegate ) {
 			window._visible = false;
 
 			window.UITweaks_ContentLoadedDelegate = Delegate.create( this, windowLoadedHandler );
