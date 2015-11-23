@@ -12,9 +12,9 @@ class com.ElTorqiro.UITweaks.Const {
 	public static var AppID:String = "ElTorqiro_UITweaks";
 	public static var AppName:String = "UITweaks";
 	public static var AppAuthor:String = "ElTorqiro";
-	public static var AppVersion:String = "1.3.0";
+	public static var AppVersion:String = "1.4.0";
 	
-	public static var PrefsVersion:Number = 10030;
+	public static var PrefsVersion:Number = 10040;
 	
 	public static var IconClipPath:String = "ElTorqiro_UITweaks\\Icon.swf";
 	public static var IconClipDepthLayer:Number = _global.Enums.ViewLayer.e_ViewLayerMiddle;
