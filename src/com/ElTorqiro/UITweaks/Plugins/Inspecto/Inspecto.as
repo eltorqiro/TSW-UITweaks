@@ -32,6 +32,8 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto extends Plugin {
 
 	public function Inspecto() {
 		
+		prefs.add( "maxSkillValues.include", e_IncludeMaxStatValuesNever );
+
 	}
 
 	public function apply() : Void {
@@ -235,17 +237,17 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto extends Plugin {
 			evade: { label: LDB.GetText('StatNames', 'EvadeRating') },
 			defence: { label: LDB.GetText('StatNames', 'DefenceRating') },
 			block: { label: LDB.GetText('StatNames', 'BlockRating') },
-			physProt: { label: LDB.GetText('StatNames', 'PhysicalProtection') },
-			magProt: { label: LDB.GetText('StatNames', 'MagicalProtection') },
+			physProt: { label: LDB.GetText('StatNames', 'PhysicalProtection'), maxSkillBase: 300 },
+			magProt: { label: LDB.GetText('StatNames', 'MagicalProtection'), maxSkillBase: 300 },
 			
 			priAegisPercent: { },
 			secAegisPercent: { },
 			
-			aegisPercent: { label: LDB.GetText('StatNames', 'AvgAegisConversionPercent'), stat: 'aegis damage' },
-			aegisShield: { label: LDB.GetText('StatNames', 'AegisShield'), stat: 'aegis shield' },
-			aegisHealing: { label: LDB.GetText('StatNames', 'AegisHealing'), stat: 'aegis healing' },
+			aegisPercent: { label: LDB.GetText('StatNames', 'AvgAegisConversionPercent'), stat: 'aegis damage', maxSkillBase: 10 },
+			aegisShield: { label: LDB.GetText('StatNames', 'AegisShield'), stat: 'aegis shield', maxSkillBase: 185 },
+			aegisHealing: { label: LDB.GetText('StatNames', 'AegisHealing'), stat: 'aegis healing', maxSkillBase: 30 },
 			
-			health: { label: LDB.GetText('StatNames', 'Health') },
+			health: { label: LDB.GetText('StatNames', 'Health'), maxSkillBase: 2070 },
 			
 			maxQL: { label: LDB.GetText('StatNames', 'MaxQL') },
 			avgQL: { label: LDB.GetText('StatNames', 'AvgQL') }
@@ -605,6 +607,23 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto extends Plugin {
 		var primaryStat:Number = baseStat + stats[ statName ].values.primary.value;
 		var secondaryStat:Number = baseStat + stats[ statName ].values.secondary.value;
 
+		// handle inclusion of max skill values
+		var includeMaxSkillValues:Boolean;
+		var maxSkillBase:Number = stats[ statName ].maxSkillBase;
+		if ( stats[ statName ].maxSkillBase ) {
+
+			var includeMaxSkillValuesPref:Number = prefs.getVal( "maxSkillValues.include" );
+			includeMaxSkillValues =	includeMaxSkillValuesPref == e_IncludeMaxStatValuesAlways
+				|| ( includeMaxSkillValuesPref == e_IncludeMaxStatValuesOnlyWithGear && (primaryStat != 0 || secondaryStat != 0) );
+				
+			if ( includeMaxSkillValues) {
+				baseStat += maxSkillBase;
+				primaryStat += maxSkillBase;
+				secondaryStat += maxSkillBase;
+			}
+			
+		}
+		
 		var valueText:String = '';
 		
 		// show weapon split values if stat exists on either weapon
@@ -632,7 +651,7 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto extends Plugin {
 
 		// add value numbers
 		fields.value = statBoxMC.m_Values.createTextField( 'm_' + statName, statBoxMC.m_Values.getNextHighestDepth(), 0, statBoxMC.cursor.y, 0, 0 );
-		textFormat.color = valueText != '0' ? 0xEEBA05 : 0x666666;
+		textFormat.color = valueText != '0' ? ( includeMaxSkillValues ? 0x33ee99 : 0xEEBA05 ) : 0x666666;
 		fields.value.setNewTextFormat( textFormat );
 		fields.value.text = valueText != '0' ? valueText : '-';
 
@@ -654,6 +673,33 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto extends Plugin {
 		statBoxMC.cursor.y += fields.name.textHeight;
 	}
 
+	public function getConfigPanelLayout() : Array {
+
+		return [
+		
+			{	id: "maxSkillValues.include",
+				type: "dropdown",
+				label: "Include Max Skill values",
+				tooltip: "Adds the Max Skill values for certain stats to their calculated totals.",
+				data: { pref: "maxSkillValues.include" },
+				list: [
+					{ label: "Never", value: e_IncludeMaxStatValuesNever },
+					{ label: "Always", value: e_IncludeMaxStatValuesAlways },
+					{ label: "Only when gear has stat", value: e_IncludeMaxStatValuesOnlyWithGear }
+				]
+			},
+			
+			{	type: "group"
+			},
+			
+			{	type: "text",
+				text: "You must re-inspect a character for setting changes to take effect."
+			}
+				
+		];
+		
+	}
+	
 	/**
 	 * internal variables
 	 */
@@ -661,5 +707,13 @@ class com.ElTorqiro.UITweaks.Plugins.Inspecto.Inspecto extends Plugin {
 	private var waitForId:Number;
 	private var hooked:Boolean;
 	private var controller;
+
+	/**
+	 * properties
+	 */
+	
+	public static var e_IncludeMaxStatValuesNever:Number = 0;
+	public static var e_IncludeMaxStatValuesAlways:Number = 1;
+	public static var e_IncludeMaxStatValuesOnlyWithGear:Number = 2;
 
 }
