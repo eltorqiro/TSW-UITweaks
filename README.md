@@ -19,6 +19,7 @@ Plugins
 * Character Sheet Zoom - Locks the character sheet zoom at a selectable level.
 * Fix 4K - [ by Julian Paolo Thiry (Aedani) ] - Fixes inherent problems with the game at 4K resolution.
 * Inspecto Patronum - Redraws inspection windows with new visuals and complete gear stats of the target.
+* Membership Filter - Hides unnecessary membership indicators, such as the icon in nametags.
 * Resize Windows - [ by Julian Paolo Thiry (Aedani) ] - Resizes windows not available in the default settings.
 * State Icons Size - Allows the _altered states_ icons in player and target info panels to be resized or hidden.
    

@@ -29,7 +29,7 @@ import com.ElTorqiro.UITweaks.Plugins.BagLock.BagLock;
 import me.jupath.tsw.UITweaks.Fix4K.Fix4K;
 import me.jupath.tsw.UITweaks.Resizer.Resizer;
 import com.ElTorqiro.UITweaks.Plugins.BooDecksFocusFix.BooDecksFocusFix;
-
+import com.ElTorqiro.UITweaks.Plugins.MembershipFilter.MembershipFilter;
 
 /**
  * 
@@ -61,7 +61,8 @@ class com.ElTorqiro.UITweaks.App {
 			new BagLock(),
 			new Fix4K(),
 			new Resizer(),
-			new BooDecksFocusFix()
+			new BooDecksFocusFix(),
+			new MembershipFilter()
 		];
 		plugins.sortOn( 'name', Array.CASEINSENSITIVE );
 		
