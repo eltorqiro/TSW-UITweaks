@@ -26,7 +26,7 @@ Plugins
    
 Important Notes
 ---------------
-* Since each plugin is intended to work against the default UI, any custom mods you use that override default UI files will probably cause strange compatibility issues.
+* Each plugin is designed to work with the default UI, thus any custom mods you use that override default UI files will probably cause strange compatibility issues in related plugins.  However, since plugins can be enabled independently, you can still use any unaffected plugins on a mix and match basis.
   
   
 Donations
@@ -61,7 +61,7 @@ You can get the source from GitHub at https://github.com/eltorqiro/TSW-UITweaks
    
 Contributors
 ------------
-Aside from the author of the UITweaks framework (ElTorqiro), testing and development of some of the plugins prior to v1.0.0 was carried out by The009.  Thanks go out to him for his ideas and support.
+Aside from the author of the UITweaks framework (ElTorqiro), testing and development of some of the plugins prior to v1.0.0 was carried out by The009, particularly his excellent Target of Target plugin.  Thanks go out to him for his ideas and support.
 
 Other mod authors have also contributed plugins to UITweaks (which is awesome).  Their names are listed against their plugins in the plugin list.  Please encourage and support them if you like their plugins!
   
