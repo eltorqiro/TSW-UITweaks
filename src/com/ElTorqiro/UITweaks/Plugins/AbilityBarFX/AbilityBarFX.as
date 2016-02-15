@@ -41,12 +41,13 @@ class com.ElTorqiro.UITweaks.Plugins.AbilityBarFX.AbilityBarFX extends Plugin {
 		prefs.add( "button.shadow.blur", 4 );
 		prefs.add( "button.shadow.angle", 90 );
 		
+		prefs.add( "waitForSlots.timeout", 2000 );
 	}
 	
 	public function apply() : Void {
 		stopWaitFor();
 
-		waitForId = WaitFor.start( waitForTest, 100, 2000, Delegate.create(this, hook) );
+		waitForId = WaitFor.start( waitForTest, 100, prefs.getVal( "waitForSlots.timeout" ), Delegate.create(this, hook) );
 	}
 
 	private function waitForTest() : Boolean {
@@ -383,8 +384,24 @@ class com.ElTorqiro.UITweaks.Plugins.AbilityBarFX.AbilityBarFX extends Plugin {
 					label: "Transparency",
 					tooltip: "The transparency of the shadow.",
 					data: { pref: "button.shadow.alpha" }
-				}
-			
+				},
+				
+				{	type: "indent-reset"
+				},
+				
+			{	type: "group"
+			},
+
+			{	id: "waitForSlots.timeout",
+				type: "slider",
+				min: 2000,
+				max: 4000,
+				step: 100,
+				valueFormat: "%i",
+				label: "Redraw timeout (increase if redraw fails after zoning)",
+				tooltip: "The amount of time after zoning to wait for the ability bar to become available.",
+				data: { pref: "waitForSlots.timeout" }
+			}
 			
 		];
 		

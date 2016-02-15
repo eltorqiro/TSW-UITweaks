@@ -2,6 +2,8 @@
 
  + added new plugin, Membership Filter, which hides unnecessary membership indicators
 
+ * [AbilityBarFX] add redraw timout preference, per request from bonzai86 https://forums.thesecretworld.com/showthread.php?81645-MOD-ElTorqiro_UITweaks&p=1990230&viewfull=1#post1990230
+
 
 1.4.0 -- 2015-11-23
 
