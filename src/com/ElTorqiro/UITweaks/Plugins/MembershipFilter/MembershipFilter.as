@@ -28,6 +28,8 @@ class com.ElTorqiro.UITweaks.Plugins.MembershipFilter.MembershipFilter extends P
 		
 		prefs.add( "nametag.icon.hide", true );
 		
+		initialisedTime = new Date();
+		
 	}
 
 	public function apply() : Void {
@@ -60,9 +62,6 @@ class com.ElTorqiro.UITweaks.Plugins.MembershipFilter.MembershipFilter extends P
 
 		});
 		
-		// fix for initial post-reloadui hook causing 3 nametags to be created if a target is currently selected, due to refreshTargetTags
-		var reHook:Boolean = controller.UITweaks_RefreshTargets == undefined;
-		
 		controller.UITweaks_RefreshTargets = Delegate.create( controller, function() {
 			
 			this.SlotDefensiveTargetChanged( undefined );
@@ -75,10 +74,13 @@ class com.ElTorqiro.UITweaks.Plugins.MembershipFilter.MembershipFilter extends P
 		});
 		
 		hooked = true;
-		
-		// trigger a refresh of nametags
+
 		prefs.SignalValueChanged.Connect( refreshTargetTags, this );
-		if ( !reHook ) refreshTargetTags();
+
+		// trigger a refresh of nametags, but delay a short period only on the initial launch after a /reloadui, to avoid the "3 nametags are created on the target" issue
+		if ( (new Date()) - initialisedTime > 3000 ) {
+			refreshTargetTags();
+		}
 		
 	}
 	
@@ -146,6 +148,8 @@ class com.ElTorqiro.UITweaks.Plugins.MembershipFilter.MembershipFilter extends P
 	private var waitForId:Number;
 	private var hooked:Boolean;
 	private var controller;
+	
+	private var initialisedTime:Date;
 
 	/**
 	 * properties
