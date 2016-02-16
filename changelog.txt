@@ -1,7 +1,7 @@
 ????? -- ????
 
  * fixed unmoveable mod icon when not using VTIO, re Issue 13.3 update
-
+ * [MembershipFilter] changed to a more reliable method for the initial redraw of target nametag after a /reloadui; in some rare cases you *may* now see a member icon for a brief second after /reloadui
 
 1.5.0 -- 2016-02-15
 

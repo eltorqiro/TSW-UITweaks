@@ -78,10 +78,7 @@ class com.ElTorqiro.UITweaks.Plugins.MembershipFilter.MembershipFilter extends P
 		prefs.SignalValueChanged.Connect( refreshTargetTags, this );
 
 		// trigger a refresh of nametags, but delay a short period only on the initial launch after a /reloadui, to avoid the "3 nametags are created on the target" issue
-		if ( (new Date()) - initialisedTime > 3000 ) {
-			refreshTargetTags();
-		}
-		
+		setTimeout( Delegate.create( this, refreshTargetTags ), (new Date()) - initialisedTime > 3000 ? 0 : 2000 );
 	}
 	
 	private function setTargetHandler( newTarget:ID32, oldTarget:ID32 ) : Void {
