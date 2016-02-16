@@ -147,7 +147,7 @@ class com.ElTorqiro.UITweaks.AppIcon extends MovieClip {
 			gemController.addEventListener( "endDrag", this, "gemEndDragHandler" );
 		}
 		
-		else {
+		else if ( !edit ) {
 			gemController.removeMovieClip();
 			gemController = null;
 		}
