@@ -1,6 +1,6 @@
 1.7.0 -- 2016-05-25
 
- * change app icon depth to be in front of default topbar when not using VTIO
+ * change app icon depth to be in front of default topbar when not using VTIO; this has the side effect of placing it above all other windows, too
 
 
 1.6.0 -- 2016-02-16
