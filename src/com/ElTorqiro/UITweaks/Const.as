@@ -12,13 +12,13 @@ class com.ElTorqiro.UITweaks.Const {
 	public static var AppID:String = "ElTorqiro_UITweaks";
 	public static var AppName:String = "UITweaks";
 	public static var AppAuthor:String = "ElTorqiro";
-	public static var AppVersion:String = "1.6.0";
+	public static var AppVersion:String = "1.7.0";
 	
-	public static var PrefsVersion:Number = 10060;
+	public static var PrefsVersion:Number = 10070;
 	
 	public static var IconClipPath:String = "ElTorqiro_UITweaks\\Icon.swf";
-	public static var IconClipDepthLayer:Number = _global.Enums.ViewLayer.e_ViewLayerMiddle;
-	public static var IconClipSubDepth:Number = 0;
+	public static var IconClipDepthLayer:Number = _global.Enums.ViewLayer.e_ViewLayerTop;
+	public static var IconClipSubDepth:Number = 2;
 	
 	public static var ConfigWindowClipPath:String = "ElTorqiro_UITweaks\\ConfigWindow.swf";
 	public static var ConfigWindowClipDepthLayer:Number = _global.Enums.ViewLayer.e_ViewLayerTop;
